@@ -13,7 +13,7 @@
       "deployment": "Public",
       "visibility": "Public",
       "version": "v1.0.0",
-      "versionSource": "git-tag",
+      "versionSource": "github-release",
       "mainUrl": "https://main.ycsu.cc",
       "plannedUrl": null,
       "githubUrl": "https://github.com/blackeirose/YCSU-Platform",

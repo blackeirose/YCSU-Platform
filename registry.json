@@ -1,0 +1,76 @@
+{
+  "$schema": "Registry data for the YCSU Platform. Edit this file to add/update products — index.html renders directly from it.",
+  "updated": "2026-08-28",
+  "products": [
+    {
+      "id": "hub",
+      "name": "Workflow Hub",
+      "tagline": "Multi-agent AI development workflow hub",
+      "domain": "hub.ycsu.cc",
+      "url": null,
+      "repo": "blackeirose/YSU-Architecture-Workflow-Hub",
+      "deploymentProvider": "Not deployed",
+      "backend": "Deferred (no Supabase yet)",
+      "maturity": "In Development",
+      "status": "NOT CONFIGURED",
+      "visibility": "Internal",
+      "notes": "DNS not yet configured; no live deployment found as of 2026-08-28."
+    },
+    {
+      "id": "tracker",
+      "name": "YCSU Tracker",
+      "tagline": "Tool development tracker",
+      "domain": "tracker.ycsu.cc",
+      "url": "https://tracker.ycsu.cc",
+      "repo": "blackeirose/YSU-Tool-Development-Tracker",
+      "deploymentProvider": "GitHub Pages",
+      "backend": "Unconfirmed (possible Supabase project ysu-tool-tracker)",
+      "maturity": "Live",
+      "status": "LIVE",
+      "visibility": "Public",
+      "notes": "Only ycsu.cc subdomain confirmed live via DNS as of 2026-08-28."
+    },
+    {
+      "id": "adcc",
+      "name": "AI Development Control Center",
+      "tagline": "Spatial AI development orchestration control center",
+      "domain": "adcc.ycsu.cc",
+      "url": null,
+      "repo": "blackeirose/AI-Development-Control-Center",
+      "deploymentProvider": "Not deployed (local-only, M1)",
+      "backend": "Local SQLite, no cloud sync",
+      "maturity": "In Development",
+      "status": "NOT CONFIGURED",
+      "visibility": "Internal",
+      "notes": "M1 Foundation complete locally; production deployment not yet in scope."
+    },
+    {
+      "id": "rachess",
+      "name": "Rachel's Animal Kingdom",
+      "tagline": "Animal Chess (RaChess)",
+      "domain": "game.ycsu.cc/RaChess",
+      "url": null,
+      "repo": null,
+      "deploymentProvider": "Not deployed",
+      "backend": "Unknown",
+      "maturity": "Planned",
+      "status": "NOT CONFIGURED",
+      "visibility": "Public",
+      "notes": "Referenced in the YCSU ecosystem; no GitHub repository or deployment confirmed as of 2026-08-28."
+    },
+    {
+      "id": "platform",
+      "name": "YCSU Platform",
+      "tagline": "Central registry and entry point for the YCSU product ecosystem",
+      "domain": "main.ycsu.cc",
+      "url": null,
+      "repo": "blackeirose/YCSU-Platform",
+      "deploymentProvider": "Netlify",
+      "backend": "None (static, data-driven)",
+      "maturity": "v1",
+      "status": "DEPLOYED - DNS PENDING",
+      "visibility": "Public",
+      "notes": "This site. DNS record for main.ycsu.cc must be added manually in Namecheap; see DEPLOYMENT.md."
+    }
+  ]
+}

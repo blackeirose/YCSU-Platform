@@ -19,6 +19,14 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
+## Required Manual Step: Turn Off Team Protection
+
+The Netlify site currently requires a Netlify sign-in to view it ("Team protection" / visitor access is on by default for new sites on this account). This would make `main.ycsu.cc` inaccessible to the public. Disabling it via the API was correctly blocked by a safety check (it's an access-control change), so it needs to be done by hand once:
+
+**Netlify admin → [ycsu-platform-registry](https://app.netlify.com/projects/ycsu-platform-registry) → Site configuration → Site protection / Visitor access → turn off "Team protection"** (or "Require sign-in to view this site").
+
+Verify afterward by loading https://ycsu-platform-registry.netlify.app in a private/incognito window — it should show the registry, not a Netlify sign-in page.
+
 ## Required Manual Step: DNS Record for `main.ycsu.cc`
 
 No DNS automation exists for the `ycsu.cc` zone (no Namecheap API key/IP whitelist configured — see `ysu-ai-core/docs/DOMAIN_REGISTRY.md` and the deployment automation plan). This one record must be added by hand in the Namecheap dashboard (Domain List → `ycsu.cc` → Manage → Advanced DNS):

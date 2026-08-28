@@ -1,7 +1,7 @@
 # PROJECT_CONTEXT.md
 
 **YSU AI Development System**
-**Project Version:** v1 (initial build, 2026-08-28)
+**Project Version:** v1.0.0 — "Product Registry Foundation" (locked 2026-08-28)
 
 This document describes the current durable context of this project. It should allow a new AI agent or developer to understand the project without relying on previous conversation history.
 
@@ -25,7 +25,7 @@ Static web application / product directory
 
 ## Current Status
 
-v1 — deployed to Netlify, `main.ycsu.cc` DNS not yet attached (pending manual Namecheap step, see `DEPLOYMENT.md`)
+**v1.0.0 — locked and released.** Live in production at `https://main.ycsu.cc`. DNS attached, HTTPS valid, Team Protection disabled, registry schema formalized. See `DEPLOYMENT.md` for current infrastructure state and `docs/PLATFORM_MODEL.md` for the governance model this release established.
 
 ---
 
@@ -57,12 +57,15 @@ The repository owner (`blackeirose` / `ysu`) and anyone visiting `main.ycsu.cc` 
 ## Working Features
 
 - Static HTML/CSS/JS page (`index.html`) that fetches and renders `registry.json`
-- Registry schema covering: domain, deployment provider, backend dependency, maturity, status, visibility, notes
-- Responsive card grid, light/dark theme via `prefers-color-scheme`
+- Formal typed registry schema (`registry.schema.ts`) — `platformLayer`, `maturity`, `deployment`, `visibility`, `version`/`versionSource`, `mainUrl`/`plannedUrl`, `certification`, and optional links, documented in `docs/REGISTRY_SCHEMA.md`
+- `scripts/validate-registry.mjs` — manual (non-CI) validator enforcing the schema and the "verified reality only" rule (a `plannedUrl` can never masquerade as `mainUrl`)
+- YCSU Product Manifest specification (`docs/REGISTRY_SCHEMA.md` §3) with a real example at `manifests/ycsu-platform/ycsu-product.json`
+- Governance docs: `docs/PLATFORM_MODEL.md` (Platform/Management/Product layers, Product vs Utility, lifecycle, version/certification models), `docs/FUTURE_AI_CORE_HANDOFF.md` (documented, not implemented)
+- Responsive card grid, light/dark theme via `prefers-color-scheme`; verified on desktop/tablet/mobile
 
 ## In Development
 
-- DNS attachment for `main.ycsu.cc` (blocked on a manual Namecheap step — no DNS automation exists yet for the `ycsu.cc` zone, see `docs/DOMAIN_REGISTRY.md` in `ysu-ai-core`)
+Nothing currently blocked. Next milestone is not yet scoped — see `docs/FUTURE_AI_CORE_HANDOFF.md` for the documented (not implemented) direction.
 
 ---
 
@@ -132,7 +135,7 @@ See `DEPLOYMENT.md` for the current live URL and DNS status — this file is not
 
 ## Deployment Relationship
 
-GitHub (`blackeirose/YCSU-Platform`, `main` branch) → Netlify continuous deployment → `main.ycsu.cc` (pending DNS).
+GitHub (`blackeirose/YCSU-Platform`, `main` branch) → manual `netlify deploy --prod` (see `DEPLOYMENT.md` for the one-click dashboard option to make this automatic — not yet enabled) → `main.ycsu.cc`, **live**.
 
 ---
 
@@ -140,7 +143,7 @@ GitHub (`blackeirose/YCSU-Platform`, `main` branch) → Netlify continuous deplo
 
 ## Custom Domain
 
-`main.ycsu.cc` (target; see `DEPLOYMENT.md` for current attachment status)
+`main.ycsu.cc` — **live**, DNS attached, HTTPS valid (verified 2026-08-28).
 
 ## Domain Role
 
@@ -183,23 +186,39 @@ No Supabase or other backend service is used.
 # 11. IMPORTANT CONSTRAINTS
 
 - Must remain static/data-driven — do not introduce a backend unless a future requirement (e.g. live status polling, user accounts) genuinely needs one, per `ysu-ai-core/docs/SERVICES.md`.
+- `registry.json` must conform to `registry.schema.ts` — run `node scripts/validate-registry.mjs` before committing a registry change.
+- `mainUrl` must only ever be set to a URL that has been personally verified live right now; an unverified/future domain belongs in `plannedUrl` and must never render as an active Launch link (see `docs/REGISTRY_SCHEMA.md` §2).
 - `registry.json` entries for products this project did not build should only be updated when their real state is verified (live DNS check, repo inspection, or explicit user confirmation) — never guessed.
 - DNS changes to the `ycsu.cc` zone always require explicit user action (see `DEPLOYMENT.md` and `ysu-ai-core/docs/DOMAIN_REGISTRY.md` §2A).
+- v1 scope is frozen (see `docs/PLATFORM_MODEL.md` §8): no GitHub API sync, no Supabase backend, no AI CORE automation, no live-status polling, no auth. Do not add these without an explicit new milestone decision.
 
 ---
 
 # 12. CURRENT DEVELOPMENT FOCUS
 
-v1 build and initial deployment. Next: confirm `main.ycsu.cc` DNS attachment once the user completes the manual Namecheap step, then validate production.
+v1.0.0 is released and locked. No open work.
 
 ---
 
 # 13. NEXT LIKELY MILESTONE
 
-Once DNS is attached and validated: keep `registry.json` current as other YCSU products (Workflow Hub, ADCC, Rachel's Animal Kingdom) reach their own production deployments.
+Not yet scoped. `docs/FUTURE_AI_CORE_HANDOFF.md` documents (without implementing) the direction: a "YCSU Product Registration Pipeline" where products submit a `ycsu-product.json` manifest and AI CORE synchronizes it into `registry.json`, rather than agents hand-editing this repository per product change. Do not begin building that pipeline without an explicit decision to start it.
 
 ---
 
-# 14. MAINTENANCE RULE
+# 14. PROJECT-SPECIFIC DOCUMENTATION
 
-Update this file when product purpose, architecture, deployment, domain, services, or current development direction durably change. Update `registry.json` whenever a tracked product's real-world status changes (verified, not assumed).
+- `AGENTS.md` — agent entry instructions
+- `PROJECT_CONTEXT.md` — this file
+- `DECISIONS.md` — confirmed durable project decisions
+- `DEPLOYMENT.md` — live deployment record (source of truth for infra state)
+- `registry.schema.ts` — typed registry schema
+- `docs/PLATFORM_MODEL.md` — governance model (layers, Product vs Utility, lifecycle, version/certification rules)
+- `docs/REGISTRY_SCHEMA.md` — schema field reference + Product Manifest specification
+- `docs/FUTURE_AI_CORE_HANDOFF.md` — future pipeline architecture (documented, not implemented)
+
+---
+
+# 15. MAINTENANCE RULE
+
+Update this file when product purpose, architecture, deployment, domain, services, or current development direction durably change. Update `registry.json` whenever a tracked product's real-world status changes (verified, not assumed) — and re-run `node scripts/validate-registry.mjs` after.

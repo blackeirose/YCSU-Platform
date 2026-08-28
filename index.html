@@ -169,6 +169,69 @@
   .badge.planned { color: var(--planned); background: var(--planned-bg); }
   .badge.pending { color: var(--pending); background: var(--pending-bg); }
 
+  .card-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .maturity-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .cert-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .version-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12.5px;
+  }
+
+  .version-row .k {
+    color: var(--text-faint);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .version-row .v {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    color: var(--text);
+  }
+
+  .version-row .v.unversioned {
+    color: var(--text-faint);
+    font-style: italic;
+  }
+
+  .links-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 12px;
+  }
+
+  .links-row a {
+    color: var(--text-dim);
+    text-decoration: none;
+  }
+
+  .links-row a:hover { color: var(--accent); text-decoration: underline; }
+
   .meta-list {
     display: flex;
     flex-direction: column;
@@ -249,54 +312,87 @@
   </div>
 
 <script>
-  const STATUS_BADGE = {
-    "LIVE": { cls: "live", label: "Live" },
-    "DEPLOYED - DNS PENDING": { cls: "pending", label: "DNS Pending" },
-    "NOT CONFIGURED": { cls: "planned", label: "Not Deployed" },
-    "IN DEVELOPMENT": { cls: "dev", label: "In Development" }
+  // Deployment is an operational/reachability indicator — it must never be used
+  // to represent product maturity. See docs/PLATFORM_MODEL.md §4.
+  const DEPLOYMENT_BADGE = {
+    "Public": { cls: "live", label: "Live" },
+    "Internal": { cls: "pending", label: "Internal" },
+    "Local": { cls: "dev", label: "Local Only" },
+    "Not Deployed": { cls: "planned", label: "Not Deployed" },
+    "Archived": { cls: "planned", label: "Archived" },
   };
 
-  function badgeFor(status, maturity) {
-    if (STATUS_BADGE[status]) return STATUS_BADGE[status];
-    if (maturity === "In Development") return { cls: "dev", label: "In Development" };
-    return { cls: "planned", label: status || "Unknown" };
+  function deploymentBadge(p) {
+    return DEPLOYMENT_BADGE[p.deployment] || { cls: "planned", label: p.deployment || "Unknown" };
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function linkRow(p) {
+    const links = [];
+    if (p.githubUrl) links.push(`<a href="${p.githubUrl}" target="_blank" rel="noopener">GitHub</a>`);
+    if (p.docsUrl) links.push(`<a href="${p.docsUrl}" target="_blank" rel="noopener">Docs</a>`);
+    if (p.trackerUrl) links.push(`<a href="${p.trackerUrl}" target="_blank" rel="noopener">Tracker</a>`);
+    if (p.roadmapUrl) links.push(`<a href="${p.roadmapUrl}" target="_blank" rel="noopener">Roadmap</a>`);
+    return links.length ? `<div class="links-row">${links.join("")}</div>` : "";
   }
 
   function render(data) {
     const grid = document.getElementById("grid");
     const products = data.products || [];
 
-    const liveCount = products.filter(p => p.status === "LIVE").length;
-    const devCount = products.filter(p => p.status !== "LIVE").length;
+    const liveCount = products.filter(p => p.deployment === "Public" && p.mainUrl).length;
+    const inProgressCount = products.length - liveCount;
 
     document.getElementById("summary-bar").innerHTML = `
       <div class="summary-stat"><div class="n">${products.length}</div><div class="l">Products</div></div>
       <div class="summary-stat"><div class="n">${liveCount}</div><div class="l">Live</div></div>
-      <div class="summary-stat"><div class="n">${devCount}</div><div class="l">In Progress</div></div>
+      <div class="summary-stat"><div class="n">${inProgressCount}</div><div class="l">In Progress</div></div>
     `;
     document.getElementById("updated-date").textContent = data.updated || "unknown";
 
     grid.innerHTML = products.map(p => {
-      const badge = badgeFor(p.status, p.maturity);
-      const domainHtml = p.url
-        ? `<a class="domain-link" href="${p.url}" target="_blank" rel="noopener">${p.domain}</a>`
-        : `<span class="domain-static">${p.domain || "—"}</span>`;
+      const badge = deploymentBadge(p);
+
+      // Reality rule: only a verified mainUrl may render as an active Launch link.
+      // A plannedUrl is informational text only — never a clickable Launch action.
+      const domainHtml = p.mainUrl
+        ? `<a class="domain-link" href="${p.mainUrl}" target="_blank" rel="noopener">${escapeHtml(p.mainUrl.replace(/^https?:\/\//, ""))}</a>`
+        : p.plannedUrl
+          ? `<span class="domain-static">${escapeHtml(p.plannedUrl.replace(/^https?:\/\//, ""))} (planned)</span>`
+          : `<span class="domain-static">—</span>`;
+
+      const versionHtml = p.version
+        ? `<span class="v">${escapeHtml(p.version)}</span>`
+        : `<span class="v unversioned">unversioned</span>`;
+
+      const certHtml = p.certification === "YCSU Certified"
+        ? `<span class="cert-badge">✓ YCSU Certified</span>`
+        : "";
+
       return `
         <article class="card">
           <div class="card-top">
             <div>
-              <h2>${p.name}</h2>
-              <div class="tagline">${p.tagline || ""}</div>
+              <div class="card-tags">
+                <span class="maturity-tag">${escapeHtml(p.maturity)}</span>
+                ${certHtml}
+              </div>
+              <h2>${escapeHtml(p.name)}</h2>
+              <div class="tagline">${escapeHtml(p.description || "")}</div>
             </div>
             <span class="badge ${badge.cls}">${badge.label}</span>
           </div>
           ${domainHtml}
           <div class="meta-list">
-            <div class="meta-row"><span class="k">Deployment</span><span class="v">${p.deploymentProvider || "—"}</span></div>
-            <div class="meta-row"><span class="k">Backend</span><span class="v">${p.backend || "—"}</span></div>
-            <div class="meta-row"><span class="k">Visibility</span><span class="v">${p.visibility || "—"}</span></div>
+            <div class="version-row"><span class="k">Version</span>${versionHtml}</div>
+            <div class="meta-row"><span class="k">Category</span><span class="v">${escapeHtml(p.category || "—")}</span></div>
+            <div class="meta-row"><span class="k">Last Updated</span><span class="v">${escapeHtml(p.lastUpdated || "—")}</span></div>
           </div>
-          ${p.notes ? `<div class="notes">${p.notes}</div>` : ""}
+          ${linkRow(p)}
+          ${p.statusNote ? `<div class="notes">${escapeHtml(p.statusNote)}</div>` : ""}
         </article>
       `;
     }).join("");

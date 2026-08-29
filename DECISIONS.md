@@ -11,21 +11,27 @@ This file is the project decision record. For current project state, see `PROJEC
 
 | ID | Decision | Status |
 |---|---|---|
-| DEC-001 | Static, data-driven registry (no backend) for v1 | ACTIVE |
+| DEC-001 | Static, data-driven registry (no backend) for v1.0.0 | SUPERSEDED by DEC-010 (v1.1.0) |
 | DEC-002 | Dedicated repository rather than folding into an existing YCSU repo | ACTIVE |
 | DEC-003 | Netlify as deployment platform | ACTIVE |
 | DEC-004 | DNS for `main.ycsu.cc` is a manual, user-performed step, not automated | LOCKED |
-| DEC-005 | Formal typed registry schema + manual validator, no build step | LOCKED |
+| DEC-005 | Formal typed registry schema + manual validator, no build step | ACTIVE (extended, not superseded, by v1.1) |
 | DEC-006 | `mainUrl` / `plannedUrl` split — Registry represents verified reality only | LOCKED |
 | DEC-007 | Product Manifest (`ycsu-product.json`) specified but not auto-discovered | ACTIVE |
 | DEC-008 | AI CORE Product Registration Pipeline documented, not implemented, in v1 | LOCKED |
-| DEC-009 | v1.0.0 scope frozen — no backend, no orchestration, no automation | LOCKED |
+| DEC-009 | v1.0.0 scope frozen — no backend, no orchestration, no automation | SUPERSEDED by DEC-015 (v1.1.0) |
+| DEC-010 | Supabase as the Registry Data Layer, replacing the static JSON file | LOCKED |
+| DEC-011 | Reuse `ysu-tool-tracker` Supabase project; dedicated `product_registry` table | LOCKED |
+| DEC-012 | Zero write RLS policies; all writes via `registry-ops` with custom secret auth | LOCKED |
+| DEC-013 | `data/registry.snapshot.json` is disaster-recovery/audit only, one-way, manual | LOCKED |
+| DEC-014 | No-redeploy round-trip test as the v1.1.0 release gate | LOCKED |
+| DEC-015 | v1.1.0 scope frozen — direct Registry operations only, no lifecycle automation | LOCKED |
 
 ---
 
 ## DEC-001 — Static, Data-Driven Registry (No Backend) for v1
 
-**Status:** ACTIVE
+**Status:** SUPERSEDED by DEC-010 (2026-08-29) — v1.0.0's "no backend" was the correct decision for that milestone's actual requirement (a read-only directory with no external write requirement). It stopped being correct once v1.1.0's requirement changed to "authorized external tools must be able to write directly" — see DEC-010's Context. This entry is kept for history, not as current guidance.
 **Date:** 2026-08-28
 
 ### Decision
@@ -272,7 +278,7 @@ Only begin implementation after an explicit user decision to start that mileston
 
 ## DEC-009 — v1.0.0 Scope Frozen
 
-**Status:** LOCKED
+**Status:** SUPERSEDED by DEC-015 (2026-08-29) for the v1.1.0 milestone; kept for history as an accurate record of the v1.0.0 release gate.
 **Date:** 2026-08-28
 
 ### Decision
@@ -300,3 +306,190 @@ Trade-off: several genuinely useful capabilities (live status, automated sync) a
 ### Change Conditions
 
 Only reconsider scope in a new, explicitly-scoped milestone (v1.1.0+ or v2.0.0 per the version model in `docs/PLATFORM_MODEL.md` §5).
+
+---
+
+## DEC-010 — Supabase as the Registry Data Layer
+
+**Status:** LOCKED
+**Date:** 2026-08-29
+
+### Decision
+
+`product_registry` moves from a static `registry.json` file to a Supabase Postgres table. The frontend reads it live via PostgREST; the file `data/registry.snapshot.json` remains only as a disaster-recovery/audit copy (DEC-013).
+
+### Context
+
+v1.1.0's actual product requirement is new and real: an external authorized tool (ChatGPT) must be able to create/update/archive Registry entries directly, and `main.ycsu.cc` must reflect those changes without a source edit, commit, or redeploy. DEC-001's "no backend" was correct for v1.0.0's read-only requirement; it does not satisfy this one. Per `ysu-ai-core/docs/SERVICES.md`'s own service-selection order (Product Requirement → Architecture Requirement → Service Selection), a real requirement now exists, so introducing Supabase is not scope creep — it's the documented process working as intended.
+
+### Reasoning
+
+- Supabase is the YSU default cloud backend (`SERVICES.md` §6) once a real persistence/remote-write requirement exists
+- PostgREST gives a zero-code public read API for free once RLS is configured — no separate read service needed
+- Postgres CHECK constraints let the v1.0.0 validation rules (enum values, `mainUrl`/`plannedUrl` exclusivity, certification checklist) become unbypassable, not just conventions
+
+### Alternatives Considered
+
+- A custom backend API (Node/Express, a serverless function set) — rejected; Supabase's built-in PostgREST + Edge Functions already provide exactly the read/write split needed with less code to maintain.
+- Keep `registry.json` and have agents commit+push+redeploy on every change — rejected; this is exactly the constraint v1.1.0 exists to remove (see the acceptance test, DEC-014).
+
+### Consequences
+
+Positive: routine Registry changes are now a database write, not a deployment; database constraints are a hard backstop independent of any single write path's code.
+Trade-off: one more external service dependency (mitigated: reused an existing project, DEC-011); the frontend now depends on Supabase's availability for the live view (mitigated: snapshot fallback, DEC-013).
+
+### Change Conditions
+
+Reconsider only if Supabase itself needs replacing (per `SERVICES.md` §21, vendor replacement is allowed without an architecture rewrite — GitHub/Netlify/the domain stay unaffected either way).
+
+---
+
+## DEC-011 — Reuse `ysu-tool-tracker` Supabase Project; Dedicated Table
+
+**Status:** LOCKED
+**Date:** 2026-08-29
+
+### Decision
+
+`product_registry` lives in the existing `ysu-tool-tracker` Supabase project (ref `fzydsnxxcdllkjxwdiwn`), as a new table separate from `tracker_items` — not merged into it, and not a new Supabase project.
+
+### Context
+
+Two existing Supabase projects were inspected before deciding anything (per the v1.1.0 brief's explicit instruction not to assume a new backend is required). `ysu-tool-tracker` already backs `tracker.ycsu.cc` and has an established, working RLS pattern (public read, restricted write) this design extends. The other project backs an unrelated tool.
+
+### Reasoning
+
+- avoids a new paid/account resource for a five-row table
+- `tracker_items` is task-tracking shaped (progress, priority, resource, hours) — structurally and conceptually different from Registry data; overloading it was explicitly rejected by the brief and would have been wrong regardless
+- a separate table means zero coupling risk: no shared columns, no shared policies, no shared triggers with `tracker_items`
+
+### Alternatives Considered
+
+- New dedicated Supabase project for the Registry — rejected as unnecessary; project-level isolation wasn't needed since table-level isolation (RLS, no shared schema) already achieves the real goal (no accidental coupling).
+- Add registry columns to `tracker_items` — rejected outright per the brief; a Registry entry and a tracked task are different entities with different lifecycles.
+
+### Consequences
+
+Positive: no new billing surface, reuses a proven security pattern, zero coupling with existing Tracker data.
+Trade-off: `product_registry`'s availability is now tied to the same project as the Tracker's — acceptable, since both are already part of the same YSU infrastructure with the same actual uptime dependency.
+
+---
+
+## DEC-012 — Zero Write RLS Policies; All Writes via `registry-ops`
+
+**Status:** LOCKED
+**Date:** 2026-08-29
+
+### Decision
+
+`product_registry` has Row Level Security enabled with exactly one policy (public `SELECT`). There is no `INSERT`/`UPDATE`/`DELETE` policy for `anon` or `authenticated` — including the one pre-existing `authenticated` user in this Supabase project. The only way to write is the `registry-ops` Edge Function, which checks a custom secret (`REGISTRY_API_KEY`) in application code and then writes using `service_role` server-side.
+
+### Context
+
+The brief was explicit and specific: "do not rely on `user_metadata` for authorization," "avoid insecure broad 'authenticated can update everything' unless admin authorization is properly enforced," and "do not expose `service_role` credentials to frontend/browser code." The existing `tracker_items` pattern (any `authenticated` user can write) was inspected and deliberately not replicated here, since it doesn't distinguish "some logged-in user" from "the one authorized Registry operator."
+
+### Reasoning
+
+- a shared secret checked in function code, not a Supabase Auth claim, sidesteps the `user_metadata`-authorization anti-pattern entirely — there's no session or claim to trust or forge
+- zero write policies means even a compromised or newly-created `authenticated` session in this project has no path to `product_registry` — the attack surface for "some other authenticated user accidentally/maliciously writes to the Registry" is fully closed, not just narrowed
+- `service_role` never leaves the Edge Function's server-side environment; it is never sent over the network to a caller and never appears in `index.html`
+
+### Alternatives Considered
+
+- Extend the `tracker_items` pattern (any `authenticated` user can write) to `product_registry` — rejected; explicitly the anti-pattern the brief warned against, and does not distinguish "authorized Registry operator" from "anyone with any Supabase Auth session in this project."
+- A Supabase Auth user per authorized agent, with an RLS policy checking `auth.uid()` — considered and rejected for v1.1.0: requires session/token refresh handling in the calling client (awkward for a stateless HTTP-calling tool like a ChatGPT Action) for no additional security benefit over a bearer secret at this single-operator scale. Revisit if multiple distinct authorized identities need independently revocable access (see `docs/FUTURE_AI_CORE_HANDOFF.md`'s open questions).
+
+### Consequences
+
+Positive: the security model is simple enough to fully verify by reading one function and one migration file; verified via `supabase db advisors` (only a pre-existing, unrelated finding remained) and by direct negative testing (wrong key → 401; anon-key direct write attempt → 0 rows affected, data unchanged).
+Trade-off: a single shared secret is an all-or-nothing credential — anyone holding it can perform any write operation. Acceptable at "one authorized operator" scale; revisit if that changes.
+
+---
+
+## DEC-013 — Snapshot Is Disaster-Recovery/Audit Only, One-Way, Manual
+
+**Status:** LOCKED
+**Date:** 2026-08-29
+
+### Decision
+
+`data/registry.snapshot.json` is refreshed only by manually running `node scripts/snapshot-registry.mjs` (DB → file). There is no scheduled job, no CI step, no automatic trigger, and no reverse (file → DB) direction.
+
+### Context
+
+The brief explicitly warned against "bidirectional sync complexity in v1.1" and asked for the snapshot to be clearly backup/reference, not the routine write source.
+
+### Reasoning
+
+- a one-way, manual refresh is trivially safe to reason about — it can never overwrite live data, and stale snapshot data can never silently become authoritative
+- the frontend's fallback path reads the snapshot only on a live fetch failure, and never writes it anywhere
+
+### Alternatives Considered
+
+- A scheduled/automatic snapshot refresh — rejected as unnecessary automation for v1.1's scope; a manual step before a release or after a batch of changes is sufficient at this data volume.
+
+### Consequences
+
+Positive: zero risk of the snapshot silently becoming a second source of truth.
+Trade-off: the snapshot can go stale between manual refreshes — acceptable, since it is a fallback and audit artifact, not something anything depends on being current.
+
+---
+
+## DEC-014 — No-Redeploy Round-Trip Test as the Release Gate
+
+**Status:** LOCKED
+**Date:** 2026-08-29
+
+### Decision
+
+Before tagging v1.1.0, a real Registry write (via `registry-ops`, simulating an authorized-tool call) was performed against a live production field, confirmed to appear on `https://main.ycsu.cc` with no code edit/commit/redeploy, then reverted. Two negative tests were also run: an unauthorized key was rejected (401), and a direct anon-key write attempt via PostgREST affected zero rows.
+
+### Context
+
+The brief named this explicitly as "the defining acceptance criterion for v1.1" and instructed not to tag/release until it passed.
+
+### Reasoning
+
+- proves the entire architecture end-to-end rather than trusting each layer's correctness individually
+- the negative tests prove the security model, not just the happy path
+
+### Alternatives Considered
+
+None — this was a named, non-negotiable release gate.
+
+### Consequences
+
+Positive: v1.1.0 ships with direct evidence the core promise (registry change → homepage update, no redeploy) actually works, not just architectural intent.
+
+---
+
+## DEC-015 — v1.1.0 Scope Frozen
+
+**Status:** LOCKED
+**Date:** 2026-08-29
+
+### Decision
+
+v1.1.0 ships as: the Registry Data Layer (Supabase table + RLS), the `registry-ops` write interface, a Registry-driven generic frontend, a snapshot/fallback model, and the migrated v1.0.0 data. It does **not** ship: the AI CORE Product Registration Pipeline, GitHub webhook automation, automatic release/version detection, deployment health monitoring, a full admin dashboard, a user-facing CMS, complex role management, or automatic Product Manifest ingestion.
+
+### Context
+
+Explicit, repeated instruction in the v1.1.0 brief: "Do not build [the excluded list]... Do not expand scope."
+
+### Reasoning
+
+- v1.1.0's completion principle is a correct, secure, directly-operable Registry foundation — not full lifecycle automation
+- every excluded item has a natural home in the V2+ pipeline documented in `docs/FUTURE_AI_CORE_HANDOFF.md`
+
+### Alternatives Considered
+
+None — direct instruction.
+
+### Consequences
+
+Positive: v1.1.0 is a stable, reviewable, lockable release with a clear boundary against V2's much larger scope.
+Trade-off: full lifecycle automation (auto-verifying a product's real deployment/version state) remains a manual, agent-asserted step until V2.
+
+### Change Conditions
+
+Only reconsider scope in a new, explicitly-scoped milestone.

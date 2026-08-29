@@ -1,12 +1,30 @@
 # FUTURE_AI_CORE_HANDOFF.md
 
-**Status: FUTURE / V2+ — documented for architectural continuity only. Nothing in this document is implemented.**
+**Status: v1.1 CURRENT (direct authorized Registry operations) vs. V2+ FUTURE (full pipeline) — see the distinction below. Only the v1.1 section is implemented.**
 
-This describes where the Registry is headed once AI CORE takes over product-registration orchestration. It exists so v1's schema and structure don't have to be redesigned later — not as a task list for this session or the next one to start building.
+This describes what v1.1 actually enabled, and where the Registry is still headed once AI CORE eventually takes over the *full product lifecycle* (not just Registry metadata edits). It exists so the schema and structure don't have to be redesigned again later — not as a task list for the next session to start building.
 
 ---
 
-## The Future Pipeline: "YCSU Product Registration Pipeline"
+## v1.1 (CURRENT, implemented 2026-08-29): Direct Authorized Registry Operations
+
+```
+ChatGPT / authorized tool
+  ↓  (Bearer REGISTRY_API_KEY)
+registry-ops Edge Function   ← authenticates + validates
+  ↓  (service_role, server-side only)
+Central Product Registry (Supabase product_registry table)
+  ↓  (public read, anon key)
+main.ycsu.cc
+```
+
+This is real and working: an authorized client can create, update, archive, unarchive, or (administratively) delete a Registry entry via HTTPS, and `main.ycsu.cc` reflects the change immediately — no source edit, no commit, no redeploy. See `DATA_LAYER.md` and `REGISTRY_OPERATIONS.md` for the full contract.
+
+**What v1.1 does NOT do:** it does not know anything about a product's actual GitHub repository, deployment pipeline, or Manifest file. An authorized agent still has to know the true facts (has this actually been deployed? does this GitHub Release actually exist?) and call `registry-ops` with them. v1.1 makes the *last mile* (Registry ↔ homepage) direct and code-free; it does not automate *discovering or verifying* those facts.
+
+---
+
+## V2+ (FUTURE, not implemented): Full Product Lifecycle Pipeline — "YCSU Product Registration Pipeline"
 
 ```
 AI Agent
@@ -21,36 +39,34 @@ YCSU Product Manifest (ycsu-product.json — see REGISTRY_SCHEMA.md §3)
   ↓
 AI CORE Product Registration Pipeline   ← not yet built
   ↓
-Central Product Registry (registry.json)
+Central Product Registry (same product_registry table v1.1 already writes to)
   ↓
 main.ycsu.cc
 ```
 
-## The Architectural Rule This Protects
+This is the difference from v1.1: instead of an authorized agent manually asserting "this is now live, here's the version," the *product's own repository* carries a self-declared manifest, and AI CORE — not a human, not an ad hoc agent call — validates deployment/version facts (e.g. by actually checking the GitHub Release exists, the URL resolves) before writing to the Registry. v1.1 skips that verification step and trusts the calling agent to have checked; V2 is meant to remove that trust requirement.
 
-**`main.ycsu.cc` is a Registry UI / read surface. AI CORE will eventually own orchestration and product-registration synchronization.**
+**Do not conflate the two.** v1.1 enables direct authorized operations on already-known facts. V2 automates *discovering and verifying* those facts in the first place.
 
-Concretely, once this pipeline exists:
+## The Architectural Rule Both Versions Protect
 
-- Agents should **not** directly edit `main.ycsu.cc`'s UI code (`index.html`) every time a product changes state.
-- Agents should instead submit/update a standardized `ycsu-product.json` manifest in the product's own repository.
-- AI CORE should validate that manifest (against the certification checklist in `PLATFORM_MODEL.md` §6, the URL-verification rule in `REGISTRY_SCHEMA.md` §2, etc.) and synchronize it into `registry.json`.
-- `main.ycsu.cc` keeps rendering `registry.json` exactly as it does today — the presentation layer does not need to change when the pipeline is added.
+**`main.ycsu.cc` is a Registry UI / read surface, not an orchestration engine.** This was true in v1.0 (a static file), remains true in v1.1 (a live database read, no write logic in the frontend), and stays true in V2 (AI CORE owns orchestration; the frontend still just reads `product_registry`).
 
-## Why This Is Deferred, Not Built Now
+## Why V2 Is Still Deferred, Not Built Now
 
-v1's explicit goal is a trustworthy, correctly-structured foundation — not automation. Building GitHub API sync, a validation service, or write access to `registry.json` from outside this repository would mean:
+Building GitHub API sync, automated deployment/version verification, or manifest ingestion would mean:
 
-- a backend/service where none currently exists (contradicts the static, data-driven v1 requirement)
-- automated trust decisions (certification, go-live) with no human review step yet designed
-- solving a coordination problem (multiple products, multiple agents, one registry) before the schema it would coordinate around has even shipped
+- automated trust decisions (certification, go-live) made from a manifest a product author wrote about themselves, with no independent verification step yet designed
+- solving a coordination problem (multiple products, multiple agents, automatic ingestion) before there was any real usage data on how v1.1's direct-operation model holds up in practice
+- deployment health monitoring, webhook automation, and release detection — all explicitly out of v1.1 scope and not evaluated yet
 
-The schema and manifest spec in `REGISTRY_SCHEMA.md` were deliberately written to be compatible with this future pipeline (see `RegistryProduct` in `registry.schema.ts` vs. the manifest shape) so that when AI CORE is ready to own this, no v1 data model needs to be redesigned — only a synchronization mechanism needs to be added on top.
+The schema and manifest spec in `REGISTRY_SCHEMA.md` remain deliberately compatible with this future pipeline (`RegistryProduct` in `registry.schema.ts` vs. the manifest shape) so that when AI CORE is ready to own full lifecycle automation, the v1.1 data model and write interface don't need to be redesigned — only a second, additional write path (manifest ingestion → the same `product_registry` table, likely via the same kind of authenticated interface `registry-ops` already demonstrates) needs to be added.
 
 ## Open Design Questions (Not Answered Here)
 
-- Does AI CORE write `registry.json` directly via a PR, or does `main.ycsu.cc` gain a minimal write path?
+- Does AI CORE call `registry-ops` itself once it exists, or get its own dedicated write path?
 - Is manifest validation fully automatic, or does certification always require a human approval step?
 - How does the "Management Layer" (see `PLATFORM_MODEL.md` §1 — not yet architected) relate to this pipeline, if at all?
+- Should `registry-ops`' `REGISTRY_API_KEY` model be replaced with per-client credentials once more than one authorized agent uses it regularly?
 
 These should be answered deliberately in a future milestone, not inferred from this document.

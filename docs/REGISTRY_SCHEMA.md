@@ -1,9 +1,11 @@
 # REGISTRY_SCHEMA.md
 
 **YCSU Platform — Registry & Product Manifest Specification**
-**Version:** 1.0 (established at v1.0.0 release, 2026-08-28)
+**Version:** 1.1 (updated at v1.1.0 release, 2026-08-29)
 
 The typed source of truth is [`registry.schema.ts`](../registry.schema.ts) — this document explains it in prose and defines the related per-product manifest format. If this document and the `.ts` file ever disagree, the `.ts` file wins; fix this document.
+
+**As of v1.1, the runtime source of truth is the Supabase `product_registry` table**, not a file in this repository — see `DATA_LAYER.md`. This schema still governs both: the table's columns, `registry-ops`' request/response shape, and `data/registry.snapshot.json`'s structure are all the same shape described here, just spelled snake_case in the database and camelCase everywhere else.
 
 ---
 
@@ -11,7 +13,8 @@ The typed source of truth is [`registry.schema.ts`](../registry.schema.ts) — t
 
 | Field | Type | Notes |
 |---|---|---|
-| `id` | string | Stable kebab-case identifier. Never reused for a different product. |
+| `id` | string | DB-assigned UUID. Stable once created; not human-meaningful. |
+| `slug` | string | Stable, human-meaningful, kebab-case identifier — the business key used by every `registry-ops` operation. Never reused for a different product. |
 | `name` | string | Full product name. |
 | `shortName` | string | Short form for tight UI contexts. |
 | `description` | string | One sentence. |
@@ -20,6 +23,7 @@ The typed source of truth is [`registry.schema.ts`](../registry.schema.ts) — t
 | `maturity` | enum | `Idea` / `Planning` / `Prototype` / `Internal Alpha` / `Beta` / `Production` |
 | `deployment` | enum | `Not Deployed` / `Local` / `Internal` / `Public` / `Archived` |
 | `visibility` | enum | `Private` / `Internal` / `Public` |
+| `operationalStatus` | enum | `Live` / `Pending` / `Offline` / `Unknown` (default). Purely operational, set manually — not automated in v1.1. Never a stand-in for maturity/deployment/visibility. |
 | `version` | string \| null | e.g. `"v1.0.0"`. Null iff `versionSource` is `"none"`. |
 | `versionSource` | enum | `github-release` / `git-tag` / `package` / `manual` / `none` |
 | `mainUrl` | string \| null | **Only ever set to a URL you have personally verified is live right now.** |
@@ -28,8 +32,10 @@ The typed source of truth is [`registry.schema.ts`](../registry.schema.ts) — t
 | `trackerUrl` | string \| null | Deep link into this product's own Tracker entry, if confirmed. |
 | `docsUrl` | string \| null | Link to the product's own documentation (often its `PROJECT_CONTEXT.md` on GitHub). |
 | `roadmapUrl` | string \| null | |
+| `featured` | boolean | Controls featured presentation/ordering (default `false`). |
+| `archived` | boolean | True if this entry should not appear in the default active view (default `false`). Prefer archiving over deleting — see `PLATFORM_MODEL.md` §2/§7 and `REGISTRY_OPERATIONS.md` §2.3. |
 | `certification` | enum | `Not Certified` / `YCSU Certified` — see `PLATFORM_MODEL.md` §6. |
-| `lastUpdated` | string (ISO date) | When this row's facts were last verified against real state. |
+| `lastUpdated` | string (ISO date) | Last **meaningful** metadata change — see `REGISTRY_OPERATIONS.md` §4 for exact semantics (distinct from the DB's always-automatic `updated_at`). |
 | `statusNote` | string \| null | Short honest caveat, e.g. "DNS not configured yet." |
 
 ## 2. The `mainUrl` / `plannedUrl` Rule
@@ -40,15 +46,15 @@ This is the single most important rule in the schema: **the Registry represents 
 - Only move a URL from `plannedUrl` to `mainUrl` after directly verifying it (DNS resolves, HTTP 200, correct content) — not from a roadmap document, not from what "should" be true.
 - The UI must never render a `plannedUrl` as a clickable Launch action.
 
-`scripts/validate-registry.mjs` mechanically rejects an entry that sets both fields at once, or sets `mainUrl` while `deployment` is `"Not Deployed"`.
+This rule is now enforced at three layers: `scripts/validate-registry.mjs` (the offline snapshot check), `registry-ops`' request validation, and a database CHECK constraint (`main_or_planned_not_both` in `supabase/migrations/20260829000001_product_registry.sql`) — the database is the layer that actually can't be bypassed.
 
 ---
 
 ## 3. Product Manifest Specification (`ycsu-product.json`)
 
-A **Product Manifest** is a small, self-contained JSON file a product's own repository can carry, describing itself in a schema compatible with (but simpler than) the central Registry. It is the intended future hand-off unit for `FUTURE_AI_CORE_HANDOFF.md`'s registration pipeline.
+A **Product Manifest** is a small, self-contained JSON file a product's own repository can carry, describing itself in a schema compatible with (but simpler than) the central Registry. It is the intended future hand-off unit for `FUTURE_AI_CORE_HANDOFF.md`'s registration pipeline — **not** the live homepage database (that's the Supabase `product_registry` table, written only through `registry-ops`; see `DATA_LAYER.md` and `REGISTRY_OPERATIONS.md`). The Central Registry represents which products YCSU officially recognizes; a Product Manifest is just that product's own self-declaration.
 
-**Not implemented in v1**: no discovery, no automatic sync, no validation pipeline. This is a specification and one real example only.
+**Not implemented in v1.1**: no discovery, no automatic sync, no ingestion pipeline. This remains a specification and one real example only — v1.1 added a direct, authorized *operations* path (`registry-ops`), not manifest automation. Those are different milestones; see `FUTURE_AI_CORE_HANDOFF.md`.
 
 **Canonical filename:** `ycsu-product.json`, at the root of the product's own repository.
 

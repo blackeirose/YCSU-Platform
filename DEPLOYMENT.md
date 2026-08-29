@@ -4,7 +4,7 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current State (verified live 2026-08-28)
+## Frontend (Netlify) — Current State (verified live 2026-08-29)
 
 | Field | Value |
 |---|---|
@@ -13,20 +13,30 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 | Netlify site ID | `9c0bd872-1f70-4468-b853-e87b9b3269d5` |
 | Netlify admin | https://app.netlify.com/projects/ycsu-platform-registry |
 | Netlify subdomain | https://ycsu-platform-registry.netlify.app — live |
-| **Production URL** | **https://main.ycsu.cc — LIVE.** DNS resolved (CNAME → `ycsu-platform-registry.netlify.app`), HTTPS valid, HTTP 200, Team Protection disabled (public, no login required). Verified via `nslookup`, `curl -I`, and browser at desktop/tablet/mobile widths. |
-| DNS record (already in place) | CNAME `main.ycsu.cc` → `ycsu-platform-registry.netlify.app`, added manually in Namecheap by the user |
+| **Production URL** | **https://main.ycsu.cc — LIVE.** DNS resolved, HTTPS valid, HTTP 200, Team Protection disabled (public). |
 | Continuous deployment | **Not wired up.** GitHub push does not auto-deploy. See "Redeploying" below. |
 
-Both manual steps that were previously blocking (Team Protection, DNS record) have been completed by the user and independently reverified this session. Nothing about production is currently pending.
+## Registry Data Layer (Supabase) — Current State (deployed 2026-08-29)
+
+| Field | Value |
+|---|---|
+| Project | `ysu-tool-tracker`, ref `fzydsnxxcdllkjxwdiwn` (reused — see `docs/DATA_LAYER.md` §1) |
+| Table | `public.product_registry` — RLS enabled, public-read-only policy, zero write policies |
+| Write interface | Edge Function `registry-ops`, deployed with `verify_jwt = false` (auth handled in-function via `REGISTRY_API_KEY`) |
+| Function endpoint | `https://fzydsnxxcdllkjxwdiwn.supabase.co/functions/v1/registry-ops` |
+| Read endpoint | `https://fzydsnxxcdllkjxwdiwn.supabase.co/rest/v1/product_registry` (public anon/publishable key, embedded in `index.html`) |
+| `REGISTRY_API_KEY` | Set as a Supabase Function secret (`supabase secrets set`). **Not stored in this repo, in `DECISIONS.md`, or in Google Drive.** Retrieve/rotate via the Supabase dashboard → Edge Functions → Secrets. |
+| Security advisor result | Only pre-existing, unrelated finding (`auth_leaked_password_protection`, project-wide Auth setting predating this work) — see `docs/DATA_LAYER.md` §3 |
+| No-redeploy round-trip test | **Passed** 2026-08-29 — see `DECISIONS.md` DEC-014 |
 
 ---
 
-## Redeploying After a Change
+## Redeploying the Frontend After a Code Change
 
-Continuous deployment (GitHub → Netlify automatic build) is not configured yet. To publish a new commit:
+Continuous deployment (GitHub → Netlify automatic build) is not configured yet. **This is only needed for actual code changes — routine Registry data changes never need this, see `docs/REGISTRY_OPERATIONS.md`.**
 
 **Option A — one-time dashboard setup for automatic deploys (recommended):**
-In the Netlify admin (link above) → Site configuration → Build & deploy → Link repository → select `blackeirose/YCSU-Platform`, branch `main`. After this, every push to `main` deploys automatically.
+In the Netlify admin (link above) → Site configuration → Build & deploy → Link repository → select `blackeirose/YCSU-Platform`, branch `main`.
 
 **Option B — manual deploy from this machine:**
 ```bash
@@ -34,15 +44,29 @@ cd C:\Users\ysu\Claude_Workspaces\YCSU-Platform
 netlify deploy --prod --site 9c0bd872-1f70-4468-b853-e87b9b3269d5 --dir .
 ```
 
----
+If `netlify status` shows a project name other than `ycsu-platform-registry`, check `.netlify/state.json` — it should read `{"siteId": "9c0bd872-1f70-4468-b853-e87b9b3269d5"}`. (An earlier session's killed background command silently created an orphan site named `ycsu-platform` (id `45cec71d-b50f-4022-a82f-493d538de318`, no custom domain, unused) and left it linked in that file; this was found and fixed during v1.1.0 work. The orphan site itself was not successfully deleted — the Netlify CLI/API was intermittently timing out on delete calls at the time — and is a harmless but real leftover cleanup item.)
 
-## Why No CI Secret Was Set Up Automatically
-
-Wiring GitHub Actions to redeploy on push would normally use a `NETLIFY_AUTH_TOKEN` GitHub secret. That step was intentionally not automated in this session — scripted extraction of the local Netlify auth token was correctly stopped by a safety check. If you want automatic deploys without touching the dashboard, generate a new Netlify Personal Access Token yourself (Netlify → User settings → Applications → New access token) and add it as a repo secret:
+## Redeploying the Registry Write Interface After a Code Change
 
 ```bash
-gh secret set NETLIFY_AUTH_TOKEN --repo blackeirose/YCSU-Platform
-gh secret set NETLIFY_SITE_ID --repo blackeirose/YCSU-Platform --body "9c0bd872-1f70-4468-b853-e87b9b3269d5"
+cd C:\Users\ysu\Claude_Workspaces\YCSU-Platform
+supabase functions deploy registry-ops --project-ref fzydsnxxcdllkjxwdiwn --no-verify-jwt
 ```
 
-then add a GitHub Actions workflow that runs `netlify deploy --prod` on push to `main`. Not required — Option A above achieves the same result with no token handling at all.
+## Applying a New Database Migration
+
+```bash
+cd C:\Users\ysu\Claude_Workspaces\YCSU-Platform
+supabase link --project-ref fzydsnxxcdllkjxwdiwn   # once per machine/session
+supabase db query --linked -f supabase/migrations/<new-file>.sql
+```
+
+(`supabase link` requires being authenticated via `supabase login` first — already done on this machine.)
+
+---
+
+## Why No CI Secrets Were Set Up Automatically
+
+Wiring GitHub Actions to redeploy the frontend on push would normally use a `NETLIFY_AUTH_TOKEN` GitHub secret; scripted extraction of the local Netlify auth token was correctly stopped by a safety check in the v1.0.0 session and was not revisited. If you want automatic frontend deploys without touching the dashboard, generate a new Netlify Personal Access Token yourself and add it as a repo secret — Option A above achieves the same result with no token handling at all.
+
+`REGISTRY_API_KEY` was generated by this session (a random 256-bit secret) and set directly as a Supabase Function secret via the CLI — it was never typed into a website form, never committed, and is not printed in this document.

@@ -1,9 +1,9 @@
 # PLATFORM_MODEL.md
 
 **YCSU Platform — Governance Model**
-**Version:** 1.0 (established at v1.0.0 release, 2026-08-28)
+**Version:** 1.1 (§8 updated at v1.1.0 release, 2026-08-29; rest unchanged since v1.0.0)
 
-This is the canonical definition of what YCSU Platform is, what belongs in its Product Registry, and the rules that govern it. Update this file when the model itself changes — not when individual registry entries change (that's `registry.json`).
+This is the canonical definition of what YCSU Platform is, what belongs in its Product Registry, and the rules that govern it. Update this file when the model itself changes — not when individual registry entries change (that now lives in the Supabase `product_registry` table, see `DATA_LAYER.md`, not a file in this repository).
 
 ---
 
@@ -98,6 +98,8 @@ A product enters the Registry once it has enough maturity and product intent —
 
 ---
 
-## 8. V1 Scope Boundary
+## 8. Scope Boundary
 
-YCSU Platform v1.0.0 is a **static, curated, read-only Product Registry**. It explicitly does NOT include: GitHub API synchronization, a Supabase backend, AI CORE automation, automated product registration, health-monitoring/live-status polling, agent orchestration, a complex dashboard, or authentication. Those are future-version concerns — see `FUTURE_AI_CORE_HANDOFF.md` for the architecture they'll eventually fit into, which is documented but not implemented here.
+**v1.0.0** was a static, curated, read-only Product Registry (a JSON file). **v1.1.0** replaced the file with a Supabase-backed Registry Data Layer and a single authenticated write interface (`registry-ops`), so authorized agents can create/update/archive entries directly — see `DATA_LAYER.md` and `REGISTRY_OPERATIONS.md`. `main.ycsu.cc` itself is still curated and still a read surface; only the storage and write path changed.
+
+Both versions explicitly exclude: GitHub API synchronization, AI CORE automation, automated product *discovery*/registration, health-monitoring/live-status polling, agent orchestration, a complex dashboard, and end-user authentication. Those remain future-version concerns — see `FUTURE_AI_CORE_HANDOFF.md` for the full lifecycle pipeline they'll eventually fit into, which is documented but not implemented.

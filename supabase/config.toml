@@ -1,0 +1,9 @@
+# Supabase project config for YCSU Platform's Registry data layer.
+# Project: ysu-tool-tracker (fzydsnxxcdllkjxwdiwn) — reused, see docs/DATA_LAYER.md
+# for why this project (not a new one) hosts product_registry.
+project_id = "fzydsnxxcdllkjxwdiwn"
+
+[functions.registry-ops]
+# Auth is handled inside the function via a custom REGISTRY_API_KEY secret
+# (not a Supabase Auth session), so Supabase's own JWT verification is off.
+verify_jwt = false

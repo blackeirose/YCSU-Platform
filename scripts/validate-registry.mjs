@@ -54,6 +54,9 @@ for (const p of data.products ?? []) {
     if (!(f in p)) errors.push(`[${tag}] missing field "${f}" (use null if unknown)`);
   }
 
+  if (p.sortOrder != null && (!Number.isInteger(p.sortOrder) || p.sortOrder < -2147483648 || p.sortOrder > 2147483647)) {
+    errors.push(`[${tag}] sortOrder must be a PostgreSQL integer or null`);
+  }
   if (seenSlugs.has(p.slug)) errors.push(`[${tag}] duplicate slug`);
   seenSlugs.add(p.slug);
 

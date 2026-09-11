@@ -6,6 +6,7 @@
 <title>YCSU Platform — Product Registry</title>
 <meta name="description" content="Central registry and entry point for the YCSU product ecosystem." />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛰️</text></svg>" />
+<link rel="stylesheet" href="/assets/reorder.css" />
 <style>
   :root {
     --bg: #0b0e14;
@@ -382,15 +383,37 @@
       <div class="summary-bar" id="summary-bar"></div>
     </header>
 
+    <div id="reorder-toolbar" class="reorder-toolbar" hidden><span id="reorder-status" role="status" aria-live="polite"></span></div>
     <main class="grid" id="grid"></main>
 
     <footer>
       Source of truth: <a href="https://github.com/blackeirose/YCSU-Platform" target="_blank" rel="noopener">github.com/blackeirose/YCSU-Platform</a><br />
-      Registry data last updated <span id="updated-date"></span>.
+      Registry data last updated <span id="updated-date"></span>.<br />
+      <button type="button" id="owner-access" class="owner-button">Owner sign in</button>
     </footer>
   </div>
 
-<script>
+<dialog id="owner-dialog" class="owner-dialog" aria-labelledby="owner-title">
+  <h2 id="owner-title">Owner sign in</h2>
+  <p>Sign in to arrange the product cards. Everyone can browse; only the authorized owner can save changes.</p>
+  <form id="owner-form">
+    <label for="owner-email">Email</label>
+    <input id="owner-email" type="email" autocomplete="email" required />
+    <button type="submit">Send sign-in link</button>
+    <button type="button" id="owner-close" class="owner-button">Cancel</button>
+  </form>
+  <p id="owner-message" role="status" aria-live="polite"></p>
+</dialog>
+<script type="module">
+  import { orderedProducts } from './assets/js/registry-order.mjs';
+  import { createCardReorder } from './assets/js/card-reorder.mjs';
+  import { setupOwnerAccess } from './assets/js/owner-access.mjs';
+  let liveRegistry = false;
+  let ownerAccess;
+  const reorder = createCardReorder({
+    grid: document.getElementById('grid'), status: document.getElementById('reorder-status'),
+    save: payload => ownerAccess.save(payload),
+  });
   // Deployment is an operational/reachability indicator — it must never be used
   // to represent product maturity. See docs/PLATFORM_MODEL.md §4.
   const DEPLOYMENT_BADGE = {
@@ -465,7 +488,7 @@
 
   function render(data) {
     const grid = document.getElementById("grid");
-    const products = data.products || [];
+    const products = orderedProducts(data.products || []);
 
     const liveCount = products.filter(p => p.deployment === "Public" && p.operationalStatus === "Live" && safeUrl(p.mainUrl)).length;
     const inProgressCount = products.length - liveCount;
@@ -498,7 +521,7 @@
         : "";
 
       return `
-        <article class="card">
+        <article class="card" data-product-id="${escapeHtml(p.id)}">
           <div class="card-tags">
             <span class="maturity-tag">${escapeHtml(p.maturity)}</span>
             ${certHtml}
@@ -519,6 +542,8 @@
       `;
     }).join("");
     loadPreviews(grid);
+    reorder.setProducts(products);
+    ownerAccess?.refreshAvailability();
   }
 
   // v1.1: Central Product Registry (Supabase) is the runtime source of truth.
@@ -529,12 +554,12 @@
   const SUPABASE_ANON_KEY = "sb_publishable_wpnShrpWOLV94EEUA86vVg_zRQbbW2W";
 
   const ROW_TO_PRODUCT = {
-    slug: "slug", name: "name", short_name: "shortName", description: "description",
+    id: "id", slug: "slug", name: "name", short_name: "shortName", description: "description",
     category: "category", platform_layer: "platformLayer", maturity: "maturity",
     deployment: "deployment", visibility: "visibility", operational_status: "operationalStatus",
     version: "version", version_source: "versionSource", main_url: "mainUrl",
     planned_url: "plannedUrl", github_url: "githubUrl", tracker_url: "trackerUrl",
-    docs_url: "docsUrl", roadmap_url: "roadmapUrl", featured: "featured",
+    docs_url: "docsUrl", roadmap_url: "roadmapUrl", featured: "featured", sort_order: "sortOrder",
     archived: "archived", certification: "certification", last_updated: "lastUpdated",
     status_note: "statusNote",
   };
@@ -546,20 +571,27 @@
   }
 
   async function fetchFromRegistry() {
-    const url = `${SUPABASE_URL}/rest/v1/product_registry?select=*&archived=eq.false&order=featured.desc,name.asc`;
+    const url = `${SUPABASE_URL}/rest/v1/product_registry?select=*&archived=eq.false&order=sort_order.asc.nullslast,name.asc,id.asc`;
     const res = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY } });
     if (!res.ok) throw new Error(`registry fetch failed: HTTP ${res.status}`);
     const rows = await res.json();
     const products = rows.map(rowToProduct);
     const updated = products.reduce((max, p) => (p.lastUpdated > max ? p.lastUpdated : max), "");
+    liveRegistry = true;
     return { products, updated };
   }
 
   async function fetchFromSnapshot() {
+    liveRegistry = false;
     const res = await fetch("data/registry.snapshot.json");
     if (!res.ok) throw new Error(`snapshot fetch failed: HTTP ${res.status}`);
     return res.json();
   }
+
+  setupOwnerAccess({url:SUPABASE_URL, key:SUPABASE_ANON_KEY,
+    setAllowed:value => reorder.setAllowed(value), isLive:() => liveRegistry,
+    status:document.getElementById('reorder-status')
+  }).then(access => { ownerAccess = access; access.refreshAvailability(); });
 
   fetchFromRegistry()
     .catch(err => {

@@ -84,8 +84,10 @@ export interface RegistryProduct {
   trackerUrl: string | null;
   docsUrl: string | null;
   roadmapUrl: string | null;
-  /** Controls featured presentation/ordering. */
+  /** Featured presentation metadata; sortOrder controls manual ordering. */
   featured: boolean;
+  /** Manual display rank. Null/missing legacy ranks sort last, then name/slug. */
+  sortOrder: number | null;
   /** True if this entry should not appear in the default active view. Prefer
    *  archiving over deleting — see docs/PLATFORM_MODEL.md §2/§7. */
   archived: boolean;

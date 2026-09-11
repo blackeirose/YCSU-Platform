@@ -47,7 +47,7 @@ The repository owner (`blackeirose` / `ysu`), any AI assistant they authorize to
 
 ## Out of Scope (v1.1)
 
-- Authentication / accounts for site visitors
+- Public visitor accounts; v1.2 adds only the existing owner sign-in for ordering (DEC-017)
 - Automated *discovery* of product state (GitHub Release detection, deployment health polling, webhook automation) — authorized agents still assert facts they've verified themselves
 - The AI CORE Product Registration Pipeline / Product Manifest ingestion — documented, not built (`docs/FUTURE_AI_CORE_HANDOFF.md`)
 - The full "YCSU Platform" operating framework (Platform/Management/Product layers) described in the broader product vision — this product is only the public registry UI + data layer representing it, not the framework itself
@@ -107,7 +107,7 @@ Supabase Postgres, project `ysu-tool-tracker` (ref `fzydsnxxcdllkjxwdiwn`, reuse
 
 ## Authentication
 
-None for site visitors. The write interface uses a single shared secret (`REGISTRY_API_KEY`), not Supabase Auth — see `docs/DATA_LAYER.md` §3.
+Public viewing needs no login. Management CRUD uses `REGISTRY_API_KEY`. DEC-017 adds the existing verified owner Supabase Auth session for authorize/reorder only, checked server-side by `registry-ops`; table RLS stays public-read-only.
 
 ---
 
@@ -192,13 +192,13 @@ Yes — the 5 products migrated from v1.0.0 represent verified ecosystem state; 
 
 # 11. IMPORTANT CONSTRAINTS
 
-- `main.ycsu.cc` must remain a read/presentation surface — do not add write logic to the frontend; all writes go through `registry-ops`.
+- Public MAIN remains read-only. The explicitly authorized owner may reorder through `registry-ops` (DEC-017); no direct database writes or product CRUD from the frontend.
 - Never add an INSERT/UPDATE/DELETE RLS policy for `anon` or `authenticated` on `product_registry` without a deliberate, documented decision — the current model relies on there being exactly one write path.
 - Never expose `SUPABASE_SERVICE_ROLE_KEY` or `REGISTRY_API_KEY` to the frontend or commit them to source.
 - `mainUrl` must only ever be set to a URL that has been personally verified live right now; an unverified/future domain belongs in `plannedUrl` — enforced at the database layer now, not just by convention (see `docs/REGISTRY_SCHEMA.md` §2).
 - Registry entries for products this project did not build should only be updated when their real state is verified — never guessed.
 - DNS changes to the `ycsu.cc` zone always require explicit user action.
-- Scope remains frozen per `docs/PLATFORM_MODEL.md` §8 / `docs/FUTURE_AI_CORE_HANDOFF.md`: no GitHub API sync, no AI CORE automation, no live-status polling, no site-visitor auth, no admin dashboard. Do not add these without an explicit new milestone decision.
+- Scope remains frozen per `docs/PLATFORM_MODEL.md` §8 / `docs/FUTURE_AI_CORE_HANDOFF.md`: no GitHub API sync, no AI CORE automation, no live-status polling, no public account system, no admin dashboard. The scoped owner sign-in exception is recorded in DEC-017. Do not add these without an explicit new milestone decision.
 
 ---
 
@@ -232,3 +232,9 @@ Not yet scoped. `docs/FUTURE_AI_CORE_HANDOFF.md`'s "V2+" section documents (with
 # 15. MAINTENANCE RULE
 
 Update this file when product purpose, architecture, deployment, domain, services, or current development direction durably change. Registry **data** changes (a product's maturity, version, etc.) never touch this file or require a commit — use `registry-ops` per `docs/REGISTRY_OPERATIONS.md`. Run `node scripts/snapshot-registry.mjs` then `node scripts/validate-registry.mjs` periodically (e.g. before a release) to keep the disaster-recovery snapshot current and schema-valid.
+
+## v1.2 implementation — acceptance pending
+
+Persistent product ordering is implemented on `feat/persistent-card-order`. Products use nullable integer `sort_order`, explicit ranks first and deterministic name/slug fallback. The owner signs in from the existing homepage footer, holds non-interactive card areas or the grip for 500 ms, drags and releases to save. Keyboard arrows/Home/End provide an alternative. Only the verified owner or existing authorized management client may reorder through `registry-ops`. A single transaction detects stale state and updates only changed ranks. Failed saves restore the previous display order. Fallback snapshots are read-only.
+
+No frontend build step is required. A pinned local Supabase Auth SDK loads only for owner access; Node development dependencies provide isolated DOM/PostgreSQL tests. The prior preview release remains the verified production baseline until owner sign-in and production reorder/reload acceptance pass.

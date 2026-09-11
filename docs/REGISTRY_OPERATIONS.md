@@ -1,6 +1,6 @@
 # REGISTRY_OPERATIONS.md
 
-**YCSU Platform — Registry Operations Contract (v1.1)**
+**YCSU Platform — Registry Operations Contract (v1.2)**
 **Version:** 1.0 (established at v1.1.0 release, 2026-08-29)
 
 This is the contract an authorized AI assistant or tool (ChatGPT via a Custom GPT Action, Claude, a future script) uses to operate the Product Registry directly — the mechanism behind "Move Rachel to Production" or "Archive this product" happening without anyone editing `main.ycsu.cc` source code.
@@ -36,7 +36,7 @@ Header: Content-Type: application/json
 Every request body has the shape:
 
 ```json
-{ "operation": "create | update | archive | unarchive | delete", "slug": "...", "data": { ... } }
+{ "operation": "create | update | archive | unarchive | delete | authorize | reorder", "slug": "...", "data": { ... } }
 ```
 
 ### 2.1 Create
@@ -90,6 +90,28 @@ Hard-deletes the row. Requires `data.confirm === true` as deliberate friction �
 
 ---
 
+## 2.5 Owner authorization and persistent ordering
+
+Existing management-key calls retain their original permissions. The owner may additionally sign in through the existing Supabase Auth email-link flow. `registry-ops` validates that token with `getUser`, then matches the configured, verified owner UUID; user-editable metadata never grants access. Owner sessions may invoke **only** `authorize` and `reorder`, never product CRUD. The table still has no anon/authenticated write RLS policy.
+
+`{"operation":"authorize"}` returns `{"ok":true,"canReorder":true}` only after authorization. All browser writes still target this function; no administrative secret is sent to the browser. Browser CORS permits only `https://main.ycsu.cc`. The existing Supabase Site URL remains Tracker; the exact MAIN URL is an additional allowed auth redirect.
+
+A reorder request contains the complete active product set:
+
+```json
+{
+  "operation": "reorder",
+  "data": {
+    "expected": [{"id":"<product UUID>","sortOrder":10}],
+    "order": ["<product UUID>"]
+  }
+}
+```
+
+The examples abbreviate the list: every active product must appear exactly once in both arrays. `expected` is the caller's last read ranks, with null allowed for legacy entries. A service-role-only, SECURITY INVOKER database function locks the Registry and applies the entire permutation in one transaction. It rejects stale ranks, missing/new/archived IDs, duplicates, or malformed payloads. Stale state returns HTTP 409. Final ranks use 10,20,30…; only rows whose rank changes are updated. Product metadata and `lastUpdated` stay unchanged; `updated_at` remains the technical audit trail.
+
+Success returns `{"ok":true,"order":[{"id":"<UUID>","sortOrder":10}],"changed":1}`. The UI moves immediately on drop, serializes saves, and restores the previous display order on failure. After a failure, reload before retrying so current authoritative ranks replace stale state. Snapshot fallback never enables reordering.
+
 ## 3. Validation Failures
 
 A `422` response has the shape:
@@ -133,6 +155,6 @@ A GitHub Release or Git tag remains the canonical version source for a formal YC
 
 ## 6. What This Interface Deliberately Does Not Support
 
-- No bulk/batch operations — one `slug` per call.
+- Product CRUD remains one `slug` per call. The dedicated reorder operation is the only batch write and can change only ranks.
 - No schema migration via this endpoint (adding a new field is a code change to `registry-ops` + a DB migration, not a Registry operation).
 - No way to bypass the `mainUrl`/`plannedUrl` or certification rules — they are not "soft" guidance, they are enforced at two layers (function + database).

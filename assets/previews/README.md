@@ -23,23 +23,23 @@ Store each image at `/assets/previews/{slug}.webp`. The filename must match the 
 
 No scheduled, background, deployment-triggered, or unattended screenshot automation is permitted. Using browser capture and conversion tools during an explicit MAIN maintenance task is permitted; do not turn that workflow into an automatic capture service or job. Remote screenshot services, iframe previews, and synthetic application screenshots remain out of scope. New Registry products use the same renderer automatically; the image is the only optional manually curated visual asset. Missing previews may be supplied by the owner or an authorized agent during an explicit MAIN maintenance task.
 
+## Curated release capture batch — 2026-09-11
 
-## Curated capture batch — 2026-09-11
+All eight targets were opened and freshly captured during this explicit MAIN maintenance task. ADCC is a real local development interface, not a fabricated application image. No screenshot includes a Netlify badge, permission prompt, loading/error page, email address, or private document content. The source viewport was 1440 × 900; scrollbar-bearing native captures are 1425 × 891. No image was upscaled. WebP quality is 88, or 82 for Rachel artwork. All eight assets decode successfully.
 
-Captured during an explicit MAIN maintenance task, from the public production pages below. Browser viewport requested: 1440 × 900. Native captures are 1425 × 891 except Rachel (1440 × 900), all approximately 16:10; no upscaling or UI reconstruction. WebP quality: 88, reduced to 82 for the detailed Rachel artwork. All five assets decode successfully.
+| Asset | Capture target | Selected state | Resolution | Size (KiB) |
+| --- | --- | --- | --- | ---: |
+| `ycsu-platform.webp` | https://main.ycsu.cc | Current production homepage; temporary pre-release self-preview | 1425 × 891 | 62.0 |
+| `workflow-hub.webp` | https://hub.ycsu.cc | Current all-modules landing view | 1425 × 891 | 99.2 |
+| `ycsu-tracker.webp` | https://tracker.ycsu.cc | Cloud-synced public Card view; email input empty | 1425 × 891 | 103.3 |
+| `rachels-animal-kingdom.webp` | https://game.ycsu.cc/RaAnimalChess | Current cover with ENTER THE KINGDOM | 1440 × 900 | 230.6 |
+| `fire-pump-test-pit-simulator.webp` | https://tools.ycsu.cc/fire-pump-test-pit/#model | 3D model; default 1,500 GPM study | 1425 × 891 | 89.2 |
+| `plumbing-calculation-chart.webp` | https://tools.ycsu.cc/plumbing-chart/ | Initialized CPC 2025 landing interface; no schedule selected | 1440 × 900 | 42.8 |
+| `ysu-mind-map.webp` | https://mind.ycsu.cc | Public graph with 137 ideas / 505 relationships; Synthetic data only | 1440 × 900 | 97.4 |
+| `adcc.webp` | Authorized local development interface | Real M1 Foundation Galaxy with development mission nodes; no agent dispatch | 1440 × 900 | 17.8 |
 
-| Asset | Verified production source | Selected state | Size (KiB) |
-| --- | --- | --- | ---: |
-| `ycsu-platform.webp` | https://main.ycsu.cc | Current production homepage, before the new preview-card deployment | 64.1 |
-| `workflow-hub.webp` | https://hub.ycsu.cc | Public, signed-out landing view; default background and all modules | 102.8 |
-| `ycsu-tracker.webp` | https://tracker.ycsu.cc | Public Card/kanban view after cloud sync; sign-in email field cleared | 103.3 |
-| `rachels-animal-kingdom.webp` | https://game.ycsu.cc/RaAnimalChess | Current public cover and ENTER THE KINGDOM entry | 230.6 |
-| `fire-pump-test-pit-simulator.webp` | https://tools.ycsu.cc/fire-pump-test-pit/ | Deliberately selected `#model` section; default 1,500 GPM study and 3D flow view | 90.5 |
+The Plumbing URL must retain its trailing slash. Mind Map was verified in the browser, including working search over the public synthetic graph; this verifies reachability, not a new maturity or version. ADCC remains Local Only with a DEVELOPMENT PREVIEW label and no launch link.
 
-**Plumbing not captured:** the Registry still lists `https://tools.ycsu.cc/plumbingchart/`. Both that route and `https://tools.ycsu.cc/plumbing-chart/` returned HTTP 404 and displayed Netlify's Page not found in the browser. No working replacement route was verified; do not treat the hyphenated candidate as confirmed. Keep the missing-preview fallback until the route is resolved in a separate task. No Registry data was changed.
+**MAIN self-preview release requirement:** the current `ycsu-platform.webp` represents the production page before the new preview-card release. After the new UI is deployed, capture that actual production UI again, replace this one asset, commit, and redeploy the same existing MAIN site. Do not substitute a local QA screenshot for the required post-deploy capture.
 
-ADCC remains Local with no verified deployed interface and no image. YSU Mind Map remains Not Deployed and intentionally has no screenshot.
-
-The bundled snapshot was refreshed only through `node scripts/snapshot-registry.mjs` (Registry → file) and validated: 8 products. Before refresh it lacked Fire Pump, Plumbing, and Mind Map; Rachel and Workflow Hub had stale deployment/metadata, and Tracker had an older update date/status note. YCSU Platform and ADCC were unchanged. The snapshot faithfully retains the Registry's currently broken Plumbing URL; it is not a manual correction of production data.
-
-Visual review: desktop 3 columns, tablet 2, mobile 1; light and dark themes; top-aligned crops; image loading and missing-image fallbacks; long names/categories; and three-line Status Notes. Fine text in dense MAIN/Tracker screenshots is small at card scale, while the visual structure remains identifiable. MAIN's image intentionally represents the currently deployed homepage, not the unmerged local redesign. These assets do not establish engineering validation of the simulator or uptime of any product.
+These captures do not change Registry metadata. Registry corrections must use `registry-ops`; refresh the bundled snapshot only after the writes succeed. Until then, Not Deployed entries continue to use their designed placeholder even if a preview asset is already present. Fresh captures can be byte-identical to the previous asset when the selected live interface has not changed (Rachel and Tracker in this batch).

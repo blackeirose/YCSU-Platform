@@ -12,7 +12,7 @@ assets/previews/            Optional manual WebP previews named by Registry slug
 registry.schema.ts          Canonical typed schema (documentation contract, no build step)
 netlify.toml                 Netlify build/publish config (pure static, no build step)
 data/
-  registry.snapshot.json     Disaster-recovery/audit copy — NOT the runtime source of truth
+  registry.public.snapshot.json     Disaster-recovery/audit copy — NOT the runtime source of truth
 scripts/
   validate-registry.mjs      Manual (non-CI) validator for the snapshot
   snapshot-registry.mjs      Refreshes the snapshot from the live Registry (DB -> file, one-way)
@@ -32,10 +32,10 @@ docs/
 
 ## Local development
 
-No build step. `index.html` needs `http(s)://` (not `file://`) since it fetches live data — serve the folder with any static server:
+Run `npm run build` to create the public-only `dist` folder. `index.html` needs `http(s)://` (not `file://`) since it fetches live data — serve the folder with any static server:
 
 ```bash
-npx serve .
+npx serve dist
 ```
 
 ## Updating the Registry
@@ -65,7 +65,7 @@ Use **Owner sign in** in the footer and open the emailed link for the existing a
 
 Order is stored in nullable `product_registry.sort_order`, ascending with nulls last and a stable name fallback. Saves use only `registry-ops`; public visitors and offline snapshot views cannot reorder. A failed save restores the previous display order; reload before retrying to retrieve any newer order. Owner sessions cannot perform other Registry writes. See DEC-017 and `docs/REGISTRY_OPERATIONS.md`.
 
-Run `npm ci`, `npm test`, and `npm run validate` for local validation. Test dependencies are development-only; the static site still has no build step. The owner confirmed real-device drag/touch acceptance on 2026-09-11; production owner mouse-grip drag/save/reload and failure rollback have also passed.
+Run `npm ci`, `npm test`, and `npm run validate` for local validation. Test dependencies are development-only; the static packaging step has no runtime dependencies. The owner confirmed real-device drag/touch acceptance on 2026-09-11; production owner mouse-grip drag/save/reload and failure rollback have also passed.
 
 ## Product Preview Images
 
@@ -76,3 +76,9 @@ Public/Live cards show the image or a graceful fallback; Local/Internal cards sh
 ## Deployment
 
 See `DEPLOYMENT.md` for the live URL, Netlify site details, Supabase project/function details, and current infrastructure status.
+
+## v1.3 owner-only links
+
+Public visitors receive product metadata with protected URL fields absent, non-clickable previews, no action links and no reorder controls. The existing owner session unlocks full links and ordering after server UUID validation. Logout removes them immediately. Direct raw-table reads are denied for every browser role; all reads use registry-ops. See DEC-018 and docs/DATA_LAYER.md.
+
+Only dist may be deployed. It excludes manifests, docs, SQL, tests and full exports. The public snapshot validator rejects protected fields and URL-bearing values. Public Git history/architectural docs can still mention YCSU domains; this feature controls the current MAIN runtime interface, not access to downstream products.

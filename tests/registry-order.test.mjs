@@ -4,12 +4,12 @@ import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
 import { orderedProducts, movedOrder, orderPayload } from '../assets/js/registry-order.mjs';
 import { stripTypeScriptTypes } from 'node:module';
-const source = stripTypeScriptTypes(await readFile(new URL('../supabase/functions/registry-ops/handler.ts',import.meta.url),'utf8'));
+const source = stripTypeScriptTypes(await readFile(new URL('../supabase/functions/registry-ops/handler.ts',import.meta.url),'utf8')).replace('../../../assets/js/registry-public.mjs',new URL('../assets/js/registry-public.mjs',import.meta.url).href);
 const {createRegistryHandler} = await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const migration = await readFile(new URL('../supabase/migrations/20260911215355_product_registry_sort_order.sql',import.meta.url),'utf8');
 const base = await readFile(new URL('../supabase/migrations/20260829000001_product_registry.sql',import.meta.url),'utf8');
-const snapshot = JSON.parse(await readFile(new URL('../data/registry.snapshot.json',import.meta.url),'utf8'));
-const ids = snapshot.products.map(p=>p.id);
+const snapshot = JSON.parse(await readFile(new URL('../data/registry.public.snapshot.json',import.meta.url),'utf8'));
+const ids = [...snapshot.products].sort((a,b)=>Number(b.featured)-Number(a.featured)||a.name.localeCompare(b.name,'en')).map(p=>p.id);
 const ownerId='38531f7e-e05e-473a-a587-500b1d3aebe5';
 
 test('stable ordering: explicit ranks, nulls last, deterministic ties, archived hidden',()=>{

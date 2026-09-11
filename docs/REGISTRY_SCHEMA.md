@@ -1,3 +1,13 @@
+# v1.3 public and owner representations
+
+The canonical stored schema and Product lifecycle/version/certification rules below are unchanged. The runtime envelope is schemaVersion 1.3. RegistryProduct describes owner/full data; PublicRegistryProduct omits mainUrl, plannedUrl, githubUrl, trackerUrl, docsUrl and roadmapUrl entirely. Their snake_case database columns are not directly selectable by browser roles. Public text is URL-redacted server-side without changing stored product facts. New fields remain private until deliberately allowlisted.
+
+The public representation includes id, slug, name, shortName, description, category, platformLayer, maturity, deployment, visibility, operationalStatus, version, versionSource, featured, archived, certification, lastUpdated, statusNote and sortOrder. See DATA_LAYER.md and REGISTRY_OPERATIONS.md for the enforced API boundary.
+
+The manifest under manifests/example-product is fictional schema documentation and is never published with the website. Public Git history and architectural documentation are not a promise of global URL secrecy.
+
+---
+
 # REGISTRY_SCHEMA.md
 
 **YCSU Platform — Registry & Product Manifest Specification**
@@ -5,7 +15,7 @@
 
 The typed source of truth is [`registry.schema.ts`](../registry.schema.ts) — this document explains it in prose and defines the related per-product manifest format. If this document and the `.ts` file ever disagree, the `.ts` file wins; fix this document.
 
-**As of v1.1, the runtime source of truth is the Supabase `product_registry` table**, not a file in this repository — see `DATA_LAYER.md`. This schema still governs both: the table's columns, `registry-ops`' request/response shape, and `data/registry.snapshot.json`'s structure are all the same shape described here, just spelled snake_case in the database and camelCase everywhere else.
+**As of v1.1, the runtime source of truth is the Supabase `product_registry` table**, not a file in this repository — see `DATA_LAYER.md`. This schema still governs both: the table's columns, `registry-ops`' request/response shape, and `data/registry.public.snapshot.json`'s structure are all the same shape described here, just spelled snake_case in the database and camelCase everywhere else.
 
 ---
 
@@ -79,7 +89,7 @@ A **Product Manifest** is a small, self-contained JSON file a product's own repo
 
 Field meanings are identical to the matching fields in `registry.schema.ts` — a manifest is conceptually a single-product subset of a Registry entry, not a separate schema. A future AI CORE pipeline should be able to read a manifest and produce a Registry entry (or diff against the existing one) without knowing anything about how `main.ycsu.cc`'s UI is implemented.
 
-A real example lives at [`manifests/ycsu-platform/ycsu-product.json`](../manifests/ycsu-platform/ycsu-product.json) in this repository.
+A real example lives at [`manifests/example-product/ycsu-product.json`](../manifests/example-product/ycsu-product.json) in this repository.
 
 Do not create a second, conflicting manifest schema elsewhere — extend this one.
 

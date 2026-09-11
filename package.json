@@ -1,1 +1,13 @@
-{"private":true,"type":"module","scripts":{"test":"node --test tests/*.test.mjs","validate":"node scripts/validate-registry.mjs"},"devDependencies":{"@electric-sql/pglite":"0.5.8","jsdom":"30.0.1"}}
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "validate": "node scripts/validate-registry.mjs",
+    "build": "node scripts/build-site.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "jsdom": "30.0.1"
+  }
+}

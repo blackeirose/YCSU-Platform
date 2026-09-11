@@ -387,7 +387,7 @@
     <main class="grid" id="grid"></main>
 
     <footer>
-      Source of truth: <a href="https://github.com/blackeirose/YCSU-Platform" target="_blank" rel="noopener">github.com/blackeirose/YCSU-Platform</a><br />
+      Registry-backed product directory.<br />
       Registry data last updated <span id="updated-date"></span>.<br />
       <button type="button" id="owner-access" class="owner-button">Owner sign in</button>
     </footer>
@@ -395,7 +395,7 @@
 
 <dialog id="owner-dialog" class="owner-dialog" aria-labelledby="owner-title">
   <h2 id="owner-title">Owner sign in</h2>
-  <p>Sign in to arrange the product cards. Everyone can browse; only the authorized owner can save changes.</p>
+  <p>Sign in to open product links and arrange the cards. Everyone can browse product information.</p>
   <form id="owner-form">
     <label for="owner-email">Email</label>
     <input id="owner-email" type="email" autocomplete="email" required />
@@ -408,7 +408,8 @@
   import { orderedProducts } from './assets/js/registry-order.mjs';
   import { createCardReorder } from './assets/js/card-reorder.mjs';
   import { setupOwnerAccess } from './assets/js/owner-access.mjs';
-  let liveRegistry = false;
+  import { assertPublicRegistry } from './assets/js/registry-public.mjs';
+  let liveRegistry = false, publicLive = false, ownerView = false, publicData = null;
   let ownerAccess;
   const reorder = createCardReorder({
     grid: document.getElementById('grid'), status: document.getElementById('reorder-status'),
@@ -490,7 +491,7 @@
     const grid = document.getElementById("grid");
     const products = orderedProducts(data.products || []);
 
-    const liveCount = products.filter(p => p.deployment === "Public" && p.operationalStatus === "Live" && safeUrl(p.mainUrl)).length;
+    const liveCount = products.filter(p => p.deployment === "Public" && p.operationalStatus === "Live").length;
     const inProgressCount = products.length - liveCount;
 
     document.getElementById("summary-bar").innerHTML = `
@@ -510,7 +511,7 @@
         ? `<a class="domain-link" href="${escapeHtml(mainUrl)}" target="_blank" rel="noopener">${escapeHtml(p.mainUrl.replace(/^https?:\/\//, ""))}</a>`
         : p.plannedUrl
           ? `<span class="domain-static">${escapeHtml(p.plannedUrl.replace(/^https?:\/\//, ""))} (planned)</span>`
-          : `<span class="domain-static">—</span>`;
+          : "";
 
       const versionHtml = p.version
         ? `<span class="v">${escapeHtml(p.version)}</span>`
@@ -546,64 +547,27 @@
     ownerAccess?.refreshAvailability();
   }
 
-  // v1.1: Central Product Registry (Supabase) is the runtime source of truth.
-  // Publishable ("anon") key — safe to embed client-side by design; RLS grants
-  // it read-only access (no write policy exists for anon/authenticated at all,
-  // see docs/DATA_LAYER.md). Adding/editing products never touches this file.
   const SUPABASE_URL = "https://fzydsnxxcdllkjxwdiwn.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_wpnShrpWOLV94EEUA86vVg_zRQbbW2W";
-
-  const ROW_TO_PRODUCT = {
-    id: "id", slug: "slug", name: "name", short_name: "shortName", description: "description",
-    category: "category", platform_layer: "platformLayer", maturity: "maturity",
-    deployment: "deployment", visibility: "visibility", operational_status: "operationalStatus",
-    version: "version", version_source: "versionSource", main_url: "mainUrl",
-    planned_url: "plannedUrl", github_url: "githubUrl", tracker_url: "trackerUrl",
-    docs_url: "docsUrl", roadmap_url: "roadmapUrl", featured: "featured", sort_order: "sortOrder",
-    archived: "archived", certification: "certification", last_updated: "lastUpdated",
-    status_note: "statusNote",
-  };
-
-  function rowToProduct(row) {
-    const p = {};
-    for (const [col, camel] of Object.entries(ROW_TO_PRODUCT)) p[camel] = row[col] ?? null;
-    return p;
+  function guestView(){ownerView=false;liveRegistry=publicLive;render(publicData||{products:[],updated:''});}
+  async function fetchPublicRegistry(){
+    const response=await fetch(`${SUPABASE_URL}/functions/v1/registry-ops`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({operation:'read-public'}),cache:'no-store'});
+    if(!response.ok)throw new Error('Public Registry unavailable');
+    const data=assertPublicRegistry(await response.json());publicLive=true;return data;
   }
-
-  async function fetchFromRegistry() {
-    const url = `${SUPABASE_URL}/rest/v1/product_registry?select=*&archived=eq.false&order=sort_order.asc.nullslast,name.asc,id.asc`;
-    const res = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY } });
-    if (!res.ok) throw new Error(`registry fetch failed: HTTP ${res.status}`);
-    const rows = await res.json();
-    const products = rows.map(rowToProduct);
-    const updated = products.reduce((max, p) => (p.lastUpdated > max ? p.lastUpdated : max), "");
-    liveRegistry = true;
-    return { products, updated };
+  async function fetchPublicSnapshot(){
+    publicLive=false;
+    const response=await fetch('/data/registry.public.snapshot.json',{cache:'no-store'});
+    if(!response.ok)throw new Error('Public fallback unavailable');
+    return assertPublicRegistry(await response.json());
   }
+  setupOwnerAccess({url:SUPABASE_URL,key:SUPABASE_ANON_KEY,setAllowed:value=>reorder.setAllowed(value),isLive:()=>liveRegistry,status:document.getElementById('reorder-status'),
+    onGuest:guestView,onOwnerData:data=>{ownerView=true;liveRegistry=true;render(data);}
+  }).then(access=>{ownerAccess=access;access.refreshAvailability();});
+  fetchPublicRegistry().catch(()=>fetchPublicSnapshot()).then(data=>{
+    publicData=data;if(!ownerView){liveRegistry=publicLive;render(data);}
+  }).catch(()=>{if(!ownerView)document.getElementById('grid').textContent='Could not load the Registry. Please reload.';});
 
-  async function fetchFromSnapshot() {
-    liveRegistry = false;
-    const res = await fetch("data/registry.snapshot.json");
-    if (!res.ok) throw new Error(`snapshot fetch failed: HTTP ${res.status}`);
-    return res.json();
-  }
-
-  setupOwnerAccess({url:SUPABASE_URL, key:SUPABASE_ANON_KEY,
-    setAllowed:value => reorder.setAllowed(value), isLive:() => liveRegistry,
-    status:document.getElementById('reorder-status')
-  }).then(access => { ownerAccess = access; access.refreshAvailability(); });
-
-  fetchFromRegistry()
-    .catch(err => {
-      // Fallback only — never write snapshot data back to the Registry, and
-      // don't surface an error to visitors for a transient read failure.
-      console.warn("Live Registry fetch failed, falling back to bundled snapshot:", err);
-      return fetchFromSnapshot();
-    })
-    .then(render)
-    .catch(err => {
-      document.getElementById("grid").innerHTML = `<p style="color:#f0b94d">Could not load the Registry: ${err}</p>`;
-    });
 </script>
 </body>
 </html>

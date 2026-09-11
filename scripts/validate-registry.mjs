@@ -1,11 +1,11 @@
-#!/usr/bin/env node
+import {assertPublicRegistry} from '../assets/js/registry-public.mjs';
 /**
  * Manual registry validator. Run by hand: `node scripts/validate-registry.mjs`
  *
  * This is a correctness check only — it is NOT a build step, NOT wired into
  * CI, and NOT automatic discovery/sync. As of v1.1, the runtime source of
  * truth is the Supabase product_registry table (see docs/DATA_LAYER.md) —
- * this script validates data/registry.snapshot.json, the disaster-recovery/
+ * this script validates data/registry.public.snapshot.json, the disaster-recovery/
  * audit copy, not the live data. Run `node scripts/snapshot-registry.mjs`
  * first to refresh the snapshot from the live Registry, then validate it.
  */
@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const registryPath = join(__dirname, "..", "data", "registry.snapshot.json");
+const registryPath = join(__dirname, "..", "data", "registry.public.snapshot.json");
 
 const PLATFORM_LAYER = ["Platform", "Management", "Product"];
 const MATURITY = ["Idea", "Planning", "Prototype", "Internal Alpha", "Beta", "Production"];
@@ -27,7 +27,7 @@ const VERSION_SOURCE = ["github-release", "git-tag", "package", "manual", "none"
 const REQUIRED_STRING_FIELDS = ["id", "slug", "name", "shortName", "description", "category", "lastUpdated"];
 const REQUIRED_BOOLEAN_FIELDS = ["featured", "archived"];
 const REQUIRED_NULLABLE_FIELDS = [
-  "version", "mainUrl", "plannedUrl", "githubUrl", "trackerUrl", "docsUrl", "roadmapUrl", "statusNote",
+  "version", "statusNote",
 ];
 
 let errors = [];
@@ -35,8 +35,9 @@ let warnings = [];
 
 const raw = readFileSync(registryPath, "utf8");
 const data = JSON.parse(raw);
+assertPublicRegistry(data);
 
-if (data.schemaVersion !== "1.1") errors.push(`schemaVersion must be "1.1", got ${JSON.stringify(data.schemaVersion)}`);
+if (data.schemaVersion !== "1.3") errors.push(`schemaVersion must be "1.3", got ${JSON.stringify(data.schemaVersion)}`);
 if (!Array.isArray(data.products)) errors.push("products must be an array");
 
 const seenSlugs = new Set();
@@ -77,19 +78,7 @@ for (const p of data.products ?? []) {
     errors.push(`[${tag}] versionSource is "${p.versionSource}" but version is empty/null`);
   }
 
-  // Core rule: a planned (unverified) URL must never masquerade as a live main URL.
-  if (p.mainUrl && p.plannedUrl) {
-    errors.push(`[${tag}] has both mainUrl and plannedUrl set — a product is either live (mainUrl) or planned (plannedUrl), not both`);
-  }
-  if (p.mainUrl && p.deployment === "Not Deployed") {
-    errors.push(`[${tag}] has mainUrl set but deployment is "Not Deployed" — contradictory`);
-  }
-  if (!p.mainUrl && p.deployment === "Public") {
-    warnings.push(`[${tag}] deployment is "Public" but mainUrl is null — verify this is intentional`);
-  }
-  if (p.certification === "YCSU Certified" && (!p.mainUrl || !p.githubUrl || p.versionSource === "none")) {
-    errors.push(`[${tag}] marked "YCSU Certified" but fails minimum checklist (needs mainUrl, githubUrl, and a real versionSource) — see docs/PLATFORM_MODEL.md`);
-  }
+
 }
 
 if (warnings.length) {
@@ -103,4 +92,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`data/registry.snapshot.json valid — ${data.products.length} product(s), 0 errors.`);
+console.log(`data/registry.public.snapshot.json valid — ${data.products.length} product(s), 0 errors.`);

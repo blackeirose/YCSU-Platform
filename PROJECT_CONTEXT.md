@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT.md
 
-**YSU AI Development System**  
+**YSU AI Development System**
 **Project Version:** v1.3.0 — Owner-only Product Links (2026-09-11)
 
 ## Product and current state

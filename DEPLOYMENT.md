@@ -6,6 +6,8 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ## v1.3 current production access boundary — 2026-09-11
 
+Final release deploy: **`6aa489b6f0b74e7b1f8b75f6`**, ready/published 2026-09-11 23:07:35 UTC. HTML, owner module, MAIN preview and public snapshot SHA256 match dist. MAIN Registry version is v1.3.0 / github-release. Tag v1.3.0 points to accepted source commit `a0c07ff`; subsequent release-record/snapshot commit contains the final Registry version. Release: https://github.com/blackeirose/YCSU-Platform/releases/tag/v1.3.0.
+
 The current deployment uses registry-ops v5, active with custom JWT authorization (`verify_jwt=false`), and migration `20260911225043_owner_only_registry_links.sql`. Raw product_registry RLS remains enabled; PUBLIC, anon and authenticated have no table/column read or write privileges and no policies. Public reads now use registry-ops `read-public`; owner full reads use `read-owner` after exact UUID verification. Management CRUD and the service-role-only reorder transaction remain intact.
 
 Frontend candidate `90ac06b35faa7c611618a40578cd000a8537cb84` deployed as `6aa485b4d8321b4b271147c1`. Only allowlisted dist files were zipped. Build: `node scripts/build-site.mjs`; Netlify publish: `dist`. Never deploy the repository root. No-store headers apply to API and static responses. Current security evidence and release acceptance: `docs/releases/v1.3.0.md`.

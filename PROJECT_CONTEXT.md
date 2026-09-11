@@ -68,7 +68,7 @@ The repository owner (`blackeirose` / `ysu`), any AI assistant they authorize to
 - All 5 v1.0.0 products migrated into the table with their verified v1.0.0 facts preserved (not re-guessed)
 - Governance docs: `docs/PLATFORM_MODEL.md`, `docs/DATA_LAYER.md`, `docs/REGISTRY_OPERATIONS.md`, `docs/REGISTRY_SCHEMA.md`, `docs/FUTURE_AI_CORE_HANDOFF.md`
 - Responsive 3/2/1-column card grid, light/dark theme, status-first hierarchy, and three-line Status Notes
-- Manual product showcase previews derived from Registry slugs at `/assets/previews/{slug}.webp`; Live, development, and planned states use the same generic renderer. See `assets/previews/README.md` and DEC-016.
+- Manually curated product showcase previews derived from Registry slugs at `/assets/previews/{slug}.webp`, updated only during explicit MAIN maintenance tasks by the owner or an authorized AI/development agent; no scheduled, background, deployment-triggered, or unattended screenshot automation. Live, development, and planned states use the same generic renderer. See `assets/previews/README.md` and DEC-016.
 
 ## In Development
 
@@ -204,7 +204,7 @@ Yes — the 5 products migrated from v1.0.0 represent verified ecosystem state; 
 
 # 12. CURRENT DEVELOPMENT FOCUS
 
-v1.1.0 is released. The manual product-preview presentation enhancement is implemented; it does not change Registry data or the write architecture. Preview images are owner-selected assets, and the enhancement is not a claim of a new production deployment.
+v1.1.0 is released. The manual product-preview presentation enhancement is implemented; it does not change Registry data or the write architecture. Preview images are curated by the owner or an authorized AI/development agent only during explicit MAIN maintenance tasks, and the enhancement is not a claim of a new production deployment.
 
 ---
 

@@ -504,12 +504,12 @@ Only reconsider scope in a new, explicitly-scoped milestone.
 
 ### Decision
 
-The homepage remains `Browser → index.html → Supabase product_registry → generic card renderer`. Optional preview images are manually maintained at `/assets/previews/{slug}.webp`, derived from the Registry slug with no database field or per-product rendering component.
+The homepage remains `Browser → index.html → Supabase product_registry → generic card renderer`. Optional preview images are manually curated and updated only as part of an explicit MAIN maintenance task at `/assets/previews/{slug}.webp`, derived from the Registry slug with no database field or per-product rendering component.
 
 Public/Live products show the image or “Preview unavailable.” Local/Internal products show a manual image or neutral fallback, always labeled DEVELOPMENT PREVIEW with the existing deployment status retained. Not Deployed products show a designed IN PROGRESS placeholder, name, and non-clickable planned domain; no screenshot is requested. Other operational states do not claim to be Live or request a screenshot.
 
 ### Reasoning and consequences
 
-The owner deliberately chooses the best current homepage/interface state and updates the screenshot together with meaningful MAIN product-status updates. This avoids uncontrolled automatic captures and keeps metadata authoritative in Supabase. Images require a frontend deployment; metadata still uses the existing no-redeploy Registry write workflow. Missing assets are normal and never block card rendering.
+The owner does not need to capture previews personally. During an explicit MAIN maintenance task, an authorized AI/development agent such as Codex may open the verified production URL, select a representative current state, capture the screenshot, convert it to WebP, and update the preview asset. Manual curation describes the deliberate selection and task-scoped update, not a requirement for the owner to operate the capture tools. Product-status changes alone do not trigger screenshot updates. This avoids uncontrolled captures and keeps metadata authoritative in Supabase. Images require a frontend deployment; metadata still uses the existing no-redeploy Registry write workflow. Missing assets are normal and never block card rendering.
 
-No automatic capture, scheduled screenshot jobs, remote screenshot service, iframe, synthetic screenshot, schema change, or frontend write logic is authorized by this presentation enhancement. See `assets/previews/README.md` for capture/export and maintenance guidance.
+No scheduled, background, deployment-triggered, or unattended screenshot automation is permitted. Browser capture and conversion tools may be used within an explicit MAIN maintenance task; they must not become an automatic capture service or job. Remote screenshot services, iframes, synthetic screenshots, schema changes, and frontend write logic remain outside this presentation enhancement. See `assets/previews/README.md` for capture/export and maintenance guidance.

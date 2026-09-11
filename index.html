@@ -430,7 +430,7 @@
       </div></div>`;
     }
 
-    // Registry slugs determine optional, owner-maintained local assets.
+    // Registry slugs determine optional assets curated during explicit MAIN maintenance tasks.
     const src = (isLive || isDevelopment) && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug || "")
       ? `/assets/previews/${p.slug}.webp` : null;
     const href = isLive ? safeUrl(p.mainUrl) : null;

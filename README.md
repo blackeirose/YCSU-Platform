@@ -61,7 +61,7 @@ node scripts/validate-registry.mjs
 
 ## Product Preview Images
 
-Screenshots are intentionally **manual**, maintained together with meaningful MAIN product-status updates. Add or replace `assets/previews/{slug}.webp`, matching the Registry slug exactly. Use a current homepage/interface screenshot, preferably WebP from a 1440 × 900 viewport (16:10); do not upscale small images. No screenshot path belongs in Supabase.
+Preview images are **manually curated and updated only as part of an explicit MAIN maintenance task**. The owner does not need to capture them personally: an authorized AI/development agent such as Codex may open the verified production URL, select a representative current state, capture it, convert it to WebP, and update the asset. No scheduled, background, deployment-triggered, or unattended screenshot automation is permitted. Add or replace `assets/previews/{slug}.webp`, matching the Registry slug exactly. Use a current homepage/interface screenshot, preferably WebP from a 1440 × 900 viewport (16:10); do not upscale small images. No screenshot path belongs in Supabase.
 
 Public/Live cards show the image or a graceful fallback; Local/Internal cards show DEVELOPMENT PREVIEW; Not Deployed cards show IN PROGRESS with a non-clickable planned domain. The grid uses 3 columns on desktop, 2 on tablet, and 1 on mobile. See [the manual workflow and display rules](assets/previews/README.md). Image changes require the existing frontend deployment process; metadata updates continue to appear without redeployment.
 

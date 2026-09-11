@@ -6,7 +6,7 @@ import { orderedProducts, movedOrder, orderPayload } from '../assets/js/registry
 import { stripTypeScriptTypes } from 'node:module';
 const source = stripTypeScriptTypes(await readFile(new URL('../supabase/functions/registry-ops/handler.ts',import.meta.url),'utf8'));
 const {createRegistryHandler} = await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
-const migration = await readFile(new URL('../supabase/migrations/20260911213137_product_registry_sort_order.sql',import.meta.url),'utf8');
+const migration = await readFile(new URL('../supabase/migrations/20260911215355_product_registry_sort_order.sql',import.meta.url),'utf8');
 const base = await readFile(new URL('../supabase/migrations/20260829000001_product_registry.sql',import.meta.url),'utf8');
 const snapshot = JSON.parse(await readFile(new URL('../data/registry.snapshot.json',import.meta.url),'utf8'));
 const ids = snapshot.products.map(p=>p.id);

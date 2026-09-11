@@ -204,7 +204,7 @@ Yes — the 5 products migrated from v1.0.0 represent verified ecosystem state; 
 
 # 12. CURRENT DEVELOPMENT FOCUS
 
-v1.1.0 is released. The manual product-preview presentation enhancement is implemented; it does not change Registry data or the write architecture. Preview images are curated by the owner or an authorized AI/development agent only during explicit MAIN maintenance tasks, and the enhancement is not a claim of a new production deployment.
+v1.1.0 is the latest published release. The manually curated product-preview enhancement is deployed, including eight WebP previews and removal of the Netlify badge. Preview images are curated by the owner or an authorized AI/development agent only during explicit MAIN maintenance tasks. The persistent-ordering candidate is now deployed; v1.2.0 remains untagged pending owner interaction acceptance.
 
 ---
 
@@ -235,6 +235,6 @@ Update this file when product purpose, architecture, deployment, domain, service
 
 ## v1.2 implementation — acceptance pending
 
-Persistent product ordering is implemented on `feat/persistent-card-order`. Products use nullable integer `sort_order`, explicit ranks first and deterministic name/slug fallback. The owner signs in from the existing homepage footer, holds non-interactive card areas or the grip for 500 ms, drags and releases to save. Keyboard arrows/Home/End provide an alternative. Only the verified owner or existing authorized management client may reorder through `registry-ops`. A single transaction detects stale state and updates only changed ranks. Failed saves restore the previous display order. Fallback snapshots are read-only.
+Persistent product ordering is merged into `main` and deployed as a candidate (see `DEPLOYMENT.md`). Products use nullable integer `sort_order`, explicit ranks first and deterministic name/slug fallback. The owner signs in from the existing homepage footer, holds non-interactive card areas or the grip for 500 ms, drags and releases to save. Keyboard arrows/Home/End provide an alternative. Only the verified owner or existing authorized management client may reorder through `registry-ops`. A single transaction detects stale state and updates only changed ranks. Failed saves restore the previous display order. Fallback snapshots are read-only.
 
-No frontend build step is required. A pinned local Supabase Auth SDK loads only for owner access; Node development dependencies provide isolated DOM/PostgreSQL tests. The prior preview release remains the verified production baseline until owner sign-in and production reorder/reload acceptance pass.
+No frontend build step is required. A pinned local Supabase Auth SDK loads only for owner access; Node development dependencies provide isolated DOM/PostgreSQL tests. Production API reorder, browser reload, and original-order restoration passed without redeployment; all business metadata remained unchanged. Owner email sign-in and native mouse/touch interaction acceptance are pending. The prior preview release remains the rollback baseline; do not publish v1.2.0 until owner acceptance passes.

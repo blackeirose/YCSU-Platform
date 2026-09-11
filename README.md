@@ -8,6 +8,7 @@ See `PROJECT_CONTEXT.md` and `DECISIONS.md` for the durable project record, `doc
 
 ```
 index.html                The site — fetches live from Supabase, falls back to the snapshot below
+assets/previews/            Optional manual WebP previews named by Registry slug
 registry.schema.ts          Canonical typed schema (documentation contract, no build step)
 netlify.toml                 Netlify build/publish config (pure static, no build step)
 data/
@@ -57,6 +58,12 @@ No commit, no redeploy — `main.ycsu.cc` reflects it on next page load. `REGIST
 node scripts/snapshot-registry.mjs
 node scripts/validate-registry.mjs
 ```
+
+## Product Preview Images
+
+Screenshots are intentionally **manual**, maintained together with meaningful MAIN product-status updates. Add or replace `assets/previews/{slug}.webp`, matching the Registry slug exactly. Use a current homepage/interface screenshot, preferably WebP from a 1440 × 900 viewport (16:10); do not upscale small images. No screenshot path belongs in Supabase.
+
+Public/Live cards show the image or a graceful fallback; Local/Internal cards show DEVELOPMENT PREVIEW; Not Deployed cards show IN PROGRESS with a non-clickable planned domain. The grid uses 3 columns on desktop, 2 on tablet, and 1 on mobile. See [the manual workflow and display rules](assets/previews/README.md). Image changes require the existing frontend deployment process; metadata updates continue to appear without redeployment.
 
 ## Deployment
 

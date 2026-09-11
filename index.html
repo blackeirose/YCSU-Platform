@@ -113,11 +113,12 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 18px;
   }
 
   .card {
+    min-width: 0;
     background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: var(--radius);
@@ -134,16 +135,12 @@
     transform: translateY(-2px);
   }
 
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
   .card h2 {
     font-size: 18px;
-    margin: 0 0 4px;
+    margin: 0;
+    min-height: 0;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
     font-weight: 620;
   }
 
@@ -170,6 +167,8 @@
   .badge.pending { color: var(--pending); background: var(--pending-bg); }
 
   .card-tags {
+    min-height: 0;
+    align-content: flex-start;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -239,6 +238,7 @@
     font-size: 12.5px;
     border-top: 1px solid var(--card-border);
     padding-top: 12px;
+    margin-top: auto;
   }
 
   .meta-row {
@@ -247,8 +247,8 @@
     gap: 12px;
   }
 
-  .meta-row .k { color: var(--text-faint); }
-  .meta-row .v { color: var(--text-dim); text-align: right; }
+  .meta-row .k { color: var(--text-faint); flex-shrink: 0; }
+  .meta-row .v { color: var(--text-dim); text-align: right; min-width: 0; overflow-wrap: anywhere; }
 
   .card .domain-link {
     color: var(--accent);
@@ -269,6 +269,84 @@
     color: var(--text-faint);
     line-height: 1.5;
     font-style: italic;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .tagline, .domain-link, .domain-static, .notes, .version-row .v { overflow-wrap: anywhere; }
+  .version-row .v { min-width: 0; }
+
+  .preview {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    border-radius: 9px;
+    background: var(--bg-elev);
+    color: var(--text-dim);
+    text-decoration: none;
+    isolation: isolate;
+  }
+  a.preview { transition: border-color 0.15s ease; }
+  a.preview:hover { border-color: var(--accent-dim); }
+  .card a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .preview-image {
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .preview-image.is-loaded { opacity: 1; }
+  .preview-placeholder {
+    padding: 18px;
+    max-width: 100%;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .preview-planned {
+    background-image: linear-gradient(var(--card-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--card-border) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .preview-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .preview-name { display: block; color: var(--text); font-size: 16px; margin: 10px 0 6px; }
+  .preview-domain { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .preview-development {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    width: fit-content;
+    max-width: calc(100% - 20px);
+    padding: 5px 8px;
+    border-radius: 5px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text-dim);
+    font-size: 9px;
+  }
+  @media (min-width: 640px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card-tags { min-height: 52px; }
+    .card h2 { min-height: 2.5em; }
+  }
+  @media (min-width: 960px) {
+    .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card, a.preview { transition: none; }
+    .card:hover { transform: none; }
   }
 
   footer {
@@ -284,6 +362,7 @@
   @media (prefers-color-scheme: light) {
     :root {
       --bg: #f5f7fb;
+      --bg-elev: #f0f3f9;
       --card: #ffffff;
       --card-border: #e3e7f0;
       --text: #161a24;
@@ -323,6 +402,9 @@
   };
 
   function deploymentBadge(p) {
+    if (p.deployment === "Public" && p.operationalStatus !== "Live") {
+      return { cls: "pending", label: `Public · ${p.operationalStatus || "Unknown"}` };
+    }
     return DEPLOYMENT_BADGE[p.deployment] || { cls: "planned", label: p.deployment || "Unknown" };
   }
 
@@ -330,12 +412,54 @@
     return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
+  function safeUrl(value) {
+    try {
+      const url = new URL(value);
+      return ["https:", "http:"].includes(url.protocol) ? url.href : null;
+    } catch { return null; }
+  }
+
+  function previewHtml(p) {
+    const isDevelopment = p.deployment === "Local" || p.deployment === "Internal";
+    const isLive = p.deployment === "Public" && p.operationalStatus === "Live";
+    if (p.deployment === "Not Deployed") {
+      return `<div class="preview preview-planned"><div class="preview-placeholder">
+        <span class="preview-label">IN PROGRESS</span>
+        <strong class="preview-name">${escapeHtml(p.name)}</strong>
+        ${p.plannedUrl ? `<span class="preview-domain">${escapeHtml(p.plannedUrl.replace(/^https?:\/\//, ""))}</span>` : ""}
+      </div></div>`;
+    }
+
+    // Registry slugs determine optional, owner-maintained local assets.
+    const src = (isLive || isDevelopment) && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug || "")
+      ? `/assets/previews/${p.slug}.webp` : null;
+    const href = isLive ? safeUrl(p.mainUrl) : null;
+    const tag = href ? "a" : "div";
+    return `<${tag} class="preview"${href ? ` href="${escapeHtml(href)}" target="_blank" rel="noopener" aria-label="Open ${escapeHtml(p.name)}"` : ""}>
+      <div class="preview-placeholder">${isDevelopment ? "Development preview unavailable" : "Preview unavailable"}</div>
+      ${src ? `<img class="preview-image" data-preview-src="${escapeHtml(src)}" alt="${escapeHtml(p.name)} homepage preview" width="1440" height="900" loading="lazy" decoding="async" />` : ""}
+      ${isDevelopment ? `<span class="preview-label preview-development">DEVELOPMENT PREVIEW</span>` : ""}
+    </${tag}>`;
+  }
+
+  function loadPreviews(grid) {
+    grid.querySelectorAll("img[data-preview-src]").forEach(img => {
+      // Attach before assigning src, including when an image is already cached.
+      img.addEventListener("load", () => {
+        img.classList.add("is-loaded");
+        img.parentElement.querySelector(".preview-placeholder").hidden = true;
+      }, { once: true });
+      img.addEventListener("error", () => img.remove(), { once: true });
+      img.src = img.dataset.previewSrc;
+    });
+  }
+
   function linkRow(p) {
     const links = [];
-    if (p.githubUrl) links.push(`<a href="${p.githubUrl}" target="_blank" rel="noopener">GitHub</a>`);
-    if (p.docsUrl) links.push(`<a href="${p.docsUrl}" target="_blank" rel="noopener">Docs</a>`);
-    if (p.trackerUrl) links.push(`<a href="${p.trackerUrl}" target="_blank" rel="noopener">Tracker</a>`);
-    if (p.roadmapUrl) links.push(`<a href="${p.roadmapUrl}" target="_blank" rel="noopener">Roadmap</a>`);
+    for (const [field, label] of [["githubUrl", "GitHub"], ["docsUrl", "Docs"], ["trackerUrl", "Tracker"], ["roadmapUrl", "Roadmap"]]) {
+      const href = safeUrl(p[field]);
+      if (href) links.push(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${label}</a>`);
+    }
     return links.length ? `<div class="links-row">${links.join("")}</div>` : "";
   }
 
@@ -343,7 +467,7 @@
     const grid = document.getElementById("grid");
     const products = data.products || [];
 
-    const liveCount = products.filter(p => p.deployment === "Public" && p.mainUrl).length;
+    const liveCount = products.filter(p => p.deployment === "Public" && p.operationalStatus === "Live" && safeUrl(p.mainUrl)).length;
     const inProgressCount = products.length - liveCount;
 
     document.getElementById("summary-bar").innerHTML = `
@@ -358,8 +482,9 @@
 
       // Reality rule: only a verified mainUrl may render as an active Launch link.
       // A plannedUrl is informational text only — never a clickable Launch action.
-      const domainHtml = p.mainUrl
-        ? `<a class="domain-link" href="${p.mainUrl}" target="_blank" rel="noopener">${escapeHtml(p.mainUrl.replace(/^https?:\/\//, ""))}</a>`
+      const mainUrl = safeUrl(p.mainUrl);
+      const domainHtml = mainUrl
+        ? `<a class="domain-link" href="${escapeHtml(mainUrl)}" target="_blank" rel="noopener">${escapeHtml(p.mainUrl.replace(/^https?:\/\//, ""))}</a>`
         : p.plannedUrl
           ? `<span class="domain-static">${escapeHtml(p.plannedUrl.replace(/^https?:\/\//, ""))} (planned)</span>`
           : `<span class="domain-static">—</span>`;
@@ -374,17 +499,14 @@
 
       return `
         <article class="card">
-          <div class="card-top">
-            <div>
-              <div class="card-tags">
-                <span class="maturity-tag">${escapeHtml(p.maturity)}</span>
-                ${certHtml}
-              </div>
-              <h2>${escapeHtml(p.name)}</h2>
-              <div class="tagline">${escapeHtml(p.description || "")}</div>
-            </div>
-            <span class="badge ${badge.cls}">${badge.label}</span>
+          <div class="card-tags">
+            <span class="maturity-tag">${escapeHtml(p.maturity)}</span>
+            ${certHtml}
+            <span class="badge ${badge.cls}">${escapeHtml(badge.label)}</span>
           </div>
+          <h2>${escapeHtml(p.name)}</h2>
+          ${previewHtml(p)}
+          <div class="tagline">${escapeHtml(p.description || "")}</div>
           ${domainHtml}
           <div class="meta-list">
             <div class="version-row"><span class="k">Version</span>${versionHtml}</div>
@@ -396,6 +518,7 @@
         </article>
       `;
     }).join("");
+    loadPreviews(grid);
   }
 
   // v1.1: Central Product Registry (Supabase) is the runtime source of truth.

@@ -204,7 +204,7 @@ Yes — the 5 products migrated from v1.0.0 represent verified ecosystem state; 
 
 # 12. CURRENT DEVELOPMENT FOCUS
 
-v1.1.0 is the latest published release. The manually curated product-preview enhancement is deployed, including eight WebP previews and removal of the Netlify badge. Preview images are curated by the owner or an authorized AI/development agent only during explicit MAIN maintenance tasks. The persistent-ordering candidate is now deployed; v1.2.0 remains untagged pending owner interaction acceptance.
+v1.1.0 is the latest published release. The manually curated product-preview enhancement is deployed, including eight WebP previews and removal of the Netlify badge. Preview images are curated by the owner or an authorized AI/development agent only during explicit MAIN maintenance tasks. The persistent-ordering candidate is now deployed; v1.2.0 remains untagged pending native long-press/touch acceptance.
 
 ---
 
@@ -237,4 +237,4 @@ Update this file when product purpose, architecture, deployment, domain, service
 
 Persistent product ordering is merged into `main` and deployed as a candidate (see `DEPLOYMENT.md`). Products use nullable integer `sort_order`, explicit ranks first and deterministic name/slug fallback. The owner signs in from the existing homepage footer, drags the grip directly with a mouse, or holds non-interactive card areas for 500 ms before dragging and releasing to save. On touch, hold the grip for 500 ms. Keyboard arrows/Home/End provide an alternative. Only the verified owner or existing authorized management client may reorder through `registry-ops`. A single transaction detects stale state and updates only changed ranks. Failed saves restore the previous display order. Fallback snapshots are read-only.
 
-No frontend build step is required. A pinned local Supabase Auth SDK loads only for owner access; Node development dependencies provide isolated DOM/PostgreSQL tests. Production API reorder, browser reload, and original-order restoration passed without redeployment; all business metadata remained unchanged. Owner email sign-in and native mouse/touch interaction acceptance are pending. The prior preview release remains the rollback baseline; do not publish v1.2.0 until owner acceptance passes.
+No frontend build step is required. A pinned local Supabase Auth SDK loads only for owner access; Node development dependencies provide isolated DOM/PostgreSQL tests. Production API reorder, browser reload, and original-order restoration passed without redeployment; all business metadata remained unchanged. Owner email sign-in and real mouse-grip drag/save/reload/restore passed in production after the drop-timing repair. Native card long-press and physical touch/scroll acceptance remain pending. The prior preview release remains the rollback baseline; do not publish v1.2.0 until the remaining interaction acceptance passes.

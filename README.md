@@ -65,7 +65,7 @@ Use **Owner sign in** in the footer and open the emailed link for the existing a
 
 Order is stored in nullable `product_registry.sort_order`, ascending with nulls last and a stable name fallback. Saves use only `registry-ops`; public visitors and offline snapshot views cannot reorder. A failed save restores the previous display order; reload before retrying to retrieve any newer order. Owner sessions cannot perform other Registry writes. See DEC-017 and `docs/REGISTRY_OPERATIONS.md`.
 
-Run `npm ci`, `npm test`, and `npm run validate` for local validation. Test dependencies are development-only; the static site still has no build step. The v1.2.0 release/tag remains pending production owner acceptance.
+Run `npm ci`, `npm test`, and `npm run validate` for local validation. Test dependencies are development-only; the static site still has no build step. The v1.2.0 release/tag remains pending native long-press/touch acceptance; production owner mouse-grip drag/save/reload has passed.
 
 ## Product Preview Images
 

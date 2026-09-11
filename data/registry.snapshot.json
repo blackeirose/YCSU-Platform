@@ -94,7 +94,7 @@
       "operationalStatus": "Live",
       "version": "web-v1.0.0",
       "versionSource": "git-tag",
-      "mainUrl": "https://tools.ycsu.cc/plumbingchart/",
+      "mainUrl": "https://tools.ycsu.cc/plumbing-chart/",
       "plannedUrl": null,
       "githubUrl": "https://github.com/blackeirose/arch-tools-plumbing-calculation",
       "trackerUrl": null,
@@ -103,8 +103,8 @@
       "featured": false,
       "archived": false,
       "certification": "Not Certified",
-      "lastUpdated": "2026-09-10",
-      "statusNote": "Web V1 production baseline is complete and live. Existing production validation passed browser calculation/multi-file tests and deterministic backend tests. Future preferred YCSU route is tools.ycsu.cc/plumbing-chart/ once that stable path is deployed and verified."
+      "lastUpdated": "2026-09-11",
+      "statusNote": "Web V1 production baseline is complete and live at the canonical YCSU Tools route. Existing production validation passed browser calculation/multi-file tests and deterministic backend tests."
     },
     {
       "id": "9591a4ca-1366-421a-8341-390b7875c2e0",
@@ -193,13 +193,13 @@
       "category": "AI Knowledge / Second Brain",
       "platformLayer": "Product",
       "maturity": "Planning",
-      "deployment": "Not Deployed",
+      "deployment": "Public",
       "visibility": "Public",
-      "operationalStatus": "Pending",
+      "operationalStatus": "Live",
       "version": null,
       "versionSource": "none",
-      "mainUrl": null,
-      "plannedUrl": "https://mind.ycsu.cc",
+      "mainUrl": "https://mind.ycsu.cc",
+      "plannedUrl": null,
       "githubUrl": null,
       "trackerUrl": null,
       "docsUrl": null,
@@ -208,7 +208,7 @@
       "archived": false,
       "certification": "Not Certified",
       "lastUpdated": "2026-09-11",
-      "statusNote": "Research and architecture planning in progress. Primary focus is contextual retrieval and knowledge-graph organization across ChatGPT, Gemini, and Claude history; next steps include studying/adapting the AI-Partner /3d-brain approach and defining incremental conversation sync."
+      "statusNote": "Initial YSU Mind Map web deployment is live at mind.ycsu.cc. Current work remains focused on contextual retrieval, knowledge-graph organization, source traceability, and incremental conversation synchronization."
     }
   ]
 }

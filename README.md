@@ -1,4 +1,4 @@
-# YCSU Platform — v1.1.0 "Registry Management Foundation"
+# YCSU Platform — v1.2.0 "Persistent Product Card Reordering"
 
 A registry-driven product directory and public entry point for the YCSU product ecosystem — every product, its status, and where to find it, kept current by direct authorized machine operation, not by editing this repository. **Live at [main.ycsu.cc](https://main.ycsu.cc).**
 
@@ -59,13 +59,13 @@ node scripts/snapshot-registry.mjs
 node scripts/validate-registry.mjs
 ```
 
-## Owner card ordering (v1.2 candidate)
+## Owner card ordering
 
 Use **Owner sign in** in the footer and open the emailed link for the existing authorized Supabase owner account. Drag the grip directly with a mouse, or hold a non-interactive card area for 500 ms before dragging. On touch, hold the grip for 500 ms. Release to save. Links retain their normal behavior. A focused grip also supports Arrow keys, Home, and End; Escape cancels a drag.
 
 Order is stored in nullable `product_registry.sort_order`, ascending with nulls last and a stable name fallback. Saves use only `registry-ops`; public visitors and offline snapshot views cannot reorder. A failed save restores the previous display order; reload before retrying to retrieve any newer order. Owner sessions cannot perform other Registry writes. See DEC-017 and `docs/REGISTRY_OPERATIONS.md`.
 
-Run `npm ci`, `npm test`, and `npm run validate` for local validation. Test dependencies are development-only; the static site still has no build step. The v1.2.0 release/tag remains pending native long-press/touch acceptance; production owner mouse-grip drag/save/reload has passed.
+Run `npm ci`, `npm test`, and `npm run validate` for local validation. Test dependencies are development-only; the static site still has no build step. The owner confirmed real-device drag/touch acceptance on 2026-09-11; production owner mouse-grip drag/save/reload and failure rollback have also passed.
 
 ## Product Preview Images
 

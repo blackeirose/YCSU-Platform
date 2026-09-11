@@ -67,11 +67,12 @@ The repository owner (`blackeirose` / `ysu`), any AI assistant they authorize to
 - `scripts/validate-registry.mjs` + `scripts/snapshot-registry.mjs` — offline validation and on-demand snapshot refresh of the disaster-recovery copy
 - All 5 v1.0.0 products migrated into the table with their verified v1.0.0 facts preserved (not re-guessed)
 - Governance docs: `docs/PLATFORM_MODEL.md`, `docs/DATA_LAYER.md`, `docs/REGISTRY_OPERATIONS.md`, `docs/REGISTRY_SCHEMA.md`, `docs/FUTURE_AI_CORE_HANDOFF.md`
-- Responsive card grid, light/dark theme; visual design unchanged from v1.0.0
+- Responsive 3/2/1-column card grid, light/dark theme, status-first hierarchy, and three-line Status Notes
+- Manually curated product showcase previews derived from Registry slugs at `/assets/previews/{slug}.webp`, updated only during explicit MAIN maintenance tasks by the owner or an authorized AI/development agent; no scheduled, background, deployment-triggered, or unattended screenshot automation. Live, development, and planned states use the same generic renderer. See `assets/previews/README.md` and DEC-016.
 
 ## In Development
 
-Nothing currently blocked. Next milestone is not yet scoped — see `docs/FUTURE_AI_CORE_HANDOFF.md`'s "V2+" section for the documented (not implemented) direction.
+Manual product previews are implemented as a presentation-only enhancement; production deployment state remains recorded in `DEPLOYMENT.md`. The next broader milestone is not yet scoped — see `docs/FUTURE_AI_CORE_HANDOFF.md`'s "V2+" section for the documented (not implemented) direction.
 
 ---
 
@@ -203,7 +204,7 @@ Yes — the 5 products migrated from v1.0.0 represent verified ecosystem state; 
 
 # 12. CURRENT DEVELOPMENT FOCUS
 
-v1.1.0 is released. No open work.
+v1.1.0 is released. The manual product-preview presentation enhancement is implemented; it does not change Registry data or the write architecture. Preview images are curated by the owner or an authorized AI/development agent only during explicit MAIN maintenance tasks, and the enhancement is not a claim of a new production deployment.
 
 ---
 

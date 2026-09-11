@@ -40,7 +40,7 @@ In the Netlify admin (link above) → Site configuration → Build & deploy → 
 
 **Option B — manual deploy from this machine:**
 ```bash
-cd C:\Users\ysu\Claude_Workspaces\YCSU-Platform
+cd YCSU-Platform
 netlify deploy --prod --site 9c0bd872-1f70-4468-b853-e87b9b3269d5 --dir .
 ```
 
@@ -49,14 +49,14 @@ If `netlify status` shows a project name other than `ycsu-platform-registry`, ch
 ## Redeploying the Registry Write Interface After a Code Change
 
 ```bash
-cd C:\Users\ysu\Claude_Workspaces\YCSU-Platform
+cd YCSU-Platform
 supabase functions deploy registry-ops --project-ref fzydsnxxcdllkjxwdiwn --no-verify-jwt
 ```
 
 ## Applying a New Database Migration
 
 ```bash
-cd C:\Users\ysu\Claude_Workspaces\YCSU-Platform
+cd YCSU-Platform
 supabase link --project-ref fzydsnxxcdllkjxwdiwn   # once per machine/session
 supabase db query --linked -f supabase/migrations/<new-file>.sql
 ```

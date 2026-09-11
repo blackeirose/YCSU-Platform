@@ -26,6 +26,7 @@ This file is the project decision record. For current project state, see `PROJEC
 | DEC-013 | `data/registry.snapshot.json` is disaster-recovery/audit only, one-way, manual | LOCKED |
 | DEC-014 | No-redeploy round-trip test as the v1.1.0 release gate | LOCKED |
 | DEC-015 | v1.1.0 scope frozen — direct Registry operations only, no lifecycle automation | LOCKED |
+| DEC-016 | Manual static product previews derived from Registry slugs | LOCKED |
 
 ---
 
@@ -493,3 +494,22 @@ Trade-off: full lifecycle automation (auto-verifying a product's real deployment
 ### Change Conditions
 
 Only reconsider scope in a new, explicitly-scoped milestone.
+
+---
+
+## DEC-016 — Manual Static Product Preview Images
+
+**Status:** LOCKED
+**Date:** 2026-09-11
+
+### Decision
+
+The homepage remains `Browser → index.html → Supabase product_registry → generic card renderer`. Optional preview images are manually curated and updated only as part of an explicit MAIN maintenance task at `/assets/previews/{slug}.webp`, derived from the Registry slug with no database field or per-product rendering component.
+
+Public/Live products show the image or “Preview unavailable.” Local/Internal products show a manual image or neutral fallback, always labeled DEVELOPMENT PREVIEW with the existing deployment status retained. Not Deployed products show a designed IN PROGRESS placeholder, name, and non-clickable planned domain; no screenshot is requested. Other operational states do not claim to be Live or request a screenshot.
+
+### Reasoning and consequences
+
+The owner does not need to capture previews personally. During an explicit MAIN maintenance task, an authorized AI/development agent such as Codex may open the verified production URL, select a representative current state, capture the screenshot, convert it to WebP, and update the preview asset. Manual curation describes the deliberate selection and task-scoped update, not a requirement for the owner to operate the capture tools. Product-status changes alone do not trigger screenshot updates. This avoids uncontrolled captures and keeps metadata authoritative in Supabase. Images require a frontend deployment; metadata still uses the existing no-redeploy Registry write workflow. Missing assets are normal and never block card rendering.
+
+No scheduled, background, deployment-triggered, or unattended screenshot automation is permitted. Browser capture and conversion tools may be used within an explicit MAIN maintenance task; they must not become an automatic capture service or job. Remote screenshot services, iframes, synthetic screenshots, schema changes, and frontend write logic remain outside this presentation enhancement. See `assets/previews/README.md` for capture/export and maintenance guidance.

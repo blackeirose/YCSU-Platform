@@ -20,7 +20,7 @@ const ROW_TO_PRODUCT = {
   deployment: "deployment", visibility: "visibility", operational_status: "operationalStatus",
   version: "version", version_source: "versionSource", main_url: "mainUrl",
   planned_url: "plannedUrl", github_url: "githubUrl", tracker_url: "trackerUrl",
-  docs_url: "docsUrl", roadmap_url: "roadmapUrl", featured: "featured",
+  docs_url: "docsUrl", roadmap_url: "roadmapUrl", featured: "featured", sort_order: "sortOrder",
   archived: "archived", certification: "certification", last_updated: "lastUpdated",
   status_note: "statusNote",
 };
@@ -32,7 +32,7 @@ function rowToProduct(row) {
 }
 
 const res = await fetch(
-  `${SUPABASE_URL}/rest/v1/product_registry?select=*&order=featured.desc,name.asc`,
+  `${SUPABASE_URL}/rest/v1/product_registry?select=*&order=sort_order.asc.nullslast,name.asc,id.asc`,
   { headers: { apikey: SUPABASE_ANON_KEY } },
 );
 if (!res.ok) {

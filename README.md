@@ -59,6 +59,14 @@ node scripts/snapshot-registry.mjs
 node scripts/validate-registry.mjs
 ```
 
+## Owner card ordering (v1.2 candidate)
+
+Use **Owner sign in** in the footer and open the emailed link for the existing authorized Supabase owner account. Hold a non-interactive card area or its grip for 500 ms, drag, then release to save. Links retain their normal behavior. A focused grip also supports Arrow keys, Home, and End; Escape cancels a drag.
+
+Order is stored in nullable `product_registry.sort_order`, ascending with nulls last and a stable name fallback. Saves use only `registry-ops`; public visitors and offline snapshot views cannot reorder. A failed save restores the previous display order; reload before retrying to retrieve any newer order. Owner sessions cannot perform other Registry writes. See DEC-017 and `docs/REGISTRY_OPERATIONS.md`.
+
+Run `npm ci`, `npm test`, and `npm run validate` for local validation. Test dependencies are development-only; the static site still has no build step. The v1.2.0 release/tag remains pending production owner acceptance.
+
 ## Product Preview Images
 
 Preview images are **manually curated and updated only as part of an explicit MAIN maintenance task**. The owner does not need to capture them personally: an authorized AI/development agent such as Codex may open the verified production URL, select a representative current state, capture it, convert it to WebP, and update the asset. No scheduled, background, deployment-triggered, or unattended screenshot automation is permitted. Add or replace `assets/previews/{slug}.webp`, matching the Registry slug exactly. Use a current homepage/interface screenshot, preferably WebP from a 1440 × 900 viewport (16:10); do not upscale small images. No screenshot path belongs in Supabase.

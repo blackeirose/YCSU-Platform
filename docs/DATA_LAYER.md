@@ -72,7 +72,7 @@ This means: possessing the public anon/publishable key (embedded in `index.html`
 
 ```
 GET https://fzydsnxxcdllkjxwdiwn.supabase.co/rest/v1/product_registry
-    ?select=*&archived=eq.false&order=featured.desc,name.asc
+    ?select=*&archived=eq.false&order=sort_order.asc.nullslast,name.asc,id.asc
 Header: apikey: <publishable/anon key>
 ```
 
@@ -95,3 +95,11 @@ No server, no build step — this is PostgREST, Supabase's automatic REST layer 
 - No reliance on Supabase Auth `user_metadata` for authorization (the explicit anti-pattern called out in the v1.1 brief) — authorization is a single shared secret checked in function code, not a claim on a user's session.
 - No automatic GitHub Release/tag → version sync (see `PLATFORM_MODEL.md` §5 and `FUTURE_AI_CORE_HANDOFF.md`).
 - No bidirectional sync between the snapshot file and the database.
+
+## v1.2 focused authorization extension
+
+DEC-017 adds `sort_order` and one atomic `reorder_product_registry` function. EXECUTE is revoked from PUBLIC, anon and authenticated, and granted only to service_role. The function is SECURITY INVOKER with an empty search path. The original public-read policy is unchanged.
+
+The existing Edge Function still validates the management key for CRUD. For authorize/reorder only, it also accepts the existing verified owner's Supabase Auth session after server-side `getUser` validation and an explicit UUID match. Browser sessions contain only ordinary owner-session credentials; neither `REGISTRY_API_KEY` nor service-role credentials are exposed. This supersedes the earlier section's statement that no Supabase Auth session is accepted, only for these two operations.
+
+The browser uses a pinned, locally vendored Auth SDK, lazily loaded for owner sign-in/session restoration. Email links return to the exact allowed `https://main.ycsu.cc/` URL. Tracker's existing Site URL and redirect are preserved. No new account, Auth provider, backend service, write RLS policy, or public write endpoint is added.

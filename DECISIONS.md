@@ -27,6 +27,7 @@ This file is the project decision record. For current project state, see `PROJEC
 | DEC-014 | No-redeploy round-trip test as the v1.1.0 release gate | LOCKED |
 | DEC-015 | v1.1.0 scope frozen — direct Registry operations only, no lifecycle automation | LOCKED |
 | DEC-016 | Manual static product previews derived from Registry slugs | LOCKED |
+| DEC-017 | Owner-authenticated persistent card ordering through registry-ops | ACTIVE |
 
 ---
 
@@ -513,3 +514,15 @@ Public/Live products show the image or “Preview unavailable.” Local/Internal
 The owner does not need to capture previews personally. During an explicit MAIN maintenance task, an authorized AI/development agent such as Codex may open the verified production URL, select a representative current state, capture the screenshot, convert it to WebP, and update the preview asset. Manual curation describes the deliberate selection and task-scoped update, not a requirement for the owner to operate the capture tools. Product-status changes alone do not trigger screenshot updates. This avoids uncontrolled captures and keeps metadata authoritative in Supabase. Images require a frontend deployment; metadata still uses the existing no-redeploy Registry write workflow. Missing assets are normal and never block card rendering.
 
 No scheduled, background, deployment-triggered, or unattended screenshot automation is permitted. Browser capture and conversion tools may be used within an explicit MAIN maintenance task; they must not become an automatic capture service or job. Remote screenshot services, iframes, synthetic screenshots, schema changes, and frontend write logic remain outside this presentation enhancement. See `assets/previews/README.md` for capture/export and maintenance guidance.
+
+---
+
+## DEC-017 — Owner-authenticated persistent card ordering
+
+**Status:** ACTIVE — explicitly approved by the owner on 2026-09-11.
+
+The v1.2 milestone adds persistent manual card ordering while preserving the approved card design. It narrowly extends DEC-012/DEC-015: public viewing remains unauthenticated, and the existing verified Supabase Auth owner may authorize/reorder through the existing `registry-ops` function. All other operations still require the original management key. No anon/authenticated table write policy is added; administrative secrets remain server-side.
+
+Use nullable integer `sort_order`, deterministic null-last fallback, and an atomic service-role-only SECURITY INVOKER reorder function with expected-state conflict detection. Saves change only necessary ranks, not product facts. Optimistic UI restores the prior order after a failed save. A 500 ms non-link long press, a subtle grip, and keyboard arrow/Home/End support expose this focused operation without a CMS or a separate edit page. Snapshot fallback is always read-only.
+
+The prior release remains the last known good state until owner login, production reorder/reload, and restoration of intended order pass. Recovery is to restore the prior frontend and Edge Function; the additive nullable column and inactive restricted function can remain without affecting the previous renderer. There is no need to destroy data for rollback.

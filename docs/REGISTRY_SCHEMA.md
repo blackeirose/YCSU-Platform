@@ -32,7 +32,8 @@ The typed source of truth is [`registry.schema.ts`](../registry.schema.ts) — t
 | `trackerUrl` | string \| null | Deep link into this product's own Tracker entry, if confirmed. |
 | `docsUrl` | string \| null | Link to the product's own documentation (often its `PROJECT_CONTEXT.md` on GitHub). |
 | `roadmapUrl` | string \| null | |
-| `featured` | boolean | Controls featured presentation/ordering (default `false`). |
+| `featured` | boolean | Featured presentation metadata (default `false`). Manual order uses `sortOrder`. |
+| `sortOrder` | integer or null | Manual display rank; ascending, nulls last, then deterministic name/slug fallback. |
 | `archived` | boolean | True if this entry should not appear in the default active view (default `false`). Prefer archiving over deleting — see `PLATFORM_MODEL.md` §2/§7 and `REGISTRY_OPERATIONS.md` §2.3. |
 | `certification` | enum | `Not Certified` / `YCSU Certified` — see `PLATFORM_MODEL.md` §6. |
 | `lastUpdated` | string (ISO date) | Last **meaningful** metadata change — see `REGISTRY_OPERATIONS.md` §4 for exact semantics (distinct from the DB's always-automatic `updated_at`). |
@@ -81,3 +82,9 @@ Field meanings are identical to the matching fields in `registry.schema.ts` — 
 A real example lives at [`manifests/ycsu-platform/ycsu-product.json`](../manifests/ycsu-platform/ycsu-product.json) in this repository.
 
 Do not create a second, conflicting manifest schema elsewhere — extend this one.
+
+## Manual display order (v1.2)
+
+`sort_order` is a nullable PostgreSQL integer; `sortOrder: number | null` is its external contract. Existing active products are backfilled at 10-point intervals using the previous featured/name order. New or legacy null ranks appear after explicit ranks, with name then stable slug/ID tie-breaking. Archived products remain absent from the default homepage. `featured` keeps its metadata meaning and is not overloaded as an order field.
+
+The live Registry is authoritative. The one-way snapshot includes `sortOrder`; older snapshots with no rank remain readable. Reordering is persisted exclusively through `registry-ops` and never changes version, certification, operational state, or public last-update dates.

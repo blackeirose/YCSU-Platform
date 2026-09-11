@@ -4,6 +4,6 @@
 project_id = "fzydsnxxcdllkjxwdiwn"
 
 [functions.registry-ops]
-# Auth is handled inside the function via a custom REGISTRY_API_KEY secret
-# (not a Supabase Auth session), so Supabase's own JWT verification is off.
+# Auth is checked in-function: existing management key, or a verified owner
+# Supabase Auth JWT restricted to authorize/reorder. Mixed callers require this off.
 verify_jwt = false

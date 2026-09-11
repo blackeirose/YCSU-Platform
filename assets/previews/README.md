@@ -29,7 +29,7 @@ All eight targets were opened and freshly captured during this explicit MAIN mai
 
 | Asset | Capture target | Selected state | Resolution | Size (KiB) |
 | --- | --- | --- | --- | ---: |
-| `ycsu-platform.webp` | https://main.ycsu.cc | Current production homepage; temporary pre-release self-preview | 1425 × 891 | 62.0 |
+| `ycsu-platform.webp` | https://main.ycsu.cc | New production preview-card homepage, captured after first release | 1425 × 891 | 55.2 |
 | `workflow-hub.webp` | https://hub.ycsu.cc | Current all-modules landing view | 1425 × 891 | 99.2 |
 | `ycsu-tracker.webp` | https://tracker.ycsu.cc | Cloud-synced public Card view; email input empty | 1425 × 891 | 103.3 |
 | `rachels-animal-kingdom.webp` | https://game.ycsu.cc/RaAnimalChess | Current cover with ENTER THE KINGDOM | 1440 × 900 | 230.6 |
@@ -40,6 +40,6 @@ All eight targets were opened and freshly captured during this explicit MAIN mai
 
 The Plumbing URL must retain its trailing slash. Mind Map was verified in the browser, including working search over the public synthetic graph; this verifies reachability, not a new maturity or version. ADCC remains Local Only with a DEVELOPMENT PREVIEW label and no launch link.
 
-**MAIN self-preview release requirement:** the current `ycsu-platform.webp` represents the production page before the new preview-card release. After the new UI is deployed, capture that actual production UI again, replace this one asset, commit, and redeploy the same existing MAIN site. Do not substitute a local QA screenshot for the required post-deploy capture.
+**MAIN self-preview:** freshly captured from https://main.ycsu.cc after production deploy `6aa46283940d50974f2624ce` on 2026-09-11. It shows the new preview-card UI with 8 products / 7 live / 1 in progress. This production capture replaces the temporary old-layout image and is published in the second release to the same existing site.
 
 Registry corrections were persisted through `registry-ops` on 2026-09-11 and read back before refreshing the bundled snapshot: Plumbing uses the canonical trailing-slash URL, and Mind Map is Public / Live while retaining Planning and no version. The snapshot contains eight products and validates with zero errors. Fresh captures can be byte-identical to the previous asset when the selected live interface has not changed (Rachel and Tracker in this batch).

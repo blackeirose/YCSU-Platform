@@ -4,7 +4,7 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Frontend (Netlify) — Current State (verified live 2026-08-29)
+## Frontend (Netlify) — Current State (verified live 2026-09-11)
 
 | Field | Value |
 |---|---|
@@ -15,6 +15,14 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 | Netlify subdomain | https://ycsu-platform-registry.netlify.app — live |
 | **Production URL** | **https://main.ycsu.cc — LIVE.** DNS resolved, HTTPS valid, HTTP 200, Team Protection disabled (public). |
 | Continuous deployment | **Not wired up.** GitHub push does not auto-deploy. See "Redeploying" below. |
+
+## Manual Preview Release — 2026-09-11
+
+The production frontend now renders manually curated previews for all eight current products. ADCC uses its real local development capture with an unlinked DEVELOPMENT PREVIEW label. Plumbing links to `https://tools.ycsu.cc/plumbing-chart/`; Mind Map is Public / Live and retains Planning with no version. Both corrections were persisted through `registry-ops`, read back, and included in the validated eight-product snapshot.
+
+The initial preview-card production deployment is `6aa46283940d50974f2624ce`, from merge commit `bd630439e17a5a032f9de30e9ac304548e252bf9`. The MAIN self-preview was then captured from that real production UI and included in the follow-up release. The latest published deployment is available in the existing [Netlify deployment history](https://app.netlify.com/projects/ycsu-platform-registry/deploys).
+
+The Netlify CLI stalled before creating a deployment. The release therefore used Netlify's official ZIP deployment API against the existing site ID, with a complete archive of Git-tracked files and an `_headers` file equivalent to `netlify.toml`. Local credentials, `.git`, `.netlify`, temporary capture files, and test fixtures were excluded. Production returned HTTP 200 with the three configured security headers. The Powered by Netlify badge is disabled at the site level. No new site or screenshot automation was created.
 
 ## Registry Data Layer (Supabase) — Current State (deployed 2026-08-29)
 

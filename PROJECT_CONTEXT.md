@@ -1,240 +1,61 @@
 # PROJECT_CONTEXT.md
 
-**YSU AI Development System**
-**Project Version:** v1.1.0 — "Registry Management Foundation" (released 2026-08-29)
+**YSU AI Development System**  
+**Project Version:** v1.3.0 — Owner-only Product Links (2026-09-11)
 
-This document describes the current durable context of this project. It should allow a new AI agent or developer to understand the project without relying on previous conversation history.
+## Product and current state
 
-For confirmed design or architecture decisions and their reasoning, see `DECISIONS.md`.
+YCSU Platform is the Registry-driven public product directory at https://main.ycsu.cc. Canonical code: `blackeirose/YCSU-Platform`, branch `main`. Supabase `public.product_registry` remains the runtime metadata source of truth. Eight active products render through one generic implementation. Guests browse public metadata and curated previews; only the existing owner receives Product/planned/GitHub/Tracker/Docs/Roadmap URLs and may reorder.
 
----
+v1.2.0 was released separately after YuCheng confirmed desktop and real-device touch/drag. v1.3 adds read access control while preserving ordering, layout, business facts and the management API. Release evidence lives in `DEPLOYMENT.md` and `docs/releases/`.
 
-# 1. PROJECT IDENTITY
+## Architecture and access boundary
 
-## Project Name
+Plain HTML/CSS/JavaScript, pinned Supabase Auth SDK loaded for owner access, and the existing `registry-ops` Edge Function. No frontend framework or second login system. A deterministic Node build copies approved public files into `dist` for Netlify.
 
-`YCSU Platform`
+- Guest: homepage → registry-ops `read-public` → fixed server allowlist → generic cards. Protected fields are absent, including null placeholders. URL-bearing text is redacted server-side without mutating stored metadata.
+- Owner: existing Supabase session → server `getUser(token)` and exact confirmed, non-anonymous owner UUID → `read-owner` → full records through the same renderer. Owner retains authorize/reorder but cannot perform arbitrary metadata/CRUD writes.
+- Management: existing `REGISTRY_API_KEY` permits create/update/archive/unarchive/delete/reorder. Never expose it or service_role in browser assets, source or Drive.
+- Database: RLS enabled, zero browser policies. All table and explicit column privileges revoked from PUBLIC, anon and authenticated. Direct PostgREST access is denied even to the owner's browser role. Only the Edge Function's service role reads/writes raw records; reorder RPC remains service-role-only and transactional.
 
-## Short Description
+Owner UUID: `38531f7e-e05e-473a-a587-500b1d3aebe5` (identifier, not secret). Email, user_metadata and client flags do not authorize. Signed-in non-owners remain guest-like.
 
-A registry-driven product directory and public entry point for the YCSU product ecosystem. Lists each YCSU product (Workflow Hub, Tracker, ADCC, Rachel's Animal Kingdom, and future products) with its domain, deployment status, and maturity. As of v1.1, the data lives in a Supabase table — `product_registry` — and can be created/updated/archived directly by any authorized client (e.g. ChatGPT via an API call) without editing this repository's code.
+## Data contracts
 
-## Product Type
+Schema 1.3 public camelCase fields: id, slug, name, shortName, description, category, platformLayer, maturity, deployment, visibility, operationalStatus, version, versionSource, featured, archived, certification, lastUpdated, statusNote, sortOrder. Preview paths derive from safe slugs and are not Registry metadata.
 
-Registry-driven web application / product directory
+Protected fields: mainUrl, plannedUrl, githubUrl, trackerUrl, docsUrl, roadmapUrl (snake_case in PostgreSQL). Public JSON omits them entirely. Server redaction also covers endpoint-bearing text. See `registry.schema.ts`, `assets/js/registry-public.mjs` and `docs/DATA_LAYER.md`.
 
-## Current Status
+## UI, sessions and ordering
 
-**v1.1.0 — released.** Live in production at `https://main.ycsu.cc`. The homepage is generic and Registry-driven (no per-product rendering code); the Registry itself is a Supabase table with RLS (public read, no direct write policy) and a single authenticated write interface (`registry-ops`). See `DEPLOYMENT.md` for infrastructure state, `docs/DATA_LAYER.md` for the data architecture, and `docs/REGISTRY_OPERATIONS.md` for how authorized clients operate it.
+Guests have no action links, planned URLs, preview anchors or reorder grips. Owners see available links; previews launch only valid HTTP(S) main URLs. Development previews remain unlinked.
 
----
+Supabase Auth persists its session normally. Refresh and a newly opened tab restore access while valid. Logout drops owner records from memory, restores safe public DOM and disables sorting before awaiting sign-out. Cross-tab sign-out and stale asynchronous responses are guarded. Full owner records are never stored in localStorage or a static cache.
 
-# 2. PRODUCT PURPOSE
+Nullable integer sort_order controls display, nulls last with deterministic name/slug fallback. Mouse grip drag is immediate; non-link card areas and touch grips use a 500 ms hold. Arrows/Home/End also work. Transactional saves detect stale order and change only ranks. Failed saves restore the prior display; reload before retrying. Fallback views cannot reorder.
 
-## Primary Goal
+## Fallback, build and previews
 
-Give the YCSU ecosystem a single public entry point (`main.ycsu.cc`) that shows what products exist, their current status, and where to find them — **and** let that information be kept current by direct, authorized machine operation rather than by an engineer editing source files for every routine change.
+`data/registry.public.snapshot.json` is a manually refreshed public-safe fallback, not a full backup or authority. Its script reads only read-public and never writes back. Owner backend failure leaves public cards usable without an offline owner export.
 
-## Primary User
+Run `npm run build`, `npm run validate`, then `npm test`. Deploy only dist, never the repository root. Build excludes docs, SQL, tests, manifests and full exports. The old live manifest became a fictional example; the full snapshot was removed from the current tree.
 
-The repository owner (`blackeirose` / `ysu`), any AI assistant they authorize to operate the Registry (e.g. ChatGPT), and anyone visiting `main.ycsu.cc` to find a YCSU product.
+Preview images at `assets/previews/{slug}.webp` are manually curated by the owner or an authorized agent only in explicit MAIN maintenance tasks. No scheduled, background, deployment-triggered or unattended screenshot automation. MAIN's self-preview now shows a guest-only production state. Responsive 3/2/1 columns and the disabled Netlify badge are preserved.
 
-## Core Use Case
+## Services and deployment
 
-**Visit `main.ycsu.cc` → see every YCSU product as a card (name, status, domain, deployment info) → click through to a live product, or see at a glance what's still in development.**
+Netlify existing site `ycsu-platform-registry`, ID `9c0bd872-1f70-4468-b853-e87b9b3269d5`; custom domain and HTTPS unchanged. Git continuous deployment is not configured. Manual releases use the official ZIP API with dist contents only. Supabase existing project `ysu-tool-tracker`, ref `fzydsnxxcdllkjxwdiwn`, is reused; other applications' Auth and tables are outside this milestone. GitHub is canonical for code/migrations/docs, not live metadata. Registry updates appear on fresh reads without redeployment. Namecheap DNS is unchanged.
 
-**Operationally:** *"Move Rachel to Production"* or *"Add Kuula AI Assistant"* → an authorized client calls `registry-ops` → the database updates → `main.ycsu.cc` reflects it immediately. No code edit, no commit, no redeploy. This round trip was tested and verified working at v1.1.0 release (see `DECISIONS.md` DEC-014).
+## Constraints and future direction
 
-## Out of Scope (v1.1)
+Preserve business facts and DB enum/certification/version/URL constraints. Prefer archive over delete. Set mainUrl only after verifying production; future endpoints belong in plannedUrl. Never guess health, certification or version.
 
-- Public visitor accounts; v1.2 adds only the existing owner sign-in for ordering (DEC-017)
-- Automated *discovery* of product state (GitHub Release detection, deployment health polling, webhook automation) — authorized agents still assert facts they've verified themselves
-- The AI CORE Product Registration Pipeline / Product Manifest ingestion — documented, not built (`docs/FUTURE_AI_CORE_HANDOFF.md`)
-- The full "YCSU Platform" operating framework (Platform/Management/Product layers) described in the broader product vision — this product is only the public registry UI + data layer representing it, not the framework itself
-- A user-facing admin dashboard or CMS
+This controls current MAIN runtime access, not global URL secrecy. Public architectural docs, Git history and historical deployments may mention domains. Downstream apps enforce their own access. Do not roll back to public table grants, full snapshots or repository-root deploys; retain the secure read boundary.
 
----
+Future direction only: MAIN may become authenticated-only if YuCheng chooses; TRACKER, MIND MAP and ADCC may become authenticated-only; HUB may provide public browsing with authenticated launch. No shared SSO, member roles, admin dashboard, other-app login changes, lifecycle pipeline or automatic discovery is included.
 
-# 3. CURRENT PRODUCT STATE
+## Canonical documentation and maintenance
 
-## Working Features
+Read AGENTS.md and canonical YSU AI Core first. DECISIONS.md records durable reasoning (DEC-017 reorder; DEC-018 read boundary). DEPLOYMENT.md records production evidence. DATA_LAYER, REGISTRY_OPERATIONS, REGISTRY_SCHEMA, PLATFORM_MODEL and the preview README define their contracts. Historical handoffs are not current architecture. Durable Drive package: AI Works / 03_Projects / YCSU PLATFORM.
 
-- Generic, Registry-driven card renderer (`index.html`) — no product-specific components; adding product #50 requires zero UI code changes
-- Live read path: `index.html` fetches directly from Supabase PostgREST (`product_registry`, public anon key, RLS-scoped to read-only)
-- Fallback: on fetch failure, falls back to a bundled `data/registry.snapshot.json` (never written back)
-- Write path: `registry-ops` Supabase Edge Function — authenticated via a custom secret (`REGISTRY_API_KEY`, not a Supabase Auth session), validates payloads, writes via `service_role` server-side. Supports create / update / archive / unarchive / (administrative) delete
-- Database-enforced schema: enum CHECK constraints, `mainUrl`/`plannedUrl` mutual exclusivity, `version`/`versionSource` consistency, and the mechanical part of the certification checklist — all enforced at the DB layer, not just client-side
-- `scripts/validate-registry.mjs` + `scripts/snapshot-registry.mjs` — offline validation and on-demand snapshot refresh of the disaster-recovery copy
-- All 5 v1.0.0 products migrated into the table with their verified v1.0.0 facts preserved (not re-guessed)
-- Governance docs: `docs/PLATFORM_MODEL.md`, `docs/DATA_LAYER.md`, `docs/REGISTRY_OPERATIONS.md`, `docs/REGISTRY_SCHEMA.md`, `docs/FUTURE_AI_CORE_HANDOFF.md`
-- Responsive 3/2/1-column card grid, light/dark theme, status-first hierarchy, and three-line Status Notes
-- Manually curated product showcase previews derived from Registry slugs at `/assets/previews/{slug}.webp`, updated only during explicit MAIN maintenance tasks by the owner or an authorized AI/development agent; no scheduled, background, deployment-triggered, or unattended screenshot automation. Live, development, and planned states use the same generic renderer. See `assets/previews/README.md` and DEC-016.
-
-## In Development
-
-Manual product previews are implemented as a presentation-only enhancement; production deployment state remains recorded in `DEPLOYMENT.md`. The next broader milestone is not yet scoped — see `docs/FUTURE_AI_CORE_HANDOFF.md`'s "V2+" section for the documented (not implemented) direction.
-
----
-
-# 4. ARCHITECTURE SUMMARY
-
-## Current Architecture Pattern
-
-Registry-driven static frontend + managed backend-as-a-service (Supabase). No custom server, no build step, no framework on the frontend.
-
-## Architecture Summary
-
-**Read:** `Browser → index.html → Supabase PostgREST (anon key, RLS read-only) → render cards`
-**Write:** `Authorized client → registry-ops Edge Function (secret-key auth + validation) → service_role write → product_registry`
-
-Full diagrams in `docs/DATA_LAYER.md`.
-
----
-
-# 5. TECHNOLOGY SUMMARY
-
-## Frontend / Interface
-
-Plain HTML + CSS + vanilla JS. No framework, no build step, no dependencies.
-
-## Backend
-
-Supabase Edge Function (`registry-ops`, Deno/TypeScript) — the only write path. No other backend.
-
-## Database
-
-Supabase Postgres, project `ysu-tool-tracker` (ref `fzydsnxxcdllkjxwdiwn`, reused — see `docs/DATA_LAYER.md` §1 for why), table `public.product_registry`. RLS enabled; public read policy only, no write policy for any role.
-
-## Authentication
-
-Public viewing needs no login. Management CRUD uses `REGISTRY_API_KEY`. DEC-017 adds the existing verified owner Supabase Auth session for authorize/reorder only, checked server-side by `registry-ops`; table RLS stays public-read-only.
-
----
-
-# 6. SOURCE CONTROL
-
-## Canonical Repository
-
-`https://github.com/blackeirose/YCSU-Platform`
-
-## Default Branch
-
-`main`
-
-## Repository Role
-
-Canonical source of truth for this project's **code** (frontend, Edge Function source, migrations, docs). As of v1.1, it is **not** the source of truth for Registry **data** — that's the Supabase table. `data/registry.snapshot.json` in this repo is a disaster-recovery/audit copy, refreshed on demand, not authoritative.
-
----
-
-# 7. DEPLOYMENT
-
-## Deployment Required?
-
-Yes — both the static frontend (Netlify) and the Edge Function (Supabase).
-
-## Current Deployment Platform
-
-Netlify (frontend, per `ysu-ai-core/docs/SERVICES.md` §5 default) + Supabase Edge Functions (write interface).
-
-## Production Status
-
-See `DEPLOYMENT.md` for current live URL and infrastructure state.
-
-## Deployment Relationship
-
-GitHub (`blackeirose/YCSU-Platform`, `main` branch) → manual `netlify deploy --prod` for the frontend (see `DEPLOYMENT.md` for the one-click dashboard option — not yet enabled) → `main.ycsu.cc`. Separately: `supabase functions deploy registry-ops --project-ref fzydsnxxcdllkjxwdiwn` for the write interface, and `supabase db query --linked -f <migration>` (or an eventual `supabase db push`) for schema migrations. **Routine Registry data changes require neither** — that's the entire point of v1.1.
-
----
-
-# 8. DOMAIN
-
-## Custom Domain
-
-`main.ycsu.cc` — live, DNS attached, HTTPS valid (verified 2026-08-28, reconfirmed 2026-08-29).
-
-## Domain Role
-
-Primary public entry point for the YCSU ecosystem.
-
-## DNS / Registrar
-
-Namecheap (`ycsu.cc` zone). No DNS automation exists for this zone — unchanged from v1.0.0, see `ysu-ai-core/docs/DOMAIN_REGISTRY.md` §2A.
-
----
-
-# 9. DATA AND STORAGE
-
-## Does the Product Store Persistent Data?
-
-Yes — the Supabase `product_registry` table is the runtime source of truth. `data/registry.snapshot.json` is a manually-refreshed backup/audit copy, not live data.
-
-## Storage Location
-
-Supabase Postgres (`ysu-tool-tracker` project) + a snapshot file in this repository.
-
-## Existing Data Must Be Preserved?
-
-Yes — the 5 products migrated from v1.0.0 represent verified ecosystem state; prefer `archive` over `delete` for any product that should stop appearing in the default view (see `docs/PLATFORM_MODEL.md` §2/§7).
-
----
-
-# 10. EXTERNAL SERVICES
-
-| Service | Purpose | Required? |
-|---|---|---|
-| GitHub | Canonical source control (code, not data) | Yes |
-| Netlify | Static hosting + CD for the frontend | Yes |
-| Supabase | Registry database + `registry-ops` Edge Function | Yes (new in v1.1) |
-| Namecheap | DNS for `main.ycsu.cc` | Yes, manual only |
-
----
-
-# 11. IMPORTANT CONSTRAINTS
-
-- Public MAIN remains read-only. The explicitly authorized owner may reorder through `registry-ops` (DEC-017); no direct database writes or product CRUD from the frontend.
-- Never add an INSERT/UPDATE/DELETE RLS policy for `anon` or `authenticated` on `product_registry` without a deliberate, documented decision — the current model relies on there being exactly one write path.
-- Never expose `SUPABASE_SERVICE_ROLE_KEY` or `REGISTRY_API_KEY` to the frontend or commit them to source.
-- `mainUrl` must only ever be set to a URL that has been personally verified live right now; an unverified/future domain belongs in `plannedUrl` — enforced at the database layer now, not just by convention (see `docs/REGISTRY_SCHEMA.md` §2).
-- Registry entries for products this project did not build should only be updated when their real state is verified — never guessed.
-- DNS changes to the `ycsu.cc` zone always require explicit user action.
-- Scope remains frozen per `docs/PLATFORM_MODEL.md` §8 / `docs/FUTURE_AI_CORE_HANDOFF.md`: no GitHub API sync, no AI CORE automation, no live-status polling, no public account system, no admin dashboard. The scoped owner sign-in exception is recorded in DEC-017. Do not add these without an explicit new milestone decision.
-
----
-
-# 12. CURRENT DEVELOPMENT FOCUS
-
-v1.2.0 is the reorder release. The manually curated product-preview enhancement is deployed, including eight WebP previews and removal of the Netlify badge. Preview images are curated by the owner or an authorized AI/development agent only during explicit MAIN maintenance tasks. Persistent ordering is production-verified, including the owner’s real-device confirmation on 2026-09-11.
-
----
-
-# 13. NEXT LIKELY MILESTONE
-
-Not yet scoped. `docs/FUTURE_AI_CORE_HANDOFF.md`'s "V2+" section documents (without implementing) a full product-lifecycle pipeline: GitHub → deployment → production validation → `ycsu-product.json` manifest → AI CORE verification → the same `product_registry` table v1.1 already writes to. Do not begin building that without an explicit decision to start it.
-
----
-
-# 14. PROJECT-SPECIFIC DOCUMENTATION
-
-- `AGENTS.md` — agent entry instructions
-- `PROJECT_CONTEXT.md` — this file
-- `DECISIONS.md` — confirmed durable project decisions
-- `DEPLOYMENT.md` — live deployment record (source of truth for infra state)
-- `registry.schema.ts` — typed registry schema
-- `docs/PLATFORM_MODEL.md` — governance model (layers, Product vs Utility, lifecycle, version/certification rules)
-- `docs/DATA_LAYER.md` — Supabase architecture, RLS/security model, fallback/snapshot model
-- `docs/REGISTRY_OPERATIONS.md` — the operations contract authorized clients (e.g. ChatGPT) use
-- `docs/REGISTRY_SCHEMA.md` — schema field reference + Product Manifest specification
-- `docs/FUTURE_AI_CORE_HANDOFF.md` — v1.1 (current) vs. V2+ (future) pipeline architecture
-
----
-
-# 15. MAINTENANCE RULE
-
-Update this file when product purpose, architecture, deployment, domain, services, or current development direction durably change. Registry **data** changes (a product's maturity, version, etc.) never touch this file or require a commit — use `registry-ops` per `docs/REGISTRY_OPERATIONS.md`. Run `node scripts/snapshot-registry.mjs` then `node scripts/validate-registry.mjs` periodically (e.g. before a release) to keep the disaster-recovery snapshot current and schema-valid.
-
-## v1.2 persistent ordering
-
-Persistent product ordering is merged into `main` and deployed (see `DEPLOYMENT.md`). Products use nullable integer `sort_order`, explicit ranks first and deterministic name/slug fallback. The owner signs in from the existing homepage footer, drags the grip directly with a mouse, or holds non-interactive card areas for 500 ms before dragging and releasing to save. On touch, hold the grip for 500 ms. Keyboard arrows/Home/End provide an alternative. Only the verified owner or existing authorized management client may reorder through `registry-ops`. A single transaction detects stale state and updates only changed ranks. Failed saves restore the previous display order. Fallback snapshots are read-only.
-
-No frontend build step is required. A pinned local Supabase Auth SDK loads only for owner access; Node development dependencies provide isolated DOM/PostgreSQL tests. Production API reorder, browser reload, and original-order restoration passed without redeployment; all business metadata remained unchanged. Owner email sign-in and real mouse-grip drag/save/reload/restore passed in production after the drop-timing repair. YuCheng confirmed actual-device drag/touch works on 2026-09-11, completing reorder acceptance. The previous preview release remains a historical rollback baseline.
+Update canonical docs for architecture/deployment changes. Routine facts use registry-ops without code edits/deploys. Refresh the public snapshot during explicit release maintenance; never export full owner rows to public files.

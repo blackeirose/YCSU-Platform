@@ -4,6 +4,18 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
+## v1.3 current production access boundary — 2026-09-11
+
+The current deployment uses registry-ops v5, active with custom JWT authorization (`verify_jwt=false`), and migration `20260911225043_owner_only_registry_links.sql`. Raw product_registry RLS remains enabled; PUBLIC, anon and authenticated have no table/column read or write privileges and no policies. Public reads now use registry-ops `read-public`; owner full reads use `read-owner` after exact UUID verification. Management CRUD and the service-role-only reorder transaction remain intact.
+
+Frontend candidate `90ac06b35faa7c611618a40578cd000a8537cb84` deployed as `6aa485b4d8321b4b271147c1`. Only allowlisted dist files were zipped. Build: `node scripts/build-site.mjs`; Netlify publish: `dist`. Never deploy the repository root. No-store headers apply to API and static responses. Current security evidence and release acceptance: `docs/releases/v1.3.0.md`.
+
+Verified production: public response contains 8 products and zero protected keys; requests for each of the six link columns and select=* are denied (401 with anon key). Old full snapshot, live manifest, Edge source and docs URLs return 404. Management full-read comparison confirms all business metadata unchanged by the access migration. Actual clean-browser guest DOM has zero anchors and zero grips; owner has 24 card anchors and 8 grips. Mouse reorder saved, survived reload and was restored to the initial order without a deploy. New-tab owner session restore and cross-tab logout passed. Guest responsive widths 1440/820/390 retain 3/2/1 columns without horizontal overflow; loaded images and console checked.
+
+Security advisors: intentional INFO `rls_enabled_no_policy` on product_registry reflects the closed browser boundary ([explanation](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy)); existing project-wide WARN `auth_leaked_password_protection` remains unchanged ([remediation](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)). No new exposed-table finding.
+
+Recovery must retain denied raw-table privileges and public-safe assets. Revert a UI change only within the v1.3 safe read contract, or show public fallback without owner links. Historical v1.1/v1.2 full exports and root-directory deployments are not valid recovery targets. Historical immutable deploys/Git history remain historical public artifacts; no destructive history cleanup was requested.
+
 ## Frontend (Netlify) — Current State (verified live 2026-09-11)
 
 | Field | Value |
@@ -16,7 +28,7 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 | **Production URL** | **https://main.ycsu.cc — LIVE.** DNS resolved, HTTPS valid, HTTP 200, Team Protection disabled (public). |
 | Continuous deployment | **Not wired up.** GitHub push does not auto-deploy. See "Redeploying" below. |
 
-## Manual Preview Release — 2026-09-11
+## Historical preview release — superseded by the v1.3 publish boundary
 
 The production frontend now renders manually curated previews for all eight current products. ADCC uses its real local development capture with an unlinked DEVELOPMENT PREVIEW label. Plumbing links to `https://tools.ycsu.cc/plumbing-chart/`; Mind Map is Public / Live and retains Planning with no version. Both corrections were persisted through `registry-ops`, read back, and included in the validated eight-product snapshot.
 
@@ -24,7 +36,7 @@ The initial preview-card production deployment is `6aa46283940d50974f2624ce`, fr
 
 The Netlify CLI stalled before creating a deployment. The release therefore used Netlify's official ZIP deployment API against the existing site ID, with a complete archive of Git-tracked files and an `_headers` file equivalent to `netlify.toml`. Local credentials, `.git`, `.netlify`, temporary capture files, and test fixtures were excluded. Production returned HTTP 200 with the three configured security headers. The Powered by Netlify badge is disabled at the site level. No new site or screenshot automation was created.
 
-## Registry Data Layer (Supabase) — Current State (deployed 2026-08-29)
+## Historical v1.1 data-layer record (superseded by v1.3 above)
 
 | Field | Value |
 |---|---|
@@ -49,7 +61,8 @@ In the Netlify admin (link above) → Site configuration → Build & deploy → 
 **Option B — manual deploy from this machine:**
 ```bash
 cd YCSU-Platform
-netlify deploy --prod --site 9c0bd872-1f70-4468-b853-e87b9b3269d5 --dir .
+npm run build
+netlify deploy --prod --site 9c0bd872-1f70-4468-b853-e87b9b3269d5 --dir dist
 ```
 
 If `netlify status` shows a project name other than `ycsu-platform-registry`, check `.netlify/state.json` — it should read `{"siteId": "9c0bd872-1f70-4468-b853-e87b9b3269d5"}`. (An earlier session's killed background command silently created an orphan site named `ycsu-platform` (id `45cec71d-b50f-4022-a82f-493d538de318`, no custom domain, unused) and left it linked in that file; this was found and fixed during v1.1.0 work. The orphan site itself was not successfully deleted — the Netlify CLI/API was intermittently timing out on delete calls at the time — and is a harmless but real leftover cleanup item.)
@@ -79,7 +92,7 @@ Wiring GitHub Actions to redeploy the frontend on push would normally use a `NET
 
 `REGISTRY_API_KEY` was generated by this session (a random 256-bit secret) and set directly as a Supabase Function secret via the CLI — it was never typed into a website form, never committed, and is not printed in this document.
 
-## Persistent ordering candidate — 2026-09-11
+## Historical persistent-ordering candidate — 2026-09-11
 
 Production migration `20260911215355_product_registry_sort_order.sql` adds nullable integer order and a service-role-only transactional RPC. All eight active products were backfilled in the original visual order, 10–80. Readback confirmed unchanged business metadata and `last_updated`. Existing public SELECT RLS remains; no client write policy was added.
 
@@ -89,7 +102,7 @@ Frontend candidate commit `65c1f6fc0dc032b7f5d5a0ab933885f8a705c0dc` is publishe
 
 The existing authorized management client moved Mind Map to the first position through production `registry-ops`; a fresh MAIN browser load displayed the persisted order without a deploy. A second authorized operation restored the original 10–80 order. Readback confirmed no business metadata changes. This verifies production persistence, but does not substitute for owner Auth/UI acceptance. These initial checks preceded owner acceptance; see the repair verification below for the current state. Do not create the v1.2.0 release/tag until production persistence passes. Six local tests and independent code review passed, including transactional conflicts, authorization, link exclusion, pointer capture, keyboard order and failed-save rollback. Browser QA verified responsive layouts and keyboard save/reload/rollback using an isolated local fixture; it did not verify production Auth or native touch.
 
-Rollback: restore frontend commit `20d335ca6999c75917defde305ff6a1b486e0ae4` (Netlify deploy `6aa462ff3de1603f93416599`) and redeploy that commit's original `registry-ops/index.ts` with `verify_jwt=false`. The additive column/RPC can remain unused; remove the MAIN Auth redirect only if owner login is being withdrawn. No Tracker changes are required.
+Historical v1.2 rollback (NOT valid after v1.3; do not restore public reads/full snapshots): restore frontend commit `20d335ca6999c75917defde305ff6a1b486e0ae4` (Netlify deploy `6aa462ff3de1603f93416599`) and redeploy that commit's original `registry-ops/index.ts` with `verify_jwt=false`. The additive column/RPC can remain unused; remove the MAIN Auth redirect only if owner login is being withdrawn. No Tracker changes are required.
 
 
 ### Owner acceptance repair — 2026-09-11
@@ -99,3 +112,5 @@ The owner completed email login. Production owner keyboard reorder, reload and r
 ## v1.2.0 acceptance complete — 2026-09-11
 
 YuCheng explicitly confirmed desktop and actual-device drag/touch working. Combined with production owner mouse save/reload/restore, metadata readback, failure rollback, responsive checks and independent review, this completes reorder acceptance. The release is separate from the subsequent v1.3 owner-only link feature.
+
+The v1.2.0 tag and GitHub release were published separately at commit `49e2e72` on 2026-09-11; final v1.2 deployment `6aa48245d68ee8218917534c`. The real-device acceptance above is complete, superseding the historical pending notes.

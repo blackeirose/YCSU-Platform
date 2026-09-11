@@ -90,7 +90,8 @@ export interface RegistryProduct {
 }
 
 export interface Registry {
-  schemaVersion: "1.1";
+  schemaVersion: "1.3";
+  ok: true;
   updated: string;
   products: RegistryProduct[];
 }
@@ -98,3 +99,7 @@ export interface Registry {
 /** Server-projected public metadata. Protected fields are absent, not null. */
 export type PublicRegistryProduct = Omit<RegistryProduct,
   "mainUrl" | "plannedUrl" | "githubUrl" | "trackerUrl" | "docsUrl" | "roadmapUrl">;
+
+export interface PublicRegistry extends Omit<Registry, "products"> {
+  products: PublicRegistryProduct[];
+}

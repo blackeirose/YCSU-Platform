@@ -16,9 +16,9 @@ Store each image at `/assets/previews/{slug}.webp`. The filename must match the 
 
 ## Display rules
 
-- **Public + Live:** load the static image and link the preview to a valid `mainUrl`; a missing or undecodable image shows “Preview unavailable,” never a broken-image icon.
+- **Public + Live:** show the image to everyone; only verified owners receive a valid `mainUrl` link; a missing or undecodable image shows “Preview unavailable,” never a broken-image icon.
 - **Local / Internal:** load an optional manual image with a DEVELOPMENT PREVIEW label; otherwise show a neutral development placeholder. Keep LOCAL ONLY / INTERNAL visible. Development previews are not launch links.
-- **Not Deployed:** always show IN PROGRESS, product name, and any planned domain as text. Never request an image or make the planned domain clickable.
+- **Not Deployed:** always show IN PROGRESS, product name, and (owner only) any planned domain as text. Never request an image or make the planned domain clickable.
 - **Other operational states:** show “Preview unavailable” without requesting a screenshot. Public Pending/Offline/Unknown entries retain their actual status, not a Live label.
 
 No scheduled, background, deployment-triggered, or unattended screenshot automation is permitted. Using browser capture and conversion tools during an explicit MAIN maintenance task is permitted; do not turn that workflow into an automatic capture service or job. Remote screenshot services, iframe previews, and synthetic application screenshots remain out of scope. New Registry products use the same renderer automatically; the image is the only optional manually curated visual asset. Missing previews may be supplied by the owner or an authorized agent during an explicit MAIN maintenance task.
@@ -43,3 +43,7 @@ The Plumbing URL must retain its trailing slash. Mind Map was verified in the br
 **MAIN self-preview:** freshly captured from https://main.ycsu.cc after production deploy `6aa46283940d50974f2624ce` on 2026-09-11. It shows the new preview-card UI with 8 products / 7 live / 1 in progress. This production capture replaces the temporary old-layout image and is published in the second release to the same existing site.
 
 Registry corrections were persisted through `registry-ops` on 2026-09-11 and read back before refreshing the bundled snapshot: Plumbing uses the canonical trailing-slash URL, and Mind Map is Public / Live while retaining Planning and no version. The snapshot contains eight products and validates with zero errors. Fresh captures can be byte-identical to the previous asset when the selected live interface has not changed (Rachel and Tracker in this batch).
+
+## v1.3 manual guest-safe MAIN capture — 2026-09-11
+
+MAIN now uses a selected second-row region of the verified production guest directory (ADCC, Mind Map, Fire Pump), captured after logout on deployment `6aa485b4d8321b4b271147c1`. This avoids recursively showing the older self-preview containing link text. The 1028 × 602 crop is not upscaled and uses WebP quality 88. Other previews are unchanged. This explicit maintenance action creates no screenshot automation.

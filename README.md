@@ -1,4 +1,4 @@
-# YCSU Platform — v1.2.0 "Persistent Product Card Reordering"
+# YCSU Platform — v1.3.0 "Owner-only Product Links"
 
 A registry-driven product directory and public entry point for the YCSU product ecosystem — every product, its status, and where to find it, kept current by direct authorized machine operation, not by editing this repository. **Live at [main.ycsu.cc](https://main.ycsu.cc).**
 
@@ -10,9 +10,9 @@ See `PROJECT_CONTEXT.md` and `DECISIONS.md` for the durable project record, `doc
 index.html                The site — fetches live from Supabase, falls back to the snapshot below
 assets/previews/            Optional manual WebP previews named by Registry slug
 registry.schema.ts          Canonical typed schema (documentation contract, no build step)
-netlify.toml                 Netlify build/publish config (pure static, no build step)
+netlify.toml                 Netlify build/publish config (allowlisted dist output)
 data/
-  registry.public.snapshot.json     Disaster-recovery/audit copy — NOT the runtime source of truth
+  registry.public.snapshot.json     Public-safe fallback copy — NOT the runtime source of truth
 scripts/
   validate-registry.mjs      Manual (non-CI) validator for the snapshot
   snapshot-registry.mjs      Refreshes the snapshot from the live Registry (DB -> file, one-way)
@@ -52,7 +52,7 @@ No commit, no redeploy — `main.ycsu.cc` reflects it on next page load. `REGIST
 
 **Schema or table changes** (adding a field, changing a constraint) are a real code change: edit `registry.schema.ts`, add a migration under `supabase/migrations/`, update `registry-ops` if the write contract changes, and update `docs/REGISTRY_SCHEMA.md` / `docs/REGISTRY_OPERATIONS.md`.
 
-**Refreshing the disaster-recovery snapshot** (occasionally, e.g. before a release):
+**Refreshing the public-safe fallback snapshot** (occasionally, e.g. before a release):
 
 ```bash
 node scripts/snapshot-registry.mjs
@@ -71,7 +71,7 @@ Run `npm ci`, `npm test`, and `npm run validate` for local validation. Test depe
 
 Preview images are **manually curated and updated only as part of an explicit MAIN maintenance task**. The owner does not need to capture them personally: an authorized AI/development agent such as Codex may open the verified production URL, select a representative current state, capture it, convert it to WebP, and update the asset. No scheduled, background, deployment-triggered, or unattended screenshot automation is permitted. Add or replace `assets/previews/{slug}.webp`, matching the Registry slug exactly. Use a current homepage/interface screenshot, preferably WebP from a 1440 × 900 viewport (16:10); do not upscale small images. No screenshot path belongs in Supabase.
 
-Public/Live cards show the image or a graceful fallback; Local/Internal cards show DEVELOPMENT PREVIEW; Not Deployed cards show IN PROGRESS with a non-clickable planned domain. The grid uses 3 columns on desktop, 2 on tablet, and 1 on mobile. See [the manual workflow and display rules](assets/previews/README.md). Image changes require the existing frontend deployment process; metadata updates continue to appear without redeployment.
+Public/Live cards show the image or a graceful fallback; Local/Internal cards show DEVELOPMENT PREVIEW; Not Deployed cards show IN PROGRESS; planned domains are owner-only and non-clickable. The grid uses 3 columns on desktop, 2 on tablet, and 1 on mobile. See [the manual workflow and display rules](assets/previews/README.md). Image changes require the existing frontend deployment process; metadata updates continue to appear without redeployment.
 
 ## Deployment
 

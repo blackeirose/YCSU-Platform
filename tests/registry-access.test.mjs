@@ -35,7 +35,7 @@ test('database denies raw reads and writes to anon and every authenticated user 
  await db.exec('create role anon;create role authenticated;create role service_role bypassrls;');
  await db.exec(await readFile(new URL('../supabase/migrations/20260829000001_product_registry.sql',import.meta.url),'utf8'));
  await db.exec('grant all on public.product_registry to anon,authenticated,service_role;grant select(main_url) on public.product_registry to public,anon,authenticated;');
- await db.exec(await readFile(new URL('../supabase/migrations/20260911223740_owner_only_registry_links.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../supabase/migrations/20260911225043_owner_only_registry_links.sql',import.meta.url),'utf8'));
  for(const role of ['anon','authenticated']){
  await db.exec('set role '+role);
  for(const sql of ['select name,main_url from public.product_registry','select main_url from public.product_registry','select * from public.product_registry','update public.product_registry set name=\'bad\'','truncate public.product_registry'])await assert.rejects(db.exec(sql),/permission denied/);

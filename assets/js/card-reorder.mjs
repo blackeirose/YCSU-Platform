@@ -17,7 +17,7 @@ export function createCardReorder({ grid, status, save }) {
       const button = document.createElement('button');
       button.type = 'button'; button.className = 'reorder-handle'; button.textContent = '⠿';
       button.setAttribute('aria-label', `Reorder ${card.querySelector('h2').textContent}`);
-      button.title = 'Hold to drag. Arrow keys move one position; Home/End move to first/last.';
+      button.title = 'Drag to reorder with a mouse; hold on touch. Arrow keys move one position; Home/End move to first/last.';
       // A dedicated handle is the only interactive element permitted to initiate drag.
       button.addEventListener('keydown', async event => {
         if (!allowed || busy || gesture) return;
@@ -31,7 +31,7 @@ export function createCardReorder({ grid, status, save }) {
     });
   }
   async function persist(next, previous, focusId) {
-    if (next.join() === previous.join()) return;
+    if (next.join() === previous.join()) { announce('Order unchanged.'); return; }
     busy = true; handles(); apply(next); announce('Saving order…');
     try {
       const result = await save(orderPayload(products, next));
@@ -81,7 +81,7 @@ export function createCardReorder({ grid, status, save }) {
     const g = gesture;
     if (!g || !allowed || busy) return clear();
     const rect = g.card.getBoundingClientRect();
-    g.active = true; g.before = ids(); g.offsetX = g.x-rect.left; g.offsetY = g.y-rect.top;
+    g.active = true; g.before = ids(); g.offsetX = g.startX-rect.left; g.offsetY = g.startY-rect.top;
     g.ghost = g.card.cloneNode(true); g.ghost.classList.add('reorder-ghost');
     g.ghost.setAttribute('aria-hidden','true'); g.ghost.inert = true;
     g.ghost.style.width = `${rect.width}px`; g.ghost.style.height = `${rect.height}px`;
@@ -97,19 +97,36 @@ export function createCardReorder({ grid, status, save }) {
     const target = event.target instanceof Element ? event.target : null;
     const card = target?.closest('.card');
     if (!card || (target.closest(INTERACTIVE) && !target.closest('.reorder-handle'))) return;
-    gesture = { card, pointerId:event.pointerId, x:event.clientX, y:event.clientY, startX:event.clientX, startY:event.clientY, active:false };
+    const mouse = event.pointerType === 'mouse';
+    const directGrip = mouse && !!target.closest('.reorder-handle');
+    // Prevent mouse text selection/native dragging before the hold completes.
+    // Touch keeps native scrolling until a long press actually activates reorder.
+    if (mouse) { event.preventDefault(); if (directGrip) target.closest('.reorder-handle').focus({preventScroll:true}); }
+    gesture = { card, directGrip, pointerId:event.pointerId, x:event.clientX, y:event.clientY, startX:event.clientX, startY:event.clientY, active:false };
     gesture.timer = setTimeout(start, 500);
   });
   window.addEventListener('pointermove', event => {
     const g = gesture; if (!g || event.pointerId !== g.pointerId) return;
     g.x = event.clientX; g.y = event.clientY;
-    if (!g.active && Math.hypot(g.x-g.startX,g.y-g.startY) > 8) clear();
-    else if (g.active) event.preventDefault();
+    const distance = Math.hypot(g.x-g.startX,g.y-g.startY);
+    if (!g.active && g.directGrip && distance >= 4) { clearTimeout(g.timer); start(); }
+    else if (!g.active && distance > 8) clear();
+    if (gesture?.active) event.preventDefault();
   }, {passive:false});
   // This listener must be registered before the gesture (including on iOS).
   grid.addEventListener('touchmove', event => { if (gesture?.active) event.preventDefault(); }, {passive:false});
+  grid.addEventListener('dragstart', event => { if (gesture) event.preventDefault(); });
   grid.addEventListener('touchstart', event => { if (event.touches.length > 1) clear(); }, {passive:true});
-  window.addEventListener('pointerup', event => { if (event.pointerId === gesture?.pointerId) clear(true); });
+  window.addEventListener('pointerup', event => {
+    if (event.pointerId !== gesture?.pointerId) return;
+    if (gesture.active) {
+      // The final movement may arrive between animation frames. Commit the actual
+      // release position instead of cancelling its pending hit test.
+      gesture.x = event.clientX; gesture.y = event.clientY;
+      cancelAnimationFrame(frame); position();
+    }
+    clear(true);
+  });
   window.addEventListener('pointercancel', () => clear());
   grid.addEventListener('lostpointercapture', event => {
     if (event.target === grid && event.pointerId === gesture?.pointerId) clear();

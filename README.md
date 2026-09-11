@@ -61,7 +61,7 @@ node scripts/validate-registry.mjs
 
 ## Owner card ordering (v1.2 candidate)
 
-Use **Owner sign in** in the footer and open the emailed link for the existing authorized Supabase owner account. Hold a non-interactive card area or its grip for 500 ms, drag, then release to save. Links retain their normal behavior. A focused grip also supports Arrow keys, Home, and End; Escape cancels a drag.
+Use **Owner sign in** in the footer and open the emailed link for the existing authorized Supabase owner account. Drag the grip directly with a mouse, or hold a non-interactive card area for 500 ms before dragging. On touch, hold the grip for 500 ms. Release to save. Links retain their normal behavior. A focused grip also supports Arrow keys, Home, and End; Escape cancels a drag.
 
 Order is stored in nullable `product_registry.sort_order`, ascending with nulls last and a stable name fallback. Saves use only `registry-ops`; public visitors and offline snapshot views cannot reorder. A failed save restores the previous display order; reload before retrying to retrieve any newer order. Owner sessions cannot perform other Registry writes. See DEC-017 and `docs/REGISTRY_OPERATIONS.md`.
 

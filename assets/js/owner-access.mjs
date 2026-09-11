@@ -35,7 +35,7 @@ export async function setupOwnerAccess({ url, key, setAllowed, isLive, status })
       if (!response.ok || !(await response.json()).canReorder) throw new Error('Owner access required.');
       if (revision !== authRevision) return;
       verified = true; toolbar.hidden = false; setAllowed(isLive());
-      status.textContent = isLive() ? 'Hold a card or its grip to reorder. Arrow keys also work on the grip.' : 'Offline snapshot: reordering unavailable. Reload to reconnect.';
+      status.textContent = isLive() ? 'Drag the grip with a mouse, or hold a non-link card area for half a second. On touch, hold the grip. Arrow keys also work.' : 'Offline snapshot: reordering unavailable. Reload to reconnect.';
       if (dialog.open) dialog.close();
     } catch {
       if (revision !== authRevision) return;

@@ -526,3 +526,18 @@ The v1.2 milestone adds persistent manual card ordering while preserving the app
 Use nullable integer `sort_order`, deterministic null-last fallback, and an atomic service-role-only SECURITY INVOKER reorder function with expected-state conflict detection. Saves change only necessary ranks, not product facts. Optimistic UI restores the prior order after a failed save. A 500 ms non-link long press, a subtle grip, and keyboard arrow/Home/End support expose this focused operation without a CMS or a separate edit page. Snapshot fallback is always read-only.
 
 The prior release remains the last known good state until owner login, production reorder/reload, and restoration of intended order pass. Recovery is to restore the prior frontend and Edge Function; the additive nullable column and inactive restricted function can remain without affecting the previous renderer. There is no need to destroy data for rollback.
+
+
+## DEC-018 — Public metadata and owner-only links
+
+**Status:** ACTIVE — explicitly requested by YuCheng on 2026-09-11 for v1.3.0.
+
+MAIN remains publicly browsable. The existing exact Supabase Auth owner UUID is the only browser identity allowed to retrieve Product links or reorder. This supersedes the public full-record reads in DEC-012/DEC-016 and extends DEC-017 with read-only owner access; no other browser write capability is added.
+
+The existing registry-ops Edge Function exposes read-public and read-owner. Public reads return a fixed field allowlist with URL-bearing text redacted server-side; protected URL fields are absent. Full reads require the existing server-side getUser UUID verification or management key. All table and column privileges for PUBLIC/anon/authenticated are revoked, the public SELECT policy is removed, and RLS remains enabled. Only the existing service role accesses raw rows behind this boundary. No extra service, view, definer function or Auth system is introduced.
+
+Only a public-safe snapshot is committed and deployed. Static publishing uses an explicit dist allowlist, excluding source docs, migrations, manifests and old full exports. Owner data remains memory-only and uses no-store responses; logout clears it immediately and invalidates pending reads. Current public architectural docs and historical commits/deploys may already disclose domains; these changes enforce MAIN's current runtime access contract, not global URL secrecy or authentication for downstream products.
+
+v1.2.0 is the accepted historical baseline. Recovery for v1.3 must retain raw-table denial and public-safe static artifacts; prefer a public-only fallback if owner reads fail. Restoring old public grants or a full snapshot would reverse the authorized boundary and is not a routine rollback.
+
+Future identity targets are planning only: MAIN may become authenticated-only by a later owner decision; TRACKER, MIND MAP and ADCC may become authenticated-only; HUB may keep public browsing with authenticated launch. None of those apps is changed here.

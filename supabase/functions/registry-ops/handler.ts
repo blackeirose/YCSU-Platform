@@ -1,4 +1,5 @@
-// YCSU Platform v1.2 — Registry Write Interface ("registry-ops")
+import { registryResponse } from "../../../assets/js/registry-public.mjs";
+// YCSU Platform v1.3 — Registry Write Interface ("registry-ops")
 //
 // This is the ONLY write path into public.product_registry. The table has
 // no INSERT/UPDATE/DELETE RLS policy for anon or authenticated roles — this
@@ -129,7 +130,7 @@ return async (req: Request) => {
   const authHeader = req.headers.get("authorization") ?? "";
   const providedKey = authHeader.replace(/^Bearer\s+/i, "");
   const isManager = !!expectedKey && providedKey === expectedKey;
-  if (!providedKey) return json({ ok: false, error: "unauthorized" }, 401);
+
 
   let body: Record<string, unknown>;
   try {
@@ -152,7 +153,15 @@ return async (req: Request) => {
     getEnv("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
-  // The existing verified owner may ONLY authorize/reorder. Every other operation
+  // Public caller options cannot broaden this server-owned projection.
+  if (operation === "read-public") {
+    if (Object.keys(body).some(k => k !== "operation")) return json({ok:false,error:"Unsupported public read options"},400);
+    const {data: rows,error} = await supabase.from("product_registry").select("*").eq("archived",false).order("sort_order",{nullsFirst:false}).order("name").order("id");
+    if(error) return json({ok:false,error:"Registry read unavailable"},503);
+    return json(registryResponse(rows));
+  }
+  if (!providedKey) return json({ ok: false, error: "unauthorized" }, 401);
+  // The existing verified owner may ONLY authorize/reorder/read-owner. Every other operation
   // still requires REGISTRY_API_KEY. Never trust client claims or user_metadata.
   if (!isManager) {
     const { data: authData, error: authError } = await supabase.auth.getUser(providedKey);
@@ -161,11 +170,16 @@ return async (req: Request) => {
         !authData.user.email_confirmed_at || authData.user.is_anonymous) {
       return json({ ok: false, error: "owner access required" }, 403);
     }
-    if (operation !== "reorder" && operation !== "authorize") {
-      return json({ ok: false, error: "this session may only reorder products" }, 403);
+    if (operation !== "reorder" && operation !== "authorize" && operation !== "read-owner") {
+      return json({ ok: false, error: "this session may only read and reorder products" }, 403);
     }
   }
-  if (operation === "authorize") return json({ ok: true, canReorder: true });
+  if (operation === "authorize") return json({ ok: true, canReorder: true, canReadLinks: true });
+  if (operation === "read-owner") {
+    const {data: rows,error} = await supabase.from("product_registry").select("*").eq("archived",false).order("sort_order",{nullsFirst:false}).order("name").order("id");
+    if(error) return json({ok:false,error:"Registry read unavailable"},503);
+    return json(registryResponse(rows,true));
+  }
 
   if (operation === "reorder") {
     const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

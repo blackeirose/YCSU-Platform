@@ -1,16 +1,6 @@
-/**
- * YCSU Platform — Product Registry Schema (v1.1)
- *
- * This is the canonical, typed definition of a Registry entry. As of v1.1
- * the runtime source of truth is the Supabase `product_registry` table (see
- * docs/DATA_LAYER.md); this file — plus data/registry.snapshot.json and
- * scripts/validate-registry.mjs — remains the type contract and offline
- * correctness check. `index.html` fetches the live table directly and maps
- * each row onto this shape client-side (no build step).
- *
- * See docs/REGISTRY_SCHEMA.md for field-by-field explanation and
- * docs/REGISTRY_OPERATIONS.md for how authorized clients (e.g. ChatGPT)
- * create/update/archive records against this schema.
+/** Canonical owner/full Registry schema; public API omits protected links.
+ * Runtime reads use registry-ops; data/registry.public.snapshot.json is public-only.
+ * See docs/DATA_LAYER.md and docs/REGISTRY_SCHEMA.md for enforced v1.3 access.
  */
 
 /** Which conceptual layer of the YCSU Platform architecture this entry belongs to.
@@ -104,3 +94,7 @@ export interface Registry {
   updated: string;
   products: RegistryProduct[];
 }
+
+/** Server-projected public metadata. Protected fields are absent, not null. */
+export type PublicRegistryProduct = Omit<RegistryProduct,
+  "mainUrl" | "plannedUrl" | "githubUrl" | "trackerUrl" | "docsUrl" | "roadmapUrl">;

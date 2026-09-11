@@ -1,3 +1,15 @@
+# v1.3 read-access contract (current)
+
+POST the existing registry-ops endpoint with JSON {"operation":"read-public"} for public metadata. No user session is required. Extra selectors or request options are rejected; the server returns only the public field allowlist in DATA_LAYER.md, with all protected fields absent and URL-bearing text redacted. Raw PostgREST reads are no longer available to browser roles.
+
+POST {"operation":"read-owner"} with the existing owner Supabase access token for full active records. The server validates getUser and the exact existing owner UUID, never email or user_metadata. All responses use Cache-Control: no-store. authorize returns canReorder and canReadLinks only after the same validation. Non-owner authenticated sessions cannot obtain links or reorder.
+
+Browser owner capabilities are authorize, read-owner and reorder only. read-public is safe for everyone. Existing management-secret CRUD below remains unchanged. This read extension does not permit owner browser create/update/archive/delete.
+
+Manual snapshot refresh now writes only data/registry.public.snapshot.json through read-public. A current full Registry export must never be committed or deployed. Historical architectural examples below are documentation, not runtime exports.
+
+---
+
 # REGISTRY_OPERATIONS.md
 
 **YCSU Platform — Registry Operations Contract (v1.2)**

@@ -116,3 +116,10 @@ The owner completed email login. Production owner keyboard reorder, reload and r
 YuCheng explicitly confirmed desktop and actual-device drag/touch working. Combined with production owner mouse save/reload/restore, metadata readback, failure rollback, responsive checks and independent review, this completes reorder acceptance. The release is separate from the subsequent v1.3 owner-only link feature.
 
 The v1.2.0 tag and GitHub release were published separately at commit `49e2e72` on 2026-09-11; final v1.2 deployment `6aa48245d68ee8218917534c`. The real-device acceptance above is complete, superseding the historical pending notes.
+
+
+## v1.4 OTP candidate — not deployed / not released
+
+Production remains the verified v1.3 deployment `6aa489b6f0b74e7b1f8b75f6`. The OTP feature is isolated on `feat/mobile-email-otp`. No production Auth, Registry, Edge Function, DNS or frontend changes were saved for this candidate. Supabase Dashboard inspection confirmed Custom SMTP OFF, sender/host/username empty, OTP length 8, expiry 3600 seconds, link-only passwordless template; shared Site URL is Tracker and MAIN's redirect is allowed. The owner reports an existing Resend service, but this project is not connected to it.
+
+Local candidate build and all 17 tests pass. Independent source review passes after a stale OTP/session race fix. An isolated browser fixture passed 390/820/1440 responsive checks, code entry/incorrect-code feedback, owner-control enablement and logout removal. These simulated tests do not establish real email delivery or physical mobile acceptance. Release remains gated on actual SMTP setup, six-digit policy/template verification, real desktop OTP, owner mobile app-switch/return/verify/refresh and valid-session reopen checks. Roll back candidate UI to v1.3 if needed; preserve the existing secure Registry boundary and Magic Link compatibility.

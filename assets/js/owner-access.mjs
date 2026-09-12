@@ -1,6 +1,7 @@
+import { setupEmailOtp } from './email-otp.mjs';
 /** Existing Supabase owner session; no custom owner flag or Registry management secret. */
 export async function setupOwnerAccess({url,key,setAllowed,isLive,status,onOwnerData=()=>{},onGuest=()=>{}}) {
- const dialog=document.getElementById('owner-dialog'),form=document.getElementById('owner-form');
+ const dialog=document.getElementById('owner-dialog');
  const button=document.getElementById('owner-access'),toolbar=document.getElementById('reorder-toolbar'),message=document.getElementById('owner-message');
  let client,clientPromise,session=null,verified=false,revision=0,pending;
  function revoke(){
@@ -8,11 +9,11 @@ export async function setupOwnerAccess({url,key,setAllowed,isLive,status,onOwner
  }
  async function request(operation,token,signal){
   const r=await fetch(`${url}/functions/v1/registry-ops`,{method:'POST',headers:{apikey:key,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({operation}),cache:'no-store',signal});
-  if(!r.ok)throw new Error('Owner request denied');return r.json();
+  if(!r.ok){const error=new Error('Owner request denied');error.status=r.status;throw error;}return r.json();
  }
  async function validateSession(next){
   revoke();const current=revision;session=next;button.textContent=next?'Sign out':'Owner sign in';
-  if(!next)return;
+  if(!next)return 'guest';
   const controller=new AbortController();pending=controller;
   try{
    const auth=await request('authorize',next.access_token,controller.signal);
@@ -23,10 +24,12 @@ export async function setupOwnerAccess({url,key,setAllowed,isLive,status,onOwner
    verified=true;onOwnerData(data);toolbar.hidden=false;setAllowed(isLive());
    status.textContent='Drag the grip with a mouse, or hold a non-link card area for half a second. On touch, hold the grip. Arrow keys also work.';
    if(dialog.open)dialog.close();
-  }catch{
+   return 'owner';
+  }catch(error){
    if(current!==revision)return;
    verified=false;setAllowed(false);onGuest();toolbar.hidden=true;
    // Non-owners browse the same safe metadata as guests.
+   return error.status===403?'non-owner':'unavailable';
   }
  }
  async function loadClient(){
@@ -44,22 +47,21 @@ export async function setupOwnerAccess({url,key,setAllowed,isLive,status,onOwner
   })();
   try{return await clientPromise;}catch(error){clientPromise=null;throw error;}
  }
+ const otp=setupEmailOtp({dialog,loadClient,validateSession:next=>{
+  // Auth events are authoritative: an old verification response must not
+  // resurrect a session superseded by sign-out or another tab's identity.
+  if(!next||session?.access_token!==next.access_token)return 'stale';
+  return validateSession(next);
+ }});
  button.addEventListener('click',async()=>{
   button.disabled=true;
   try{
    if(session){
-    revoke();session=null;button.textContent='Owner sign in';
+    revoke();otp.reset();session=null;button.textContent='Owner sign in';
     const c=await loadClient();await c.auth.signOut({scope:'local'});
-   }else{await loadClient();message.textContent='';dialog.showModal();}
+   }else{await loadClient();otp.open();}
   }catch{message.textContent='Sign-in could not load. Please try again.';dialog.showModal();}
   finally{button.disabled=false;}
- });
- document.getElementById('owner-close').addEventListener('click',()=>dialog.close());
- form.addEventListener('submit',async event=>{
-  event.preventDefault();const submit=form.querySelector('[type=submit]');submit.disabled=true;
-  try{const c=await loadClient();const {error}=await c.auth.signInWithOtp({email:document.getElementById('owner-email').value.trim(),options:{shouldCreateUser:false,emailRedirectTo:location.origin+'/'}});if(error)throw error;message.textContent='Check your email for a sign-in link. Open it to return here and enable owner links and reordering.';}
-  catch{message.textContent='Unable to send a sign-in link. Check your email address or try again later.';}
-  finally{submit.disabled=false;}
  });
  let remembered=false;try{remembered=!!localStorage.getItem('ycsu-main-owner-session');}catch{}
  if(remembered||/(?:access_token|error_description)=/.test(location.hash)){

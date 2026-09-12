@@ -35,3 +35,16 @@ This protects MAIN's current Registry API, DOM and static runtime files. It does
 Keep base-table denial and public-safe artifacts during recovery; a public-only UI is the safe fallback. Do not roll back by restoring the old open SELECT or full static snapshot.
 
 The Supabase security advisor previously reported only project-wide leaked-password protection disabled. This task does not change passwords or Tracker Auth settings. Run the advisor again after deployment and record its current result in DEPLOYMENT.md.
+
+
+## v1.4 Auth UX candidate (not deployed)
+
+The candidate replaces the MAIN request-link form with email → Send sign-in code → one six-digit field → Verify. Requests use `signInWithOtp({email, options:{shouldCreateUser:false, emailRedirectTo:location.origin+'/'}})`; verification uses `verifyOtp({email, token, type:'email'})`. The pinned 2.116.0 SDK persists its normal session and emits SIGNED_IN. Only the existing trusted registry-ops UUID check grants links/reorder. Email is an authentication credential, never an owner authorization rule. Standard session refresh, URL-based Magic Link compatibility and immediate logout remain enabled.
+
+The UI supports numeric inputmode, one-time-code autocomplete, leading-zero paste, Enter submission, 16px-or-larger inputs and 48px primary controls. A 60-second client resend cooldown reduces accidental duplicates; Supabase remains authoritative for abuse limits. Invalid/expired/used codes share a safe message; network/rate-limit errors remain retryable. Code/email form state is cleared on close/completion and never stored by the UI. Late verification results cannot override newer sign-out or identity events.
+
+Deployment prerequisites observed on 2026-09-11: this exact Supabase project's Custom SMTP is disabled and sender/host/user fields are empty; the default passwordless email is link-only; OTP length is 8 and expiry is 3600 seconds. Existing Resend must be configured on this project via Authentication → Emails → SMTP Settings. Use a verified sender, smtp.resend.com:465 and username resend; complete confidential authentication directly in the dashboard, never in these documents. Change Email OTP length to 6 before releasing the UI. `supabase/templates/magic-link.html` is the reviewed proposed Token + ConfirmationURL body; it has NOT been applied. Other email templates remain untouched.
+
+The shared Site URL is https://tracker.ycsu.cc/, not MAIN. The allowlist already includes https://main.ycsu.cc/ and https://tracker.ycsu.cc/. Preserve the shared fallback and all other redirects; MAIN explicitly supplies its own redirect and typed OTP verification does not redirect. Do not change Tracker to satisfy a MAIN-only UX task.
+
+References: [Supabase passwordless email](https://supabase.com/docs/guides/auth/auth-email-passwordless), [Resend SMTP for Supabase](https://resend.com/docs/send-with-supabase-smtp). Real desktop delivery, the owner's physical mobile same-browser workflow, and browser-reopen acceptance remain required before v1.4 release.

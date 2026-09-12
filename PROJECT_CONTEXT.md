@@ -59,3 +59,8 @@ Future direction only: MAIN may become authenticated-only if YuCheng chooses; TR
 Read AGENTS.md and canonical YSU AI Core first. DECISIONS.md records durable reasoning (DEC-017 reorder; DEC-018 read boundary). DEPLOYMENT.md records production evidence. DATA_LAYER, REGISTRY_OPERATIONS, REGISTRY_SCHEMA, PLATFORM_MODEL and the preview README define their contracts. Historical handoffs are not current architecture. Durable Drive package: AI Works / 03_Projects / YCSU PLATFORM.
 
 Update canonical docs for architecture/deployment changes. Routine facts use registry-ops without code edits/deploys. Refresh the public snapshot during explicit release maintenance; never export full owner rows to public files.
+
+
+## v1.4 candidate — Mobile Email OTP Sign-In
+
+The separate `feat/mobile-email-otp` branch adds a two-stage request/verify flow using existing Supabase Auth and server UUID authorization (DEC-019). Production remains v1.3.0 until SMTP delivery and real-mobile acceptance pass. The shared project currently has Custom SMTP disabled, no sender/host/username configured, a link-only default template and an 8-digit OTP setting. The existing Resend service must be connected to this exact project; the planned configuration is six digits with Token plus the existing Magic Link fallback. No credentials belong in source/Drive/chat. The shared Tracker Site URL remains unchanged; MAIN's exact redirect is already allowed. See `docs/releases/v1.4.0.md` for candidate acceptance status and `docs/DATA_LAYER.md` for the Auth contract.

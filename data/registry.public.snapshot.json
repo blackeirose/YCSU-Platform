@@ -14,7 +14,7 @@
       "deployment": "Public",
       "visibility": "Public",
       "operationalStatus": "Live",
-      "version": "v1.3.0",
+      "version": "v1.4.0",
       "versionSource": "github-release",
       "featured": true,
       "archived": false,

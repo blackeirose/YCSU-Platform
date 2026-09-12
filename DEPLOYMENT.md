@@ -118,13 +118,16 @@ YuCheng explicitly confirmed desktop and actual-device drag/touch working. Combi
 The v1.2.0 tag and GitHub release were published separately at commit `49e2e72` on 2026-09-11; final v1.2 deployment `6aa48245d68ee8218917534c`. The real-device acceptance above is complete, superseding the historical pending notes.
 
 
-## v1.4 accepted OTP candidate — release publication follows
+## v1.4 accepted OTP candidate and release
 
 Candidate source `42d25f191de950730343697b9b065ae45657d241` is deployed as `6aa49a34fa3641ec6784ecbb`, ready at 2026-09-12 00:17:57 UTC. HTML, owner-access, email-otp and CSS SHA256 match the reviewed dist. Public read still returns eight safe products; a direct protected-column read is denied. A clean production browser shows the six-digit form, no guest links/grips and no console errors. The last accepted release/LKG remains v1.3.0 (`6aa489b6f0b74e7b1f8b75f6`).
 
 The owner configured Resend Custom SMTP. Dashboard readback confirmed it enabled with smtp.resend.com. OTP length changed from 8 to 6 and persisted across reload; expiry remains 3600 seconds. The reviewed Token + ConfirmationURL email body and subject Your YCSU sign-in code were saved and reloaded successfully. One explicitly authorized sign-in request to the existing owner returned 200 and YuCheng confirmed a six-digit email. No credentials were read/displayed. Shared Site URL remains Tracker; MAIN and Tracker redirects and other email templates were not changed.
 
-All 17 local tests and independent source review passed. Isolated browser UI checks passed at 390/820/1440. YuCheng confirmed actual mobile same-browser OTP verification, links, reorder and session refresh/reopen; new desktop-tab owner restoration also passed; no v1.4 tag/release or Registry version update yet. Do not confuse a candidate deployment with a new LKG. Recovery uses the v1.3 frontend while preserving the secure Registry boundary and compatible Magic Link email fallback.
+All 17 local tests and independent source review passed. Isolated browser UI checks passed at 390/820/1440. YuCheng confirmed actual mobile same-browser OTP verification, links, reorder and session refresh/reopen; new desktop-tab owner restoration also passed; the subsequent v1.4 release is recorded below. Do not confuse a candidate deployment with a new LKG. Recovery uses the v1.3 frontend while preserving the secure Registry boundary and compatible Magic Link email fallback.
 
 
 Fresh desktop OTP acceptance also passed: YuCheng signed out, requested a new six-digit code and successfully signed in. Desktop and physical-mobile acceptance are complete; final publication/version/deploy records follow below.
+
+
+GitHub v1.4.0 published at accepted merge `8e3052382dfec453ba92444a5e08d613a4366fc6` on 2026-09-12 00:30:45 UTC. MAIN Registry now reads v1.4.0 / github-release / lastUpdated 2026-09-11. Public before/after comparison found only MAIN version changed; current owner-selected ordering is preserved in the refreshed public-safe snapshot.

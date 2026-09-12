@@ -4,6 +4,12 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
+## Current production — v1.4.0 Mobile Email OTP Sign-In
+
+Final production deployment: `6aa49d8b2ef630b94b973b22`, ready/published 2026-09-12 00:32:12 UTC from source `bc3f715` (accepted runtime unchanged). All 18 public runtime files match dist SHA256. Public Registry validates eight products and MAIN v1.4.0; direct protected-column read returns 401; source docs, email template and former full snapshot return 404. Clean guest DOM has 8 cards, 0 product anchors and 0 card buttons; owner reload has 24 anchors and 8 reorder buttons. Both show v1.4.0 with zero console errors; guest has no overflow or Netlify badge. Only MAIN version changed in the before/after public metadata comparison. User-selected ordering is preserved.
+
+v1.4.0 is now the accepted current production release. Secure v1.3 rollback deployment: `6aa489b6f0b74e7b1f8b75f6`; retain RLS/privilege denial, public-safe artifacts and the compatible email link fallback during recovery.
+
 ## v1.3 secure release baseline — 2026-09-11
 
 Final release deploy: **`6aa489b6f0b74e7b1f8b75f6`**, ready/published 2026-09-11 23:07:35 UTC. HTML, owner module, MAIN preview and public snapshot SHA256 match dist. MAIN Registry version is v1.3.0 / github-release. Tag v1.3.0 points to accepted source commit `a0c07ff`; subsequent release-record/snapshot commit contains the final Registry version. Release: https://github.com/blackeirose/YCSU-Platform/releases/tag/v1.3.0.

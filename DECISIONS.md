@@ -28,6 +28,8 @@ This file is the project decision record. For current project state, see `PROJEC
 | DEC-015 | v1.1.0 scope frozen — direct Registry operations only, no lifecycle automation | LOCKED |
 | DEC-016 | Manual static product previews derived from Registry slugs | LOCKED |
 | DEC-017 | Owner-authenticated persistent card ordering through registry-ops | ACTIVE |
+| DEC-018 | Server-enforced owner-only Product links and public-safe reads | ACTIVE |
+| DEC-019 | Six-digit mobile email OTP with unchanged owner authorization | ACTIVE |
 
 ---
 

@@ -63,4 +63,9 @@ Update canonical docs for architecture/deployment changes. Routine facts use reg
 
 ## v1.4 candidate — Mobile Email OTP Sign-In
 
-The separate `feat/mobile-email-otp` branch adds a two-stage request/verify flow using existing Supabase Auth and server UUID authorization (DEC-019). The released baseline remains v1.3.0. After SMTP/configuration and desktop delivery are verified, a controlled candidate deploy may enable real-mobile acceptance; only after that passes may v1.4 be merged/tagged/released. The shared project currently has Custom SMTP disabled, no sender/host/username configured, a link-only default template and an 8-digit OTP setting. The existing Resend service must be connected to this exact project; the planned configuration is six digits with Token plus the existing Magic Link fallback. No credentials belong in source/Drive/chat. The shared Tracker Site URL remains unchanged; MAIN's exact redirect is already allowed. See `docs/releases/v1.4.0.md` for candidate acceptance status and `docs/DATA_LAYER.md` for the Auth contract.
+The separate `feat/mobile-email-otp` branch adds a two-stage request/verify flow using existing Supabase Auth and server UUID authorization (DEC-019). A controlled candidate is now live at MAIN, deployment `6aa49a34fa3641ec6784ecbb`; released baseline remains v1.3.0 until real-mobile acceptance and final release checks pass.
+
+The owner configured existing Resend on this exact project. SMTP enabled/host readback passed; OTP length is now 6 (expiry remains 3600 seconds), and the saved passwordless template includes Token plus the existing Magic Link fallback. A request returned 200 and YuCheng confirmed receiving six digits. No SMTP credentials were read or displayed. The shared Tracker Site URL and both allowed redirects remain unchanged. See `docs/releases/v1.4.0.md` for acceptance evidence and `docs/DATA_LAYER.md` for the Auth contract.
+
+
+Physical mobile acceptance passed: the owner confirmed OTP login, links, sorting and session persistence after refresh/reopen. Fresh desktop tab owner restoration also passed. Final release bookkeeping follows these accepted runtime checks.

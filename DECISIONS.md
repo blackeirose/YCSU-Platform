@@ -545,12 +545,12 @@ Future identity targets are planning only: MAIN may become authenticated-only by
 
 ## DEC-019 — Mobile email OTP with unchanged owner authorization
 
-**Status:** APPROVED for v1.4; controlled candidate deployed, real-mobile acceptance passed; final release checks in progress.
+**Status:** ACTIVE — accepted for v1.4.0.
 **Date:** 2026-09-11
 
 The owner explicitly requested a six-digit Email OTP flow so mobile users can return to their original browser instead of depending on a Magic Link opening the correct browser context. Reuse pinned supabase-js 2.116.0: signInWithOtp with shouldCreateUser:false and the explicit MAIN redirect, then verifyOtp with email/token/type=email. Use one numeric-keypad/autofill-compatible field, a 60-second resend cooldown and safe errors. Do not store OTPs or create a custom login/session system.
 
-Supabase Auth establishes the session; registry-ops still checks the exact existing owner UUID. Non-owners gain no links, ordering or writes. A delayed OTP result must match the newest Auth-event session before owner validation, preserving cross-tab sign-out and identity changes. The existing Magic Link callback support remains; the proposed email template includes both Token and ConfirmationURL.
+Supabase Auth establishes the session; registry-ops still checks the exact existing owner UUID. Non-owners gain no links, ordering or writes. A delayed OTP result must match the newest Auth-event session before owner validation, preserving cross-tab sign-out and identity changes. The existing Magic Link callback support remains; the deployed email template includes both Token and ConfirmationURL.
 
 This project is shared with Tracker. Its Site URL is currently https://tracker.ycsu.cc/ and both Tracker and MAIN redirects are allowed. Keep that shared fallback unchanged; MAIN already sends emailRedirectTo: location.origin + '/'. OTP verification requires no redirect. No other app, Registry architecture, grants or owner permission changes are included.
 
@@ -558,3 +558,5 @@ Inspection found Custom SMTP disabled with empty sender/host/username, a link-on
 
 
 YuCheng subsequently confirmed physical-mobile OTP login, product links, card ordering and session persistence across refresh/browser reopen. A fresh desktop tab also restored the existing owner session. This satisfies the required real-mobile acceptance before release.
+
+YuCheng also confirmed a fresh desktop request/code/login succeeds after signing out. All requested owner desktop/mobile acceptance checkpoints are complete. Release this as v1.4.0 separately from v1.3.0.

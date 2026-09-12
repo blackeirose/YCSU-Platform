@@ -37,9 +37,9 @@ Keep base-table denial and public-safe artifacts during recovery; a public-only 
 The Supabase security advisor previously reported only project-wide leaked-password protection disabled. This task does not change passwords or Tracker Auth settings. Run the advisor again after deployment and record its current result in DEPLOYMENT.md.
 
 
-## v1.4 Auth UX candidate (controlled production deployment; release pending)
+## v1.4 Auth UX — accepted email OTP
 
-The candidate replaces the MAIN request-link form with email → Send sign-in code → one six-digit field → Verify. Requests use `signInWithOtp({email, options:{shouldCreateUser:false, emailRedirectTo:location.origin+'/'}})`; verification uses `verifyOtp({email, token, type:'email'})`. The pinned 2.116.0 SDK persists its normal session and emits SIGNED_IN. Only the existing trusted registry-ops UUID check grants links/reorder. Email is an authentication credential, never an owner authorization rule. Standard session refresh, URL-based Magic Link compatibility and immediate logout remain enabled.
+The flow replaces the MAIN request-link form with email → Send sign-in code → one six-digit field → Verify. Requests use `signInWithOtp({email, options:{shouldCreateUser:false, emailRedirectTo:location.origin+'/'}})`; verification uses `verifyOtp({email, token, type:'email'})`. The pinned 2.116.0 SDK persists its normal session and emits SIGNED_IN. Only the existing trusted registry-ops UUID check grants links/reorder. Email is an authentication credential, never an owner authorization rule. Standard session refresh, URL-based Magic Link compatibility and immediate logout remain enabled.
 
 The UI supports numeric inputmode, one-time-code autocomplete, leading-zero paste, Enter submission, 16px-or-larger inputs and 48px primary controls. A 60-second client resend cooldown reduces accidental duplicates; Supabase remains authoritative for abuse limits. Invalid/expired/used codes share a safe message; network/rate-limit errors remain retryable. Code/email form state is cleared on close/completion and never stored by the UI. Late verification results cannot override newer sign-out or identity events.
 
@@ -47,4 +47,4 @@ Deployment prerequisites observed on 2026-09-11: this exact Supabase project's C
 
 The shared Site URL is https://tracker.ycsu.cc/, not MAIN. The allowlist already includes https://main.ycsu.cc/ and https://tracker.ycsu.cc/. Preserve the shared fallback and all other redirects; MAIN explicitly supplies its own redirect and typed OTP verification does not redirect. Do not change Tracker to satisfy a MAIN-only UX task.
 
-References: [Supabase passwordless email](https://supabase.com/docs/guides/auth/auth-email-passwordless), [Resend SMTP for Supabase](https://resend.com/docs/send-with-supabase-smtp). Real delivery is confirmed. The owner confirmed physical-mobile same-browser OTP login, product links, sorting and session persistence after refresh/reopen. A new desktop production tab restored the existing owner session. Fresh desktop OTP verification is the remaining test checkpoint.
+References: [Supabase passwordless email](https://supabase.com/docs/guides/auth/auth-email-passwordless), [Resend SMTP for Supabase](https://resend.com/docs/send-with-supabase-smtp). Real delivery is confirmed. The owner confirmed physical-mobile same-browser OTP login, product links, sorting and session persistence after refresh/reopen. A new desktop production tab restored the existing owner session. YuCheng also confirmed fresh desktop OTP request and login after signing out.

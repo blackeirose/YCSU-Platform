@@ -1,7 +1,7 @@
 # PROJECT_CONTEXT.md
 
 **YSU AI Development System**
-**Project Version:** v1.3.0 — Owner-only Product Links (2026-09-11)
+**Project Version:** v1.4.0 — Mobile Email OTP Sign-In (2026-09-11)
 
 ## Product and current state
 
@@ -61,11 +61,8 @@ Read AGENTS.md and canonical YSU AI Core first. DECISIONS.md records durable rea
 Update canonical docs for architecture/deployment changes. Routine facts use registry-ops without code edits/deploys. Refresh the public snapshot during explicit release maintenance; never export full owner rows to public files.
 
 
-## v1.4 candidate — Mobile Email OTP Sign-In
+## v1.4 — Mobile Email OTP Sign-In
 
-The separate `feat/mobile-email-otp` branch adds a two-stage request/verify flow using existing Supabase Auth and server UUID authorization (DEC-019). A controlled candidate is now live at MAIN, deployment `6aa49a34fa3641ec6784ecbb`; released baseline remains v1.3.0 until real-mobile acceptance and final release checks pass.
+MAIN uses a two-stage six-digit email/code flow with existing Supabase Auth and exact server UUID authorization (DEC-019). The owner configured Resend on this exact project. OTP length is 6 (expiry 3600 seconds); the passwordless template includes Token and retains ConfirmationURL for Magic Link compatibility. No SMTP credentials were read or placed in source/chat.
 
-The owner configured existing Resend on this exact project. SMTP enabled/host readback passed; OTP length is now 6 (expiry remains 3600 seconds), and the saved passwordless template includes Token plus the existing Magic Link fallback. A request returned 200 and YuCheng confirmed receiving six digits. No SMTP credentials were read or displayed. The shared Tracker Site URL and both allowed redirects remain unchanged. See `docs/releases/v1.4.0.md` for acceptance evidence and `docs/DATA_LAYER.md` for the Auth contract.
-
-
-Physical mobile acceptance passed: the owner confirmed OTP login, links, sorting and session persistence after refresh/reopen. Fresh desktop tab owner restoration also passed. Final release bookkeeping follows these accepted runtime checks.
+YuCheng confirmed fresh desktop OTP login and physical-mobile original-browser login, product links, sorting and session persistence after refresh/browser reopen. A new desktop production tab also restored the existing owner. All 17 local tests and independent source review passed. The shared Tracker Site URL, allowed redirects and other apps remain unchanged. See DEPLOYMENT.md and docs/releases/v1.4.0.md for release records.

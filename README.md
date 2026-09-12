@@ -1,4 +1,4 @@
-# YCSU Platform — v1.3.0 "Owner-only Product Links"
+# YCSU Platform — v1.4.0 "Mobile Email OTP Sign-In"
 
 A registry-driven product directory and public entry point for the YCSU product ecosystem — every product, its status, and where to find it, kept current by direct authorized machine operation, not by editing this repository. **Live at [main.ycsu.cc](https://main.ycsu.cc).**
 
@@ -82,3 +82,8 @@ See `DEPLOYMENT.md` for the live URL, Netlify site details, Supabase project/fun
 Public visitors receive product metadata with protected URL fields absent, non-clickable previews, no action links and no reorder controls. The existing owner session unlocks full links and ordering after server UUID validation. Logout removes them immediately. Direct raw-table reads are denied for every browser role; all reads use registry-ops. See DEC-018 and docs/DATA_LAYER.md.
 
 Only dist may be deployed. It excludes manifests, docs, SQL, tests and full exports. The public snapshot validator rejects protected fields and URL-bearing values. Public Git history/architectural docs can still mention YCSU domains; this feature controls the current MAIN runtime interface, not access to downstream products.
+
+
+## v1.4 six-digit email sign-in
+
+Owner sign-in now requests a six-digit email code to enter in the original browser. The single input supports numeric keyboards, one-time-code autofill, paste and Enter; resend has a 60-second cooldown. Existing UUID-based authorization, session persistence, immediate logout and Magic Link compatibility remain. Desktop and physical-mobile acceptance passed; see docs/releases/v1.4.0.md.

@@ -15,3 +15,14 @@
 .owner-dialog input { display:block; width:100%; margin:8px 0 16px; padding:10px; border:1px solid var(--card-border); border-radius:6px; color:var(--text); background:var(--bg); }
 .owner-dialog button[type=submit] { padding:10px 16px; border:1px solid var(--accent-dim); border-radius:6px; color:var(--text); background:var(--bg-elev); cursor:pointer; }
 button:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+
+.owner-dialog { max-height:calc(100dvh - 32px); overflow:auto; }
+.owner-dialog h3 { font-size:16px; margin:0 0 8px; }
+.owner-dialog input { min-height:48px; font:inherit; font-size:16px; }
+.owner-dialog button { min-height:44px; font:inherit; }
+.owner-dialog button[type=submit] { width:100%; min-height:48px; font-size:16px; }
+.owner-dialog button:disabled { cursor:default; opacity:.55; }
+.owner-secondary-actions { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px; margin-top:8px; }
+#owner-code { font-family:ui-monospace,monospace; font-size:24px; letter-spacing:.3em; }
+#owner-sent-email { overflow-wrap:anywhere; }
+#owner-message:empty { display:none; }

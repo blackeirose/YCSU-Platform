@@ -398,10 +398,21 @@
   <p>Sign in to open product links and arrange the cards. Everyone can browse product information.</p>
   <form id="owner-form">
     <label for="owner-email">Email</label>
-    <input id="owner-email" type="email" autocomplete="email" required />
-    <button type="submit">Send sign-in link</button>
-    <button type="button" id="owner-close" class="owner-button">Cancel</button>
+    <input id="owner-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
+    <button type="submit" id="owner-send">Send sign-in code</button>
   </form>
+  <form id="owner-code-form" hidden>
+    <h3>Enter verification code</h3>
+    <p>We sent a 6-digit code to <strong id="owner-sent-email"></strong>.</p>
+    <label for="owner-code">Verification code</label>
+    <input id="owner-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" enterkeyhint="done" aria-describedby="owner-message" required />
+    <button type="submit" id="owner-verify">Verify code</button>
+    <div class="owner-secondary-actions">
+      <button type="button" id="owner-resend" class="owner-button">Resend code</button>
+      <button type="button" id="owner-change-email" class="owner-button">Change email</button>
+    </div>
+  </form>
+  <button type="button" id="owner-close" class="owner-button">Close</button>
   <p id="owner-message" role="status" aria-live="polite"></p>
 </dialog>
 <script type="module">

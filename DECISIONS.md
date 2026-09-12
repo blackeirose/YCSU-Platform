@@ -541,3 +541,22 @@ Only a public-safe snapshot is committed and deployed. Static publishing uses an
 v1.2.0 is the accepted historical baseline. Recovery for v1.3 must retain raw-table denial and public-safe static artifacts; prefer a public-only fallback if owner reads fail. Restoring old public grants or a full snapshot would reverse the authorized boundary and is not a routine rollback.
 
 Future identity targets are planning only: MAIN may become authenticated-only by a later owner decision; TRACKER, MIND MAP and ADCC may become authenticated-only; HUB may keep public browsing with authenticated launch. None of those apps is changed here.
+
+
+## DEC-019 — Mobile email OTP with unchanged owner authorization
+
+**Status:** ACTIVE — accepted for v1.4.0.
+**Date:** 2026-09-11
+
+The owner explicitly requested a six-digit Email OTP flow so mobile users can return to their original browser instead of depending on a Magic Link opening the correct browser context. Reuse pinned supabase-js 2.116.0: signInWithOtp with shouldCreateUser:false and the explicit MAIN redirect, then verifyOtp with email/token/type=email. Use one numeric-keypad/autofill-compatible field, a 60-second resend cooldown and safe errors. Do not store OTPs or create a custom login/session system.
+
+Supabase Auth establishes the session; registry-ops still checks the exact existing owner UUID. Non-owners gain no links, ordering or writes. A delayed OTP result must match the newest Auth-event session before owner validation, preserving cross-tab sign-out and identity changes. The existing Magic Link callback support remains; the deployed email template includes both Token and ConfirmationURL.
+
+This project is shared with Tracker. Its Site URL is currently https://tracker.ycsu.cc/ and both Tracker and MAIN redirects are allowed. Keep that shared fallback unchanged; MAIN already sends emailRedirectTo: location.origin + '/'. OTP verification requires no redirect. No other app, Registry architecture, grants or owner permission changes are included.
+
+Inspection found Custom SMTP disabled with empty sender/host/username, a link-only default template, and email OTP length 8 (expiry 3600 seconds). At that initial inspection, the owner's existing Resend service was not configured on this Supabase project. The owner subsequently configured existing Resend on this project. SMTP enabled/host readback passed, OTP length was changed to 6 and read back after reload, and the reviewed token-plus-link subject/body were saved and read back. One explicitly authorized OTP request returned 200; YuCheng confirmed receiving exactly six digits. No SMTP credential was read, displayed or transferred into chat. Preserve unrelated email templates and redirect settings. Do not deploy the six-digit UI until SMTP, the six-digit setting and real desktop delivery are verified. A controlled candidate deployment then enables the owner's real MAIN mobile acceptance. Do not merge, tag, publish v1.4 or replace the v1.3 LKG until that same-browser mobile acceptance passes. The released v1.3 frontend remains the recovery baseline. Controlled OTP candidate deployment `6aa49a34fa3641ec6784ecbb` is live; only OTP length and the passwordless email subject/body were changed by this agent. Shared redirects and unrelated templates remain unchanged.
+
+
+YuCheng subsequently confirmed physical-mobile OTP login, product links, card ordering and session persistence across refresh/browser reopen. A fresh desktop tab also restored the existing owner session. This satisfies the required real-mobile acceptance before release.
+
+YuCheng also confirmed a fresh desktop request/code/login succeeds after signing out. All requested owner desktop/mobile acceptance checkpoints are complete. Release this as v1.4.0 separately from v1.3.0.

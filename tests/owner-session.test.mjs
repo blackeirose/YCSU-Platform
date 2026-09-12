@@ -1,7 +1,7 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {JSDOM} from 'jsdom';import {setupOwnerAccess} from '../assets/js/owner-access.mjs';
+import {readFileSync} from 'node:fs';import test from 'node:test';import assert from 'node:assert/strict';import {JSDOM} from 'jsdom';import {setupOwnerAccess} from '../assets/js/owner-access.mjs';
 const tick=()=>new Promise(r=>setTimeout(r,10));
 test('owner hydration, immediate logout, stale full-read rejection and cross-tab sign-out',async()=>{
- const dom=new JSDOM(`<button id="owner-access"></button><div id="reorder-toolbar"><span id="status"></span></div><dialog id="owner-dialog"><form id="owner-form"><input id="owner-email"><button type="submit"></button></form><button id="owner-close"></button><p id="owner-message"></p></dialog>`,{url:'https://main.example.invalid'});
+ const dom=new JSDOM(readFileSync(new URL('../index.html',import.meta.url),'utf8'),{url:'https://main.example.invalid'});
  const w=dom.window;Object.assign(globalThis,{window:w,document:w.document,location:w.location,localStorage:w.localStorage});
  w.localStorage.setItem('ycsu-main-owner-session','standard SDK session fixture');
  let callback,ownerData=null,allowed=false,delayRead=false,resolveRead,signoutStarted=false,resolveSignout,config;
@@ -16,7 +16,7 @@ test('owner hydration, immediate logout, stale full-read rejection and cross-tab
  if(delayRead)return new Promise(r=>{resolveRead=()=>r(answer())});return answer();
  };
  try{
- await setupOwnerAccess({url:'https://backend.example.invalid',key:'public-key',setAllowed:v=>{allowed=v},isLive:()=>true,status:w.document.getElementById('status'),onOwnerData:d=>{ownerData=d},onGuest:()=>{ownerData=null}});
+ await setupOwnerAccess({url:'https://backend.example.invalid',key:'public-key',setAllowed:v=>{allowed=v},isLive:()=>true,status:w.document.getElementById('reorder-status'),onOwnerData:d=>{ownerData=d},onGuest:()=>{ownerData=null}});
  assert.ok(ownerData);assert.equal(allowed,true);assert.equal(config.auth.persistSession,true);assert.equal(config.auth.storageKey,'ycsu-main-owner-session');
  delayRead=true;callback('TOKEN_REFRESHED',session);await tick();assert.equal(ownerData,null);
  w.document.getElementById('owner-access').click();assert.equal(ownerData,null);assert.equal(allowed,false);

@@ -1,7 +1,7 @@
 # PROJECT_CONTEXT.md
 
 **YSU AI Development System**
-**Project Version:** v1.3.0 — Owner-only Product Links (2026-09-11)
+**Project Version:** v1.4.0 — Mobile Email OTP Sign-In (2026-09-11)
 
 ## Product and current state
 
@@ -59,3 +59,10 @@ Future direction only: MAIN may become authenticated-only if YuCheng chooses; TR
 Read AGENTS.md and canonical YSU AI Core first. DECISIONS.md records durable reasoning (DEC-017 reorder; DEC-018 read boundary). DEPLOYMENT.md records production evidence. DATA_LAYER, REGISTRY_OPERATIONS, REGISTRY_SCHEMA, PLATFORM_MODEL and the preview README define their contracts. Historical handoffs are not current architecture. Durable Drive package: AI Works / 03_Projects / YCSU PLATFORM.
 
 Update canonical docs for architecture/deployment changes. Routine facts use registry-ops without code edits/deploys. Refresh the public snapshot during explicit release maintenance; never export full owner rows to public files.
+
+
+## v1.4 — Mobile Email OTP Sign-In
+
+MAIN uses a two-stage six-digit email/code flow with existing Supabase Auth and exact server UUID authorization (DEC-019). The owner configured Resend on this exact project. OTP length is 6 (expiry 3600 seconds); the passwordless template includes Token and retains ConfirmationURL for Magic Link compatibility. No SMTP credentials were read or placed in source/chat.
+
+YuCheng confirmed fresh desktop OTP login and physical-mobile original-browser login, product links, sorting and session persistence after refresh/browser reopen. A new desktop production tab also restored the existing owner. All 17 local tests and independent source review passed. The shared Tracker Site URL, allowed redirects and other apps remain unchanged. See DEPLOYMENT.md and docs/releases/v1.4.0.md for release records.

@@ -137,3 +137,8 @@ Fresh desktop OTP acceptance also passed: YuCheng signed out, requested a new si
 
 
 GitHub v1.4.0 published at accepted merge `8e3052382dfec453ba92444a5e08d613a4366fc6` on 2026-09-12 00:30:45 UTC. MAIN Registry now reads v1.4.0 / github-release / lastUpdated 2026-09-11. Public before/after comparison found only MAIN version changed; current owner-selected ordering is preserved in the refreshed public-safe snapshot.
+
+
+## UMS manual preview maintenance — 2026-09-13
+
+Explicit owner request: replace UMS development-preview placeholder with the actual Draft 0.3 interface screenshot. Source `f2c464ebda178a0da2528cc70f51638069582e4d`; deployed `6aa73f14dcefc0bfdb32050d`; prior deployment `6aa49d8b2ef630b94b973b22` is the rollback. Only `/assets/previews/ums.webp` differs from the previous published file manifest (path case normalized for Netlify). Build, public snapshot validation and all 17 existing tests passed. The candidate image decoded in the authorized browser; after publication every public asset hash matched the staged build, and the real MAIN UMS card displayed the new image with DEVELOPMENT PREVIEW. No Registry/Tracker metadata, auth, status or other preview changed. Evidence: docs/releases/ums-preview-2026-09-13.json.

@@ -1,0 +1,24 @@
+{
+  "baseline": "6aa49d8b2ef630b94b973b22",
+  "source_commit": "f2c464ebda178a0da2528cc70f51638069582e4d",
+  "preview": "6aa73f14dcefc0bfdb32050d",
+  "url": "https://6aa73f14dcefc0bfdb32050d--ycsu-platform-registry.netlify.app",
+  "published": "6aa73f14dcefc0bfdb32050d",
+  "live_hashes_verified": true,
+  "asset": "assets/previews/ums.webp",
+  "image_dimensions": [
+    1028,
+    828
+  ],
+  "image_bytes": 41724,
+  "only_deployed_change": "Added UMS preview asset; every pre-existing file matched baseline",
+  "validation": {
+    "build": "pass",
+    "public_snapshot": "pass",
+    "tests": "17/17 pass",
+    "candidate_image_browser": "decoded and visually inspected",
+    "production_card_browser": "UMS image displayed in card; DEVELOPMENT PREVIEW retained",
+    "production_asset_hashes": "all match"
+  },
+  "metadata_changes": false
+}

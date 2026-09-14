@@ -47,3 +47,9 @@ Registry corrections were persisted through `registry-ops` on 2026-09-11 and rea
 ## v1.3 manual guest-safe MAIN capture — 2026-09-11
 
 MAIN now uses a selected second-row region of the verified production guest directory (ADCC, Mind Map, Fire Pump), captured after logout on deployment `6aa485b4d8321b4b271147c1`. This avoids recursively showing the older self-preview containing link text. The 1028 × 602 crop is not upscaled and uses WebP quality 88. Other previews are unchanged. This explicit maintenance action creates no screenshot automation.
+
+## UMS manual preview — 2026-09-13
+
+Added `ums.webp` during the owner's explicit MAIN preview-maintenance request. Captured the real signed-in production UI at https://tools.ycsu.cc/UMS/ (Draft 0.3): connected same-computer processor, public-video input including LinkedIn, and the previously completed public Me at the zoo sample with Drive actions. No credentials, account email, private document, or visible Drive URL is included. Source screenshot is 1028 x 828; exported to WebP quality 88 without upscaling or synthetic UI changes. The standard top-aligned card crop and DEVELOPMENT PREVIEW / INTERNAL labels remain unchanged. Registry metadata, permissions and all other preview assets are unchanged.
+
+The public fallback snapshot in Git was aligned byte-for-byte with the already-published snapshot before staging, so the deployment changes only `/assets/previews/ums.webp`. No Registry write or fallback-data change is introduced by this maintenance.

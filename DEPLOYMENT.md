@@ -4,7 +4,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — v1.4.0 Mobile Email OTP Sign-In
+## Current production — verified 2026-09-16
+
+Source `f2c464ebda178a0da2528cc70f51638069582e4d`, Netlify deployment `6aa73f14dcefc0bfdb32050d`, ready/published 2026-09-14 00:27:27.812 UTC. Product release remains v1.4.0; the only subsequent runtime change is the manually curated UMS preview. Final owner-only link security acceptance is **PASS / CLOSED**. All 19 served files match the reviewed build; the live public Registry has 11 products. See [final acceptance and evidence limits](docs/releases/owner-links-security-acceptance-2026-09-16.md).
+
+## v1.4.0 accepted release baseline — Mobile Email OTP Sign-In
 
 Final production deployment: `6aa49d8b2ef630b94b973b22`, ready/published 2026-09-12 00:32:12 UTC from source `bc3f715` (accepted runtime unchanged). All 18 public runtime files match dist SHA256. Public Registry validates eight products and MAIN v1.4.0; direct protected-column read returns 401; source docs, email template and former full snapshot return 404. Clean guest DOM has 8 cards, 0 product anchors and 0 card buttons; owner reload has 24 anchors and 8 reorder buttons. Both show v1.4.0 with zero console errors; guest has no overflow or Netlify badge. Only MAIN version changed in the before/after public metadata comparison. User-selected ordering is preserved.
 
@@ -142,3 +146,7 @@ GitHub v1.4.0 published at accepted merge `8e3052382dfec453ba92444a5e08d613a4366
 ## UMS manual preview maintenance — 2026-09-13
 
 Explicit owner request: replace UMS development-preview placeholder with the actual Draft 0.3 interface screenshot. Source `f2c464ebda178a0da2528cc70f51638069582e4d`; deployed `6aa73f14dcefc0bfdb32050d`; prior deployment `6aa49d8b2ef630b94b973b22` is the rollback. Only `/assets/previews/ums.webp` differs from the previous published file manifest (path case normalized for Netlify). Build, public snapshot validation and all 17 existing tests passed. The candidate image decoded in the authorized browser; after publication every public asset hash matched the staged build, and the real MAIN UMS card displayed the new image with DEVELOPMENT PREVIEW. No Registry/Tracker metadata, auth, status or other preview changed. Evidence: docs/releases/ums-preview-2026-09-13.json.
+
+## Owner-only Product Links security closeout — 2026-09-16
+
+PASS / CLOSED. Production remains source f2c464ebda178a0da2528cc70f51638069582e4d, Netlify deployment 6aa73f14dcefc0bfdb32050d. Fresh readback matched all 19 served runtime files; Edge Function v5 source matched the reviewed repository. All 47 HTTP checks and 17 regression tests passed; live RLS/grants, isolated DOM with current data, user-confirmed production owner/guest/logout/incognito behavior and independent source review passed. No runtime or deployment change was required. Detailed evidence and browser-tool limitations: docs/releases/owner-links-security-acceptance-2026-09-16.md.

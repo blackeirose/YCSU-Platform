@@ -5,9 +5,9 @@
 
 ## Product and current state
 
-YCSU Platform is the Registry-driven public product directory at https://main.ycsu.cc. Canonical code: `blackeirose/YCSU-Platform`, branch `main`. Supabase `public.product_registry` remains the runtime metadata source of truth. Eight active products render through one generic implementation. Guests browse public metadata and curated previews; only the existing owner receives Product/planned/GitHub/Tracker/Docs/Roadmap URLs and may reorder.
+YCSU Platform is the Registry-driven public product directory at https://main.ycsu.cc. Canonical code: `blackeirose/YCSU-Platform`, branch `main`. Supabase `public.product_registry` remains the runtime metadata source of truth. Active products render through one generic implementation. Guests browse public metadata and curated previews; only the existing owner receives Product/planned/GitHub/Tracker/Docs/Roadmap URLs and may reorder.
 
-v1.2.0 was released separately after YuCheng confirmed desktop and real-device touch/drag. v1.3 adds read access control while preserving ordering, layout, business facts and the management API. Release evidence lives in `DEPLOYMENT.md` and `docs/releases/`.
+v1.2.0 was released separately after YuCheng confirmed desktop and real-device touch/drag. v1.3 adds read access control while preserving ordering, layout, business facts and the management API. Release evidence lives in `DEPLOYMENT.md` and `docs/releases/`. Owner-only Product Links is CLOSED / COMPLETE after final security acceptance on 2026-09-16; see `docs/releases/owner-links-security-acceptance-2026-09-16.md` for the current production evidence and explicit verification limits.
 
 ## Architecture and access boundary
 

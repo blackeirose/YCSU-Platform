@@ -1,0 +1,495 @@
+{
+  "productionSource": "f2c464ebda178a0da2528cc70f51638069582e4d",
+  "reviewedHead": "9ed4bb355958cb8335331be7a2a7e4c2d022342c",
+  "deployId": "6aa73f14dcefc0bfdb32050d",
+  "http": {
+    "time": "2026-09-17T04:53:56.168Z",
+    "checks": [
+      {
+        "name": "live-public-projection",
+        "pass": true,
+        "status": 200,
+        "products": 11,
+        "cache": "no-store"
+      },
+      {
+        "name": "public-no-store",
+        "pass": true
+      },
+      {
+        "name": "public-no-protected-values",
+        "pass": true,
+        "protectedValueMatches": 0
+      },
+      {
+        "name": "authorized-reference-read",
+        "pass": true,
+        "products": 11,
+        "cache": "no-store",
+        "method": "existing management credential; not owner-session evidence"
+      },
+      {
+        "name": "read-owner-guest",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "read-public-extra-select",
+        "pass": true,
+        "status": 400
+      },
+      {
+        "name": "reorder-guest",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "authorize-guest",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "read-owner-forged",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "reorder-forged",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "authorize-forged",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "raw-table-github_url",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "raw-table-tracker_url",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "raw-table-*",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "raw-table-docs_url",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "raw-table-planned_url",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "raw-table-main_url",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "raw-table-roadmap_url",
+        "pass": true,
+        "status": 401
+      },
+      {
+        "name": "asset-assets/js/card-reorder.mjs",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/js/email-otp.mjs",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/js/owner-access.mjs",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/js/registry-order.mjs",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/js/registry-public.mjs",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/adcc.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/fire-pump-test-pit-simulator.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/plumbing-calculation-chart.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/rachels-animal-kingdom.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/ums.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/workflow-hub.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/ycsu-platform.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/ycsu-tracker.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/previews/ysu-mind-map.webp",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/reorder.css",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/vendor/supabase-2.116.0.js",
+        "pass": true
+      },
+      {
+        "name": "asset-assets/vendor/SUPABASE-LICENSE",
+        "pass": true
+      },
+      {
+        "name": "asset-data/registry.public.snapshot.json",
+        "pass": true
+      },
+      {
+        "name": "asset-index.html",
+        "pass": true
+      },
+      {
+        "name": "fallback-safe",
+        "pass": true,
+        "products": 8
+      },
+      {
+        "name": "excluded-route-/data/registry.snapshot.json",
+        "pass": true,
+        "status": 404
+      },
+      {
+        "name": "excluded-route-/netlify.toml",
+        "pass": true,
+        "status": 404
+      },
+      {
+        "name": "excluded-route-/supabase/functions/registry-ops/handler.ts",
+        "pass": true,
+        "status": 404
+      },
+      {
+        "name": "excluded-route-/manifests/ycsu-platform/ycsu-product.json",
+        "pass": true,
+        "status": 404
+      },
+      {
+        "name": "excluded-route-/PROJECT_CONTEXT.md",
+        "pass": true,
+        "status": 404
+      },
+      {
+        "name": "excluded-route-/registry.json",
+        "pass": true,
+        "status": 404
+      },
+      {
+        "name": "excluded-route-/docs/DATA_LAYER.md",
+        "pass": true,
+        "status": 404
+      },
+      {
+        "name": "anonymous-reload",
+        "pass": true,
+        "status": 200,
+        "cache": "no-store"
+      },
+      {
+        "name": "anonymous-hard-refresh",
+        "pass": true,
+        "status": 200,
+        "cache": "no-store"
+      }
+    ],
+    "assets": [
+      {
+        "path": "assets/js/card-reorder.mjs",
+        "status": 200,
+        "sha256": "7ae60b9a1d7d73309e6c2e45d09bc4c9af9a2141f9f8ed53c2fb4cad5738af58",
+        "localSha256": "7ae60b9a1d7d73309e6c2e45d09bc4c9af9a2141f9f8ed53c2fb4cad5738af58",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/js/email-otp.mjs",
+        "status": 200,
+        "sha256": "297e8be773e3eba581e7362703a3c671e725429a6a1058671c897cbc9f06ce54",
+        "localSha256": "297e8be773e3eba581e7362703a3c671e725429a6a1058671c897cbc9f06ce54",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/js/owner-access.mjs",
+        "status": 200,
+        "sha256": "003223a559e965faade27fc4d000a719408481c51529218cff61c076e2fea24b",
+        "localSha256": "003223a559e965faade27fc4d000a719408481c51529218cff61c076e2fea24b",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/js/registry-order.mjs",
+        "status": 200,
+        "sha256": "a0c60e2fd842d4d98193bb083ef4dd8b92bb1ed340564ff85edd447a783c25a2",
+        "localSha256": "a0c60e2fd842d4d98193bb083ef4dd8b92bb1ed340564ff85edd447a783c25a2",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/js/registry-public.mjs",
+        "status": 200,
+        "sha256": "a396329da6ef7f43e20f822933a40e23dd8405f19d478e3c158b864423004527",
+        "localSha256": "a396329da6ef7f43e20f822933a40e23dd8405f19d478e3c158b864423004527",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/adcc.webp",
+        "status": 200,
+        "sha256": "00d236b083082960f4e45c1515682101823b13843e4f6cac7acffa6c7644d8ef",
+        "localSha256": "00d236b083082960f4e45c1515682101823b13843e4f6cac7acffa6c7644d8ef",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/fire-pump-test-pit-simulator.webp",
+        "status": 200,
+        "sha256": "bcb7524c6b01cf45e8f87bb18f8c12abacc0f66754729178ea6f1bb2ded60fda",
+        "localSha256": "bcb7524c6b01cf45e8f87bb18f8c12abacc0f66754729178ea6f1bb2ded60fda",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/plumbing-calculation-chart.webp",
+        "status": 200,
+        "sha256": "72169fc8f09bef0b9b29cb21c3710753d4338dfbe8d59ee205772943b07ba955",
+        "localSha256": "72169fc8f09bef0b9b29cb21c3710753d4338dfbe8d59ee205772943b07ba955",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/rachels-animal-kingdom.webp",
+        "status": 200,
+        "sha256": "f7fd6e831ebb568c59cdd4e2f40a1a0a97dca73623466a42f997712e42d7aed2",
+        "localSha256": "f7fd6e831ebb568c59cdd4e2f40a1a0a97dca73623466a42f997712e42d7aed2",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/ums.webp",
+        "status": 200,
+        "sha256": "587f4f281974807498bb1455a691d95eaafcbfb53946f628d2f651f76106895d",
+        "localSha256": "587f4f281974807498bb1455a691d95eaafcbfb53946f628d2f651f76106895d",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/workflow-hub.webp",
+        "status": 200,
+        "sha256": "609e52a8e42d5026a8f09a0cf0dbd29044b1572cbfc5ac7c22ad67acc24a7a89",
+        "localSha256": "609e52a8e42d5026a8f09a0cf0dbd29044b1572cbfc5ac7c22ad67acc24a7a89",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/ycsu-platform.webp",
+        "status": 200,
+        "sha256": "fcc22f1bd49c49efb9a81151fd722257c60b40f55f7841b748acec6b48ffdf4f",
+        "localSha256": "fcc22f1bd49c49efb9a81151fd722257c60b40f55f7841b748acec6b48ffdf4f",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/ycsu-tracker.webp",
+        "status": 200,
+        "sha256": "3c660efc47decacb56e2283606f4e18985f39f4cfeea45c2703b0e80e54dc746",
+        "localSha256": "3c660efc47decacb56e2283606f4e18985f39f4cfeea45c2703b0e80e54dc746",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/previews/ysu-mind-map.webp",
+        "status": 200,
+        "sha256": "f37732f75fbfcd7707c0602886a21aed32981f826d71149dd22162751c6f48f9",
+        "localSha256": "f37732f75fbfcd7707c0602886a21aed32981f826d71149dd22162751c6f48f9",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/reorder.css",
+        "status": 200,
+        "sha256": "92b542071890ec788230e43472135584d4ec7ae82f3d485b5c8961a010f13f05",
+        "localSha256": "92b542071890ec788230e43472135584d4ec7ae82f3d485b5c8961a010f13f05",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/vendor/supabase-2.116.0.js",
+        "status": 200,
+        "sha256": "118e46708b26a7913386c7740284fd28bd92f37e00cb59e5a58be8aea7ef34bd",
+        "localSha256": "118e46708b26a7913386c7740284fd28bd92f37e00cb59e5a58be8aea7ef34bd",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "assets/vendor/SUPABASE-LICENSE",
+        "status": 200,
+        "sha256": "bc704afe85e5e92311e42c5e6b07d5ff082e93639303c92a93d7fa3184ce3eef",
+        "localSha256": "bc704afe85e5e92311e42c5e6b07d5ff082e93639303c92a93d7fa3184ce3eef",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "data/registry.public.snapshot.json",
+        "status": 200,
+        "sha256": "47b74818912d79f1157834ad1f0b6fb8d550e54d48b55d1bc04d87c81015dd74",
+        "localSha256": "47b74818912d79f1157834ad1f0b6fb8d550e54d48b55d1bc04d87c81015dd74",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      },
+      {
+        "path": "index.html",
+        "status": 200,
+        "sha256": "4c31421d91dad634816a32c18ef302ed1a650eebccfe2655fe7560638d8ea028",
+        "localSha256": "4c31421d91dad634816a32c18ef302ed1a650eebccfe2655fe7560638d8ea028",
+        "match": true,
+        "cache": "no-store",
+        "protectedValueMatches": 0
+      }
+    ],
+    "passed": true
+  },
+  "isolatedDom": {
+    "time": "2026-09-17T04:56:58.075Z",
+    "method": "JSDOM with verified production renderer and live public HTTP data; not a browser DevTools capture",
+    "cards": 11,
+    "anchors": 0,
+    "hrefAttributes": 0,
+    "grips": 0,
+    "opens": 0,
+    "navigation": false,
+    "localStorageKeys": 0,
+    "sessionStorageKeys": 0,
+    "unexpectedEndpointText": false,
+    "requests": [
+      {
+        "url": "/functions/v1/registry-ops",
+        "operation": "read-public",
+        "status": 200
+      }
+    ],
+    "errors": [],
+    "images": [
+      {
+        "path": "/assets/previews/ycsu-platform.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      },
+      {
+        "path": "/assets/previews/ycsu-tracker.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      },
+      {
+        "path": "/assets/previews/workflow-hub.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      },
+      {
+        "path": "/assets/previews/adcc.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      },
+      {
+        "path": "/assets/previews/ysu-mind-map.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      },
+      {
+        "path": "/assets/previews/fire-pump-test-pit-simulator.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      },
+      {
+        "path": "/assets/previews/plumbing-calculation-chart.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      },
+      {
+        "path": "/assets/previews/rachels-animal-kingdom.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      },
+      {
+        "path": "/assets/previews/rachels-secret-spot.webp",
+        "status": 404,
+        "webp": false,
+        "fallbackVisible": true
+      },
+      {
+        "path": "/assets/previews/social-capture-tool.webp",
+        "status": 404,
+        "webp": false,
+        "fallbackVisible": true
+      },
+      {
+        "path": "/assets/previews/ums.webp",
+        "status": 200,
+        "webp": true,
+        "fallbackVisible": false
+      }
+    ],
+    "pass": true
+  }
+}

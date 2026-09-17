@@ -1,5 +1,9 @@
 # DECISIONS.md
 
+## Reading historical decisions
+
+DEC-018/DEC-019 and current `PROJECT_CONTEXT.md` define the accepted secure read/build/auth boundary. Earlier version-specific records retain their historical reasoning and do not authorize public full-record reads, repository-root publishing, or old full-snapshot recovery. Surface any remaining conflict before action. Production publication follows the current Core release gate; historical candidate releases are not standing authorization for production QA.
+
 **YSU AI Development System**
 **Project:** YCSU Platform
 
@@ -104,7 +108,7 @@ Trade-off: one more repository to track — acceptable, consistent with how Trac
 
 ### Decision
 
-Deploy via Netlify, connected to the GitHub repository for continuous deployment.
+Deploy via Netlify. Git-linked continuous deployment was an initial intention, not the current configured state. Current recorded releases are manual and publish approved `dist` contents only; see `PROJECT_CONTEXT.md` and `DEPLOYMENT.md`. Enabling CD is a separate authorized configuration change, not a prerequisite for routine documentation work.
 
 ### Context
 
@@ -160,7 +164,7 @@ Revisit once Namecheap API access + Terraform automation is adopted per the depl
 
 ## DEC-005 — Formal Typed Registry Schema, No Build Step
 
-**Status:** LOCKED
+**Status:** PARTIALLY SUPERSEDED by DEC-018. The typed schema remains applicable; the v1.0 no-build restriction and historical alternatives below no longer describe the current dist-only build boundary.
 **Date:** 2026-08-28
 
 ### Decision
@@ -412,7 +416,7 @@ Trade-off: a single shared secret is an all-or-nothing credential — anyone hol
 
 ## DEC-013 — Snapshot Is Disaster-Recovery/Audit Only, One-Way, Manual
 
-**Status:** LOCKED
+**Status:** PARTIALLY SUPERSEDED by DEC-018. Manual, one-way handling remains applicable. The historical full snapshot below is retired; current `data/registry.public.snapshot.json` is public-safe fallback only, not a full backup or authority. Never restore or deploy full owner exports.
 **Date:** 2026-08-29
 
 ### Decision

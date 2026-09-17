@@ -1,5 +1,16 @@
 # AGENTS.md
 
+## Mandatory YSU AI Core preflight
+
+This is a YSU project. Before meaningful work in every new agent session, new meaningful task, and agent handoff:
+
+1. Load the **current canonical** YSU AI Core at https://github.com/blackeirose/ysu-ai-core (`blackeirose/ysu-ai-core`). Read its current `AGENTS.md`, `AI_CORE.md`, and task-relevant shared references required by the Core.
+2. Then read this project's `AGENTS.md`, `PROJECT_CONTEXT.md`, and `DECISIONS.md` where present; inspect the current branch, working tree, and implementation before changing anything.
+
+Do not substitute an old local/cached Core copy or previous chat memory for current canonical access. If the Core is inaccessible, surface the limitation and pause meaningful work. A trivial, non-meaningful edit does not authorize architecture, service, data, authentication, deployment, or other durable changes.
+
+Local rules may add stricter requirements but must not silently weaken the Core. Surface conflicts rather than silently overriding either the Core or a confirmed user decision. Preserve all project privacy, security, no-deploy, and release-approval holds. This entry does not grant permission to deploy or change production.
+
 **YSU Project Agent Entry Template**
 **Template Version:** 1.0
 
@@ -23,7 +34,7 @@ Do not create a separate agent-specific interpretation of the Core.
 
 Do not copy or rewrite the Global Core into this project unless there is a specific operational reason to maintain a local snapshot.
 
-If the canonical Core cannot be accessed, surface that limitation before making architecture, service, data, authentication, deployment, or other durable structural changes. Small reversible tasks may proceed when the local project documentation is sufficient.
+If the canonical Core is inaccessible, pause meaningful work and surface the limitation. Only trivial, non-meaningful edits may proceed with sufficient local context; this is not an exception for meaningful development or durable changes.
 
 ---
 

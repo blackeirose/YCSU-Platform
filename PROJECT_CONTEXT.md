@@ -1,5 +1,11 @@
 # PROJECT_CONTEXT.md
 
+## Workspace and release authority
+
+Canonical source is `blackeirose/YCSU-Platform`, `main`. The current active checkout is `C:\Users\ysu\Claude_Workspaces\YCSU-Platform`. `C:\Users\ysu\Codex_Workspaces\YCSU-UMS-preview` is a secondary validation checkout, not UMS source; compare it with canonical state before reuse. `YCSU-Platform_AI-WORK-Package` is the historical v1.1 archive, not current security/build/deployment instructions. Preserve all copies.
+
+The last verified deployment record is in `DEPLOYMENT.md`; this documentation remediation does not reverify or change production. GitHub remains the canonical handoff destination; local documentation commits are not published until deliberately pushed. Current documented releases are manual, dist-only; automatic Git-linked CD is not configured and must not be enabled implicitly. Follow the release gate in `DEPLOYMENT.md`.
+
 **YSU AI Development System**
 **Project Version:** v1.4.0 — Mobile Email OTP Sign-In (2026-09-11)
 

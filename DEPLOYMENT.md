@@ -1,5 +1,15 @@
 # DEPLOYMENT.md
 
+## Production release gate
+
+Production deploy is a **release event, not a test event**. Follow the current canonical Core's `docs/DEVELOPMENT_WORKFLOW.md`:
+
+**Local validation -> Deploy Preview / Branch Deploy (or an equivalent isolated draft) when remote validation is needed and practical -> QA pass / release readiness -> authorized production release -> production verification.**
+
+Treat a push/merge to an automatically publishing branch, a build hook, and a manual publish command as production release operations. Do not use repeated production deploys as the normal test loop. Preserve stricter project approval, privacy, security, and no-deploy holds. Production-only exceptions require the Core's explicit exception criteria and never substitute for a missing safe test environment. Record the accepted source/candidate and rollback point; verify the released behavior before calling it complete.
+
+Any production commands below are execution references **after** these gates, not authorization to skip them. Historical release evidence is not current permission to release.
+
 Live deployment record for YCSU Platform. Update this file whenever deployment state actually changes — do not let it drift from reality.
 
 ---
@@ -67,13 +77,15 @@ The Netlify CLI stalled before creating a deployment. The release therefore used
 
 Continuous deployment (GitHub → Netlify automatic build) is not configured yet. **This is only needed for actual code changes — routine Registry data changes never need this, see `docs/REGISTRY_OPERATIONS.md`.**
 
-**Option A — one-time dashboard setup for automatic deploys (recommended):**
-In the Netlify admin (link above) → Site configuration → Build & deploy → Link repository → select `blackeirose/YCSU-Platform`, branch `main`.
+**Current delivery mode:** manual, approved `dist` artifacts; recent records use the official ZIP API. Git-linked CD is an unconfigured option requiring a separate authorized configuration task. Do not enable it while following this release runbook.
 
-**Option B — manual deploy from this machine:**
+**Manual release preparation:** run the local checks first, then use a non-production draft for remote QA when needed. Retain the reviewed artifact, acceptance evidence and rollback point. Only after the release gate above passes may an authorized release publish the accepted artifact. The following CLI example is an execution reference, not the normal QA loop:
 ```bash
 cd YCSU-Platform
 npm run build
+npm run validate
+npm test
+# Complete required draft/preview QA and release approval before this command.
 netlify deploy --prod --site 9c0bd872-1f70-4468-b853-e87b9b3269d5 --dir dist
 ```
 
@@ -81,12 +93,16 @@ If `netlify status` shows a project name other than `ycsu-platform-registry`, ch
 
 ## Redeploying the Registry Write Interface After a Code Change
 
+Requires separately authorized backend release scope, isolated validation where practical, QA acceptance and recoverability before execution. Preserve the current auth/RLS/security boundary; a frontend or documentation task does not authorize this operation.
+
 ```bash
 cd YCSU-Platform
 supabase functions deploy registry-ops --project-ref fzydsnxxcdllkjxwdiwn --no-verify-jwt
 ```
 
 ## Applying a New Database Migration
+
+Requires separately authorized data-change scope, migration review, safe validation and rollback/recovery planning before execution. Never use production as a substitute for an unavailable test environment.
 
 ```bash
 cd YCSU-Platform

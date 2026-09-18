@@ -22,3 +22,14 @@ Remaining gates:final complete suite,Netlify protectedpreview,canonicalpush/merg
 - Remote preview browser QA is BLOCKED: repeated Chrome extension connection timeouts, including recovery after documentation reload. Ready status is not UI acceptance.
 - No new Supabase function deployed; no frontend production promotion. Existing production rollback remains `6aada2062630da334a6f46db`.
 - Resume after browser reconnection: protected preview QA, normal main merge/push, deploy only `writing-content` using API bundling, verify backend, promote accepted frontend artifact once, then production browser and canonical readback checks.
+
+## Backend release checkpoint after owner preview acceptance
+
+The owner confirmed the remote preview normal. This is user-performed acceptance; automated remote browser control remained unavailable despite reconnection/restart.
+
+- Canonical main merged and pushed: `ff463beeeaf9b84daa5ed21a944d88ed625ac391`.
+- New `writing-content` function deployed to `fzydsnxxcdllkjxwdiwn` using API bundling; no other function or DB changed.
+- Production backend checks: guest read 401, invalid session 403, foreign Origin 403. Public read returned 503 `CONTENT_UNAVAILABLE`.
+- Diagnostic: the exact same handler, executed locally against the current public canonical GitHub repo without credentials, returned 200 and the one approved article; all nine GitHub reads returned 200. This narrows the problem to the deployed environment/upstream access, but does not prove whether the configured token or another upstream condition is the cause.
+- Requested owner verification of fine-grained token validity, repository selection and Contents read/write. No credential value retrieved or displayed.
+- FRONTEND RELEASE HOLD: do not promote draft until deployed content read succeeds. Current frontend remains `6aada2062630da334a6f46db`; candidate remains `6aadad55588dbc213eb5a13e`. Production editor save/image verification is still pending.

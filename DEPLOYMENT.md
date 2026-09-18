@@ -166,3 +166,14 @@ Explicit owner request: replace UMS development-preview placeholder with the act
 ## Owner-only Product Links security closeout — 2026-09-16
 
 PASS / CLOSED. Production remains source f2c464ebda178a0da2528cc70f51638069582e4d, Netlify deployment 6aa73f14dcefc0bfdb32050d. Fresh readback matched all 19 served runtime files; Edge Function v5 source matched the reviewed repository. All 47 HTTP checks and 17 regression tests passed; live RLS/grants, isolated DOM with current data, user-confirmed production owner/guest/logout/incognito behavior and independent source review passed. No runtime or deployment change was required. Detailed evidence and browser-tool limitations: docs/releases/owner-links-security-acceptance-2026-09-16.md.
+
+
+## MAIN Writing v1 — released 2026-09-18
+
+Feature 57cca7e8facf779871ce51fd13e7ebfa0a8561c9 merged normally at 2b2cdac08cbf0e5e2db0cff917778a147d70b0c6. Explicit task release authorization, 28/28 tests, isolated 1440/768/390 light/dark UI QA and independent source review passed. Existing site ycsu-platform-registry (9c0bd872-1f70-4468-b853-e87b9b3269d5) published accepted draft 6aad8e62321b9fa6785b09b8 at 2026-09-18T19:20:50.868Z. Previous secure rollback: 6aa73f14dcefc0bfdb32050d. No Git CD or new site configured.
+
+Production Writing is empty (no approved articles), beside all 11 unchanged Products. Product count excludes Writing. Actual owner mixed-order save/reload/restore, owner settings availability, desktop/mobile viewer, guest/logout/new-tab security, no badge/broken images/errors, and 25 runtime SHA256 comparisons passed. Full record: docs/releases/main-writing-v1.md and main-writing-v1-assets.json.
+
+Additive Supabase migration version 20260918191717 creates service-only main_presentation and atomic CAS RPC; writing-ops v1 independently validates the existing owner. Local migration filename matches the server-applied version. No product_registry schema/data, registry-ops, Auth or SMTP changes. Never deploy dist-qa. New article routes are generated only from approved content/writing Markdown; optional video is a link. Deploy ordinary dist only.
+
+Rollback restores the previous secure frontend; the new Writing table/function can remain unused. Do not reopen browser table access or restore the old unsafe snapshot. Owner-authenticated ordering acceptance saved the original grid order in the new presentation layer (12 IDs, revision 2); existing Product ranks are untouched.

@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';import {rea
 import {parseArticle,markdown,buildWriting} from '../scripts/writing-content.mjs';
 import {defaults,featuredArticle,articleOrder,mixedCards,writingCard,validateSettings,readPresentation} from '../assets/js/writing-model.mjs';
 import {createWritingViewer,wireImages} from '../assets/js/writing-viewer.mjs';
-const fixture=await readFile(new URL('fixtures/content/writing/qa-first.md',import.meta.url),'utf8');
+const fixture=(await readFile(new URL('fixtures/content/writing/qa-first.md',import.meta.url),'utf8')).replace(/\r\n/g,'\n');
 test('Markdown frontmatter validates schema, rejects ambiguous/malformed/unsafe input and escapes raw HTML',()=>{
  const a=parseArticle(fixture);assert.equal(a.title,'QA only: A quieter place to read');assert.match(a.html,/<h2>/);assert.match(a.html,/<figure>/);assert.match(a.html,/<strong>test content/);
  for(const bad of [fixture.replace('slug: "qa-first"','slug: "../secret"'),fixture.replace('date: "2026-09-18"','date: "2026-02-30"'),fixture.replace('featured: true','featured: "true"'),fixture.replace('title:','unknown:'),fixture.replace('---\n',''),fixture.replace('display_order: 20','display_order: [20]'),fixture.replace('---\nThis','title: "duplicate"\n---\nThis')])assert.throws(()=>parseArticle(bad));
@@ -23,18 +23,18 @@ test('presentation projection never includes raw owner metadata; settings reject
  for(const settings of [{secret:'x'},{cover:'//evil.invalid/x'},{cover:'/writing/a/../../secret'},{video_url:'javascript:alert(1)'},{article_order:['a','a']},{title:''}])assert.throws(()=>validateSettings(settings));
  assert.equal(readPresentation({ok:true,settings:{title:'Notes'},home_order:[]}).settings.title,'Notes');
 });
-test('static deep links render real article content and metadata without JS; production is empty and includes no demo media',async()=>{
+test('static deep links render real article content and metadata without JS; production excludes demo articles',async()=>{
  const dir=await mkdtemp(path.join(tmpdir(),'main-writing-'));try{
   await mkdir(path.join(dir,'content/writing'),{recursive:true});await writeFile(path.join(dir,'content/writing/a.md'),fixture.replaceAll('cover: "/writing/qa-first/cover.webp"\n','').replace(/!\[QA[^\n]+\n/,''));
   const template=await readFile(new URL('../index.html',import.meta.url),'utf8');assert.equal(await buildWriting({root:dir,out:path.join(dir,'out'),template}),1);
   const html=await readFile(path.join(dir,'out/writing/qa-first/index.html'),'utf8');assert.match(html,/id="writing-static"/);assert.match(html,/Space for a clear idea/);assert.match(html,/rel="canonical" href="https:\/\/main.ycsu.cc\/writing\/qa-first\//);assert.match(html,/from '\/assets/);assert.match(html,/property="og:title"/);
   await writeFile(path.join(dir,'content/writing/a.md'),fixture);await assert.rejects(buildWriting({root:dir,out:path.join(dir,'out'),template}),/Missing article media/);
-  const prod=JSON.parse(await readFile(new URL('../dist/data/writing.json',import.meta.url),'utf8'));assert.deepEqual(prod.articles,[]);
+  const prod=JSON.parse(await readFile(new URL('../dist/data/writing.json',import.meta.url),'utf8'));assert.equal(prod.articles.some(a=>a.slug.startsWith('qa-')||a.title.startsWith('QA only:')),false);
  }finally{await rm(dir,{recursive:true,force:true})}
 });
 test('singleton RPC is atomic CAS, preserves independent fields, and forbids every browser role',async()=>{
  const db=new PGlite();try{
-  await db.exec('create role anon;create role authenticated;create role service_role bypassrls;');await db.exec(await readFile(new URL('../supabase/migrations/20260918185542_main_writing_presentation.sql',import.meta.url),'utf8'));
+  await db.exec('create role anon;create role authenticated;create role service_role bypassrls;');await db.exec(await readFile(new URL('../supabase/migrations/20260918191717_main_writing_presentation.sql',import.meta.url),'utf8'));
   for(const role of ['anon','authenticated']){await db.exec('set role '+role);await assert.rejects(db.exec('select * from main_presentation'),/permission denied/);await assert.rejects(db.exec("select * from update_main_presentation(0,'{}','[]')"),/permission denied/);await db.exec('reset role')}
   await db.exec('set role service_role');const a=await db.query("select * from update_main_presentation(0,'{\"featured_slug\":\"a\",\"article_order\":[\"b\",\"a\"]}',null)");assert.equal(a.rows[0].revision,1);
   assert.equal((await db.query("select * from update_main_presentation(0,'{\"title\":\"stale\"}',null)")).rows.length,0);

@@ -17,6 +17,7 @@ slug: "stable-article-slug"
 date: "2026-09-18"
 category: "AI & Architecture"
 cover: "/writing/stable-article-slug/cover.webp"
+cover_alt: "A concise description of the approved cover image."
 excerpt: "Optional short summary."
 linkedin_url: "https://www.linkedin.com/posts/..."
 facebook_url: null
@@ -26,6 +27,8 @@ display_order: 10
 ---
 Approved Markdown body.
 ```
+
+Optional `cover_alt` (up to 1000 characters) describes the article cover in the static page, reader and homepage card; omitted/blank values fall back to the title. A different owner cover override retains the title fallback. This is article metadata only, not a persistent presentation setting.
 
 Required: nonempty title (up to 200 characters), lowercase hyphenated slug (up to 100), valid ISO date, nonempty body. Other fields are optional; omit them or use `null`. `featured` is boolean; `display_order` is an integer. Strings with punctuation should be JSON-style double-quoted. Dates must be quoted. Flat scalar fields only; unknown or duplicate keys fail the build. Slugs `index`, `assets`, and `data` are reserved. Treat a published slug as permanent; changing it needs a redirect maintenance task.
 

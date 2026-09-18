@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFile,mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';import {tmpdir} from 'node:os';import path from 'node:path';import {stripTypeScriptTypes} from 'node:module';import {PGlite} from '@electric-sql/pglite';import {JSDOM} from 'jsdom';
-import {parseArticle,markdown,buildWriting} from '../scripts/writing-content.mjs';
+import {parseArticle,markdown,buildWriting,articleHtml} from '../scripts/writing-content.mjs';
 import {defaults,featuredArticle,articleOrder,mixedCards,writingCard,validateSettings,readPresentation} from '../assets/js/writing-model.mjs';
 import {createWritingViewer,wireImages} from '../assets/js/writing-viewer.mjs';
 const fixture=(await readFile(new URL('fixtures/content/writing/qa-first.md',import.meta.url),'utf8')).replace(/\r\n/g,'\n');
@@ -60,4 +60,17 @@ test('viewer supports deep entry, list/article transitions, history, focus, scro
  w.history.back();await new Promise(r=>setTimeout(r,20));assert.equal(w.location.pathname,'/writing/');w.history.forward();await new Promise(r=>setTimeout(r,20));assert.equal(w.location.pathname,'/writing/b/');
  w.document.querySelector('.writing-close').click();await new Promise(r=>setTimeout(r,20));assert.equal(w.location.pathname,'/');assert.equal(w.document.body.style.overflow,'');assert.equal(w.document.activeElement,trigger);
  w.history.replaceState(null,'','/writing/a/');viewer.setData([{slug:'a',title:'A',date:'2026-09-18',reader_html:'<h1>A</h1>'}],defaults);assert.equal(w.document.querySelector('dialog').open,true);w.document.querySelector('.writing-back').click();assert.equal(w.location.pathname,'/writing/');w.document.querySelector('dialog').dispatchEvent(new w.Event('cancel',{cancelable:true}));assert.equal(w.location.pathname,'/');dom.window.close();
+});
+
+test('cover descriptions reach readers and cards with safe fallbacks',()=>{
+ const alt='A child draws "animals" <beside> a tablet.';
+ const article=parseArticle(fixture.replace('slug:',`cover_alt: ${JSON.stringify(alt)}\nslug:`));
+ for(const html of [articleHtml(article),writingCard([article])]){
+  const dom=new JSDOM(html);assert.equal(dom.window.document.querySelector('img').alt,alt);assert.equal(dom.window.document.querySelector('beside'),null);dom.window.close();
+ }
+ for(const cover_alt of [undefined,null,'   ']){
+  const a={...article,cover_alt};for(const html of [articleHtml(a),writingCard([a])]){const dom=new JSDOM(html);assert.equal(dom.window.document.querySelector('img').alt,a.title);dom.window.close();}
+ }
+ const override=new JSDOM(writingCard([article],{...defaults,cover:'/writing/other/cover.webp'}));assert.equal(override.window.document.querySelector('img').alt,article.title);override.window.close();
+ for(const value of ['42','true','"'+ 'x'.repeat(1001)+'"'])assert.throws(()=>parseArticle(fixture.replace('slug:',`cover_alt: ${value}\nslug:`)),/invalid cover_alt/);
 });

@@ -1,7 +1,7 @@
 import {readFile,readdir,mkdir,writeFile,cp,lstat} from 'node:fs/promises';
 import path from 'node:path';
 import {escapeHtml as esc,safeUrl,validSlug} from '../assets/js/writing-model.mjs';
-const fields=new Set(['title','slug','date','category','cover','excerpt','linkedin_url','facebook_url','video_url','featured','display_order']);
+const fields=new Set(['title','slug','date','category','cover','cover_alt','excerpt','linkedin_url','facebook_url','video_url','featured','display_order']);
 function scalar(raw){
  const v=raw.trim();if(v==='null'||v==='')return null;if(v==='true')return true;if(v==='false')return false;
  if(/^-?\d+$/.test(v))return Number(v);
@@ -19,7 +19,7 @@ export function parseArticle(source,filename='article.md'){
  }
  if(typeof meta.title!=='string'||!meta.title.trim()||meta.title.length>200||!validSlug(meta.slug)||['index','assets','data'].includes(meta.slug))throw new Error(`${filename}: invalid title/slug`);
  if(typeof meta.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(meta.date)||new Date(meta.date).toISOString().slice(0,10)!==meta.date)throw new Error(`${filename}: invalid date`);
- for(const key of ['category','excerpt'])if(meta[key]!=null&&(typeof meta[key]!=='string'||meta[key].length>1000))throw new Error(`${filename}: invalid ${key}`);
+ for(const key of ['category','excerpt','cover_alt'])if(meta[key]!=null&&(typeof meta[key]!=='string'||meta[key].length>1000))throw new Error(`${filename}: invalid ${key}`);
  for(const key of ['cover','video_url','linkedin_url','facebook_url'])if(meta[key]!=null&&(typeof meta[key]!=='string'||!safeUrl(meta[key],{media:['cover','video_url'].includes(key)})))throw new Error(`${filename}: invalid ${key}`);
  if(meta.featured!=null&&typeof meta.featured!=='boolean')throw new Error(`${filename}: invalid featured`);
  if(meta.display_order!=null&&!Number.isSafeInteger(meta.display_order))throw new Error(`${filename}: invalid display_order`);
@@ -54,7 +54,7 @@ export function markdown(body){
 export function articleHtml(article){
  const media=safeUrl(article.video_url,{media:true});
  return `<header class="article-header"><p class="writing-label">WRITING</p><h1>${esc(article.title)}</h1><p class="writing-date">${esc([article.date,article.category].filter(Boolean).join(' · '))}</p></header>
- ${article.cover?`<figure class="article-hero"><img src="${esc(article.cover)}" alt="${esc(article.title)}" width="1440" height="900"><figcaption hidden>Cover</figcaption></figure>`:''}
+ ${article.cover?`<figure class="article-hero"><img src="${esc(article.cover)}" alt="${esc(article.cover_alt?.trim()||article.title)}" width="1440" height="900"><figcaption hidden>Cover</figcaption></figure>`:''}
  <div class="article-body">${article.html}</div>
  ${media?`<p><a href="${esc(media)}" target="_blank" rel="noopener noreferrer">Watch video ↗</a></p>`:''}
  <footer class="article-originals">${[['linkedin_url','Original on LinkedIn'],['facebook_url','Original on Facebook']].filter(([key])=>article[key]).map(([key,label])=>`<a href="${esc(article[key])}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`).join('')}</footer>`;

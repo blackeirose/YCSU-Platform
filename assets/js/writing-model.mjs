@@ -53,7 +53,7 @@ export function writingCard(articles,settings=defaults){
  const title=article?.title||settings.title;
  return `<article class="card writing-card" data-product-id="writing"><div class="card-tags"><span class="writing-label">WRITING</span><span class="writing-count">${articles.length} ARTICLES</span></div>
  <h2><a class="writing-open" href="/writing/${article?escapeHtml(article.slug)+'/':''}" data-writing-link>${escapeHtml(title)}</a></h2>
- <div class="preview writing-cover">${cover?`<img data-writing-image="${escapeHtml(cover)}" alt="${escapeHtml(title)}" width="1440" height="900" loading="lazy">`:''}<span class="writing-placeholder">${article?'YCSU · WRITING':'A space for ideas.'}</span></div>
+ <div class="preview writing-cover">${cover?`<img data-writing-image="${escapeHtml(cover)}" alt="${escapeHtml((!settings.cover||settings.cover===article?.cover)?(article?.cover_alt?.trim()||title):title)}" width="1440" height="900" loading="lazy">`:''}<span class="writing-placeholder">${article?'YCSU · WRITING':'A space for ideas.'}</span></div>
  <p class="writing-date">${article?escapeHtml([article.date,article.category].filter(Boolean).join(' · ')):'No published articles yet.'}</p>
  <p class="tagline writing-excerpt">${escapeHtml(article?(settings.excerpt||article.excerpt||settings.description):settings.description)}</p>
  <div class="writing-footer">${escapeHtml(settings.title)} <span aria-hidden="true">↗</span></div></article>`;

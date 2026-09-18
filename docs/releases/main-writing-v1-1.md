@@ -33,3 +33,20 @@ The owner confirmed the remote preview normal. This is user-performed acceptance
 - Diagnostic: the exact same handler, executed locally against the current public canonical GitHub repo without credentials, returned 200 and the one approved article; all nine GitHub reads returned 200. This narrows the problem to the deployed environment/upstream access, but does not prove whether the configured token or another upstream condition is the cause.
 - Requested owner verification of fine-grained token validity, repository selection and Contents read/write. No credential value retrieved or displayed.
 - FRONTEND RELEASE HOLD: do not promote draft until deployed content read succeeds. Current frontend remains `6aada2062630da334a6f46db`; candidate remains `6aadad55588dbc213eb5a13e`. Production editor save/image verification is still pending.
+
+## Deployed 7f3f5fa verification — credential blocker confirmed
+
+Backend source: `7f3f5fac1e0cee12db272331c860fa241ae4338e`. Full validate/build and 53/53 tests passed. Public reads never retrieve or send MAIN_WRITING_GITHUB_TOKEN. Owner reads/saves retain exact confirmed owner auth. GitHub failures now expose only bounded HTTP status/class diagnostics, with no upstream response body or credential.
+
+Actual live evidence:
+- writing-content read-public: HTTP 200, one approved article. Direct unauthenticated GitHub main-ref read: HTTP 200 at the same canonical source.
+- Guest read-article/save-article: HTTP 401. Invalid owner session: HTTP 403.
+- Chrome control recovered. A temporary loopback-only candidate server connected the real pinned Auth SDK to the existing Supabase project and proxied only fixed Auth routes and permitted function operations. No existing browser session was exported, no owner-auth bypass was added, no CORS/production permission was changed, and no credential/request bodies were logged.
+- Normal six-digit owner OTP login completed through the browser; deployed registry owner authorization/read returned 200. Candidate Edit Article invoked the deployed writing-content with the real owner session.
+- **Exact deployed editor result:** HTTP 502 envelope; `diagnostic.github_status=401`, `diagnostic.response_class=authentication_failed`. GitHub rejected the editor credential. This is an observed backend result, not an inference from public access.
+- The article editor failed closed; no article save was possible or attempted because owner read did not produce a valid revision. No article/media/Registry/presentation content was changed.
+- Actual candidate sign-out removed visible owner controls and Product links immediately. Article refresh retained public article content; only Owner sign in and Close were visible, with zero Product anchors. This verifies logout UI but does not satisfy the blocked owner-save gate.
+- Public read remained HTTP 200 after owner failure. Dist and public response scans found no GitHub token patterns, editor-secret names or service-role patterns; raw upstream errors/credentials are not returned. This is a bounded exposure check, not a claim to have read the secret.
+- Temporary QA server stopped and candidate tab closed.
+
+Frontend remains deployment `6aada2062630da334a6f46db`; Git CD remains disconnected. **RELEASE HOLD** until replacing the GitHub token in Supabase permits actual owner edit/read, save/readback and subsequent logout verification. Owner should perform only the account-secret replacement; agent must verify behavior rather than ask the owner to check settings or perform QA.

@@ -189,3 +189,5 @@ Normal owner saves create canonical content commits and become visible through t
 
 ## Writing v1.1 backend checkpoint — frontend release held
 Owner remote preview acceptance received. Main merged at ff463beeeaf9b84daa5ed21a944d88ed625ac391. Additive writing-content deployed through --use-api. Its unauthorized request checks pass (401/403), but public canonical content read returns 503; identical handler against public GitHub from the workstation succeeds. Token/environment diagnosis is pending. No frontend promotion: production remains 6aada2062630da334a6f46db. See docs/releases/main-writing-v1-1.md for exact scope and remaining gates.
+
+Writing v1.1 backend 7f3f5fa is deployed: public read 200; guest writes denied; real owner edit read reaches GitHub and reports github_status 401 / response_class authentication_failed. Actual candidate logout passed. Owner save remains blocked pending token replacement, so frontend remains 6aada2062630da334a6f46db. Detailed live evidence: docs/releases/main-writing-v1-1.md.

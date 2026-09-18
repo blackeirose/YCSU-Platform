@@ -126,3 +126,10 @@ test('GitHub diagnostic reports exact status and safe class without upstream bod
   const out=await response.json();assert.deepEqual(out.diagnostic,{github_status:status,response_class:classification});assert.doesNotMatch(JSON.stringify(out),/github-secret|service-secret|private\/secret/);
  }
 });
+
+test('numeric body size persists through owner save, reload and public guest read; invalid sizes never write',async()=>{
+ const c=setup();assert.equal((await c.read()).article.body_font_size,18);
+ for(const size of [17,18,19,20]){const response=await c.save({body_font_size:size});assert.equal(response.status,200);assert.equal((await c.read()).article.body_font_size,size);const pub=await (await c.request({operation:'read-public'},'')).json();assert.equal(pub.articles[0].body_font_size,size);assert.match(pub.articles[0].reader_html,new RegExp('data-body-size="'+size+'"'));}
+ const head=c.fixture.head;for(const value of [null,'18','18px',16,21,18.5,true,{},[]])assert.equal((await c.save({body_font_size:value})).status,400);assert.equal(c.fixture.head,head);
+ for(const token of ['', 'other'])assert.ok([401,403].includes((await c.request({operation:'save-article',slug:'existing',revision:(await c.read()).revision,data:{body_font_size:20}},token)).status));assert.equal(c.fixture.head,head);
+});

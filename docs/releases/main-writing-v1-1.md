@@ -1,52 +1,72 @@
-# MAIN Writing v1.1 — release evidence
+# MAIN Writing v1.1 — released and verified
 
-Status: CANDIDATE; no production release yet.
-Core:7a11fa58253cbd2e1587a97e01af15e054aec442, current canonical AGENTS/AI_CORE and required architecture/services/workflow/workspace/communication/gate/UI/tool references read. Gate Full; existing Node/CLI/PGlite only, no Admin/system installation.
-Initial main:97c9322; clean, origin matched. Feature branch:feat/main-writing-v1-1-polish. Production/rollback:6aada2062630da334a6f46db, existing Netlify site9c0bd872-1f70-4468-b853-e87b9b3269d5, no Git CD. One approved article retained byte-for-byte in canonical source. No Product schema/records,Auth/SMTP,DNS,other apps or original media changes.
+Status: RELEASED / owner save and logout gates passed. Production https://main.ycsu.cc/.
 
-Requirements1–5,13,16–17:contextual editor,all named metadata/body fields,cover/inline asset selection/upload,exact owner server validation,Git canonical writes,tags preservation implemented. Requirements6–12,15:880px/86dvh floating shell,frosted layering,sans18px body/17pxmobile,~651px desktop measure,170pxsidebar,compact leftheader,singular/plural card. Requirement14:independent order/feature/home with200article bounded backend. Requirements18–21:tests and actualbrowser evidence below. Requirements22–24:release pending.
+## Release identity
 
-Independent reviewer /root/writing_security_review PASS after two fixes: navigation invalidates delayed edit reads; save uses committed public_article and public reads validate current main SHA across instances. Reviewer ran25focusedtests, no remaining code/security blockers. Separate visual implementation agent owned only CSS/card/header; backend agent owned only new handler/API tests. Root integrated and performed browserQA. Authors' own checks are not labelled independent review.
+| Record | Value |
+|---|---|
+| Feature SHA | `4ec90f7e216280addb57c4ba725d92ff01f6aa30` |
+| Merge SHA | `ff463beeeaf9b84daa5ed21a944d88ed625ac391` |
+| Backend credential-separation fix | `7f3f5fac1e0cee12db272331c860fa241ae4338e` |
+| Canonical content / deployed build source | `6bcde873d6a5f30efe9a712cd7f8cbe5dccb2a1d` |
+| Previous production / frontend rollback | `6aada2062630da334a6f46db` |
+| New production deploy | `6aadc5abb7561cd759f6c1e3` |
+| Published | `2026-09-18T23:14:45.917Z` |
+| Existing Netlify site | `9c0bd872-1f70-4468-b853-e87b9b3269d5` |
+| Current Core checked | `57a69136b7473718dfcf26311ae801f033696f05` |
 
-Real Chrome isolated QA:owner edited title/body/excerpt/video/LinkedIn and uploaded cover+inline WebP, saved, then reloaded. Updated body and two immutable image URLs persisted and decoded. Set featured on second article, moved first article to top of index, saved/reloaded; homepage featured stayed second and home position unchanged. Close leaves only Arrange cards; mobile Back/Forward and list transition passed. Logout removed allProduct links and allWriting owner buttons immediately. No console warnings/errors. Test fixtures remained in memory/dist-qa only.
-Approved article visualQA:1440x1000 panel880x860,grid1032,body~651px,18px/29.7px;768x1024 panel688px;390x844 full-width17pxbody. Light/dark inspected at all three breakpoints, nooverflow/brokenimages. Current Tracker/UMS/Capture production visualreferences inspected read-only. Existing real article Markdown/image unmodified.
+One frontend production release, by promotion of the accepted draft. Git CD stays disconnected. Backend writing-content is additive; registry-ops, writing-ops, DB schema, Auth/SMTP, DNS and other apps were not changed. Core 7a11fa was used for implementation; fresh Core 57a69136 was read before final verification (only the designated media-workspace guidance changed). Gate Full; no Admin/system installation.
 
-Remaining gates:final complete suite,Netlify protectedpreview,canonicalpush/merge,newbackendrelease,singlefrontendpromotion,productionreadback/ownereditor verification. Real physical-device touch not newly tested; actualChrome viewporttests and existing touch regression retained.
+## Requested report
 
-## Release checkpoint
+1. **Files:** frontend `index.html`, `assets/writing.css`, `assets/js/{owner-access,writing,writing-model,writing-viewer,writing-content,writing-editor}.mjs`; content builder and isolated QA server; new `supabase/functions/writing-content/{index.ts,handler.mjs}`, function config; backend/editor/session/visual tests and Git fixture; PROJECT_CONTEXT, DECISIONS, DESIGN, DEPLOYMENT, docs/WRITING and this release record. Acceptance created one immutable replacement WebP and changed only the approved article's cover reference. Full asset hashes: [main-writing-v1-1-assets.json](main-writing-v1-1-assets.json).
+2. **Article editing:** contextual Edit Article inside the viewer. Existing Markdown is canonical; fixed repo/main/slug allowlist, blob revision conflict protection and atomic non-force Git commit. No CMS database copy.
+3. **Images:** existing asset selection, URL replacement, or validated PNG/JPEG/WebP/GIF upload into the same article directory. Unique replacement filenames preserve originals; Markdown and uploaded media commit together. Cover and inline replacement both passed isolated browser QA; cover also passed real deployed-backend writing/readback.
+4. **Security:** exact confirmed nonanonymous Supabase owner via server getUser. Public reads never retrieve/send MAIN_WRITING_GITHUB_TOKEN. Only protected owner read/save uses it. No client secret, raw-table access, arbitrary repo/path, delete or overwrite-original operation. Safe diagnostics include actual GitHub HTTP status/class without upstream body or credentials.
+5. **Dimensions:** desktop 880px maximum width / 86dvh; measured 880x860 at 1440x1000; 688px at 768px viewport. Sidebar 170px, body approximately 651px. Mobile full-height separate article/list views.
+6. **Frosted surface:** 45% dark backdrop with 8px blur; translucent shell with 20px blur and differentiated index/reader layers. MAIN remains visible around the floating desktop panel.
+7. **Typography:** system sans body 18px / 1.65 (29.7px), mobile 17px; desktop title 26–32px, mobile 27px; metadata 13px.
+8. **Header:** compact existing sizing retained, title/subtitle/stats aligned left. Homepage Writing settings removed; Arrange cards retained. Cover precedes Writing title; singular 1 ARTICLE fixed.
+9. **Tags:** bounded safe YAML block-list strings, preserved across saves; no tag filter UI. Existing slug, featured and display_order are preserved.
+10. **Tests:** validate/build passed, full 53/53 tests passed after backend separation fix. After actual cover save, validate/build and 9 relevant Writing tests passed. Original privacy, OTP, reorder, conflict/race and logout regressions retained.
+11. **Browser QA:** independent original security review passed after navigation/cache fixes. Root's own browser checks are separately identified below; final delta review is recorded separately. Actual Chrome isolated edit/upload/feature/order/logout passed; latest protected Netlify preview visually inspected; actual production owner read/no-op save/logout, public cards/reader and console checks passed.
+12. **Mobile QA:** 1440/768/390 light/dark isolated visual checks passed. Actual production 390x844 guest reader, decoded cover, no overflow, deep-link refresh and Back to Articles passed. No new physical-device touch acceptance is claimed.
+13–16. **SHAs / deploy IDs:** see release identity above.
+17. **Limits:** max 200 articles, 128KiB per Markdown source, 4 uploads / 4MiB each / 6MiB combined. Public GitHub rate limits or outage can cause fallback to the last deployed static manifest; current code never substitutes the editor token for public access. Runtime edits appear via Git immediately; static/no-JS/SEO content is updated at the next attended build/release. Real production has one article, so multi-article movement/featured independence was proven with isolated fixtures, not fake production content.
+18. **Owner action:** none required. Credential replacement resolved the observed GitHub 401 and was verified through the deployed function, not by asking the owner to inspect settings.
 
-- Feature commit: `4ec90f7e216280addb57c4ba725d92ff01f6aa30`, pushed on `feat/main-writing-v1-1-polish`; not merged to main.
-- Final local validation: `npm run validate`, `npm run build`, and all 51 tests passed.
-- `MAIN_WRITING_GITHUB_TOKEN` configuration confirmed by secret name only; value was not retrieved or displayed. Actual production GitHub write remains unverified.
-- Draft deploy `6aadad55588dbc213eb5a13e` is ready at https://6aadad55588dbc213eb5a13e--ycsu-platform-registry.netlify.app. Existing preview access protection is preserved.
-- Remote preview browser QA is BLOCKED: repeated Chrome extension connection timeouts, including recovery after documentation reload. Ready status is not UI acceptance.
-- No new Supabase function deployed; no frontend production promotion. Existing production rollback remains `6aada2062630da334a6f46db`.
-- Resume after browser reconnection: protected preview QA, normal main merge/push, deploy only `writing-content` using API bundling, verify backend, promote accepted frontend artifact once, then production browser and canonical readback checks.
+## Actual owner save gate before frontend publication
 
-## Backend release checkpoint after owner preview acceptance
+A temporary attended loopback-only candidate served the accepted frontend and proxied only fixed Supabase Auth routes and permitted read/save operations. It used the normal pinned SDK and six-digit OTP flow; no existing session was exported, no Auth bypass/CORS relaxation was added, and no credential/request bodies were logged. It was stopped after acceptance.
 
-The owner confirmed the remote preview normal. This is user-performed acceptance; automated remote browser control remained unavailable despite reconnection/restart.
+Before secret replacement, exact real owner response was HTTP 502 with `github_status:401`, `response_class:authentication_failed`; public read and direct unauthenticated GitHub both returned 200. This failure held frontend publication.
 
-- Canonical main merged and pushed: `ff463beeeaf9b84daa5ed21a944d88ed625ac391`.
-- New `writing-content` function deployed to `fzydsnxxcdllkjxwdiwn` using API bundling; no other function or DB changed.
-- Production backend checks: guest read 401, invalid session 403, foreign Origin 403. Public read returned 503 `CONTENT_UNAVAILABLE`.
-- Diagnostic: the exact same handler, executed locally against the current public canonical GitHub repo without credentials, returned 200 and the one approved article; all nine GitHub reads returned 200. This narrows the problem to the deployed environment/upstream access, but does not prove whether the configured token or another upstream condition is the cause.
-- Requested owner verification of fine-grained token validity, repository selection and Contents read/write. No credential value retrieved or displayed.
-- FRONTEND RELEASE HOLD: do not promote draft until deployed content read succeeds. Current frontend remains `6aada2062630da334a6f46db`; candidate remains `6aadad55588dbc213eb5a13e`. Production editor save/image verification is still pending.
+After the owner replaced the secret:
+- Real owner read-article returned 200.
+- No-op save returned 200 / unchanged:true and retained main SHA 3870b33.
+- Uploading the same approved cover and saving returned 200 / unchanged:false, creating canonical commit 6bcde87. Only cover metadata changed. Body and other metadata stayed identical.
+- Original and replacement image SHA256 both equal `5f2040fb825d6019721090eba159a006d49c9826591a9711f7a58595ed1f8282`. Original cover.webp remains.
+- Reload displayed the newly committed immutable raw-GitHub media URL with a decoded image.
+- Sign-out immediately removed Product links and owner controls; subsequent article refresh kept public reading with no Edit Article, feature or reorder buttons.
 
-## Deployed 7f3f5fa verification — credential blocker confirmed
+Only after this gate passed was the latest canonical article rebuilt, previewed and published. Earlier draft 6aadad555 was never promoted.
 
-Backend source: `7f3f5fac1e0cee12db272331c860fa241ae4338e`. Full validate/build and 53/53 tests passed. Public reads never retrieve or send MAIN_WRITING_GITHUB_TOKEN. Owner reads/saves retain exact confirmed owner auth. GitHub failures now expose only bounded HTTP status/class diagnostics, with no upstream response body or credential.
+## Production readback
 
-Actual live evidence:
-- writing-content read-public: HTTP 200, one approved article. Direct unauthenticated GitHub main-ref read: HTTP 200 at the same canonical source.
-- Guest read-article/save-article: HTTP 401. Invalid owner session: HTTP 403.
-- Chrome control recovered. A temporary loopback-only candidate server connected the real pinned Auth SDK to the existing Supabase project and proxied only fixed Auth routes and permitted function operations. No existing browser session was exported, no owner-auth bypass was added, no CORS/production permission was changed, and no credential/request bodies were logged.
-- Normal six-digit owner OTP login completed through the browser; deployed registry owner authorization/read returned 200. Candidate Edit Article invoked the deployed writing-content with the real owner session.
-- **Exact deployed editor result:** HTTP 502 envelope; `diagnostic.github_status=401`, `diagnostic.response_class=authentication_failed`. GitHub rejected the editor credential. This is an observed backend result, not an inference from public access.
-- The article editor failed closed; no article save was possible or attempted because owner read did not produce a valid revision. No article/media/Registry/presentation content was changed.
-- Actual candidate sign-out removed visible owner controls and Product links immediately. Article refresh retained public article content; only Owner sign in and Close were visible, with zero Product anchors. This verifies logout UI but does not satisfy the blocked owner-save gate.
-- Public read remained HTTP 200 after owner failure. Dist and public response scans found no GitHub token patterns, editor-secret names or service-role patterns; raw upstream errors/credentials are not returned. This is a bounded exposure check, not a claim to have read the secret.
-- Temporary QA server stopped and candidate tab closed.
+- All **30/30 served runtime files** match dist SHA256; exact evidence in the linked JSON.
+- `/`, `/writing/`, and the article deep link return 200. Source Markdown, Edge Function source and docs routes return 404.
+- Public registry-ops and writing-ops payloads are deeply identical to the pre-task baseline: all 11 Products, mixed home order, article order and featured selection preserved.
+- writing-content read-public returns 200 with exactly one approved article and its new immutable cover URL.
+- Actual production owner opened Edit Article, loaded original and replacement image options, saved without changes and returned to the reader. Canonical main remained 6bcde87, proving no-op behavior.
+- Actual production sign-out immediately left only Owner sign in and zero Product links. Deep-link refresh remained guest-only; article and image remained available.
+- No Powered by Netlify badge and no console warnings/errors. Production mobile reader/back-to-list passed without overflow.
+- Guest read/save requests returned 401; invalid owner session and foreign origin returned 403. Dist/public response scans found no GitHub credential patterns, editor secret name or service-role patterns. The secret itself was never retrieved or displayed.
 
-Frontend remains deployment `6aada2062630da334a6f46db`; Git CD remains disconnected. **RELEASE HOLD** until replacing the GitHub token in Supabase permits actual owner edit/read, save/readback and subsequent logout verification. Owner should perform only the account-secret replacement; agent must verify behavior rather than ask the owner to check settings or perform QA.
+## Recovery
+
+Restore secure frontend deploy 6aada2062630da334a6f46db if needed. Keep denied raw table access and public-safe assets. The additive backend can remain unused or be withdrawn independently. Recover article content with normal Git history; never force-push or delete original media. No automated publishing or screenshot workflow was added.
+
+## Independent final delta review
+
+Independent reviewer /root/writing_security_review rechecked exact runtime commit 7f3f5fa after the original review: PASS, no actionable security findings. Public reads never access/send the editor token; diagnostics contain only bounded status and fixed classification. Reviewer independently ran 14/14 backend tests. This source review is separate from the real browser and production evidence above. Core revision 57a69136b7473718dfcf26311ae801f033696f05.

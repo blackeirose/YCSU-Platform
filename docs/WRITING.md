@@ -78,3 +78,4 @@ Public runtime checks current main head per request and caches parsed manifests 
 
 QA server now exercises the real content handler against tests/helpers/writing-github-fixture.mjs entirely in memory. --empty serves the ordinary build/current approved article despite its historical flag name. Default uses two explicit QA fixtures. Test saves never write local canonical article files or GitHub. Restart resets state. Production contains only the approved article.
 
+Public reads use unauthenticated GitHub access only; MAIN_WRITING_GITHUB_TOKEN is reserved for exact-owner read/save operations. A missing/expired editor token cannot break the public read path. Safe upstream diagnostics report github_status and response_class without raw errors or secrets. Writing v1.1 was released after actual deployed-backend owner save/logout acceptance; see docs/releases/main-writing-v1-1.md.

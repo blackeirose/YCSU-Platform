@@ -12,3 +12,13 @@ Real Chrome isolated QA:owner edited title/body/excerpt/video/LinkedIn and uploa
 Approved article visualQA:1440x1000 panel880x860,grid1032,body~651px,18px/29.7px;768x1024 panel688px;390x844 full-width17pxbody. Light/dark inspected at all three breakpoints, nooverflow/brokenimages. Current Tracker/UMS/Capture production visualreferences inspected read-only. Existing real article Markdown/image unmodified.
 
 Remaining gates:final complete suite,Netlify protectedpreview,canonicalpush/merge,newbackendrelease,singlefrontendpromotion,productionreadback/ownereditor verification. Real physical-device touch not newly tested; actualChrome viewporttests and existing touch regression retained.
+
+## Release checkpoint
+
+- Feature commit: `4ec90f7e216280addb57c4ba725d92ff01f6aa30`, pushed on `feat/main-writing-v1-1-polish`; not merged to main.
+- Final local validation: `npm run validate`, `npm run build`, and all 51 tests passed.
+- `MAIN_WRITING_GITHUB_TOKEN` configuration confirmed by secret name only; value was not retrieved or displayed. Actual production GitHub write remains unverified.
+- Draft deploy `6aadad55588dbc213eb5a13e` is ready at https://6aadad55588dbc213eb5a13e--ycsu-platform-registry.netlify.app. Existing preview access protection is preserved.
+- Remote preview browser QA is BLOCKED: repeated Chrome extension connection timeouts, including recovery after documentation reload. Ready status is not UI acceptance.
+- No new Supabase function deployed; no frontend production promotion. Existing production rollback remains `6aada2062630da334a6f46db`.
+- Resume after browser reconnection: protected preview QA, normal main merge/push, deploy only `writing-content` using API bundling, verify backend, promote accepted frontend artifact once, then production browser and canonical readback checks.

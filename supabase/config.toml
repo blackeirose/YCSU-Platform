@@ -7,3 +7,7 @@ project_id = "fzydsnxxcdllkjxwdiwn"
 # Auth is checked in-function: existing management key, or a verified owner
 # Supabase Auth JWT restricted to authorize/reorder. Mixed callers require this off.
 verify_jwt = false
+
+[functions.writing-ops]
+# Public read projection; exact owner validated in handler for all other operations.
+verify_jwt = false

@@ -160,3 +160,6 @@ For meaningful implementation work, verify that:
 **Use the simplest sufficient architecture.**
 
 **Leave the repository ready for the next agent.**
+
+## Writing UI maintenance
+For MAIN UI work, apply current canonical ysu-ai-core/docs/SMALL_PROJECT_UI_STANDARD.md and preserve DESIGN.md tokens. Writing publishing requires explicit owner instruction; see docs/WRITING.md. Never deploy dist-qa or fixture content. Preserve the existing Product Registry security boundary and independent Writing presentation model.

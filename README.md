@@ -87,3 +87,7 @@ Only dist may be deployed. It excludes manifests, docs, SQL, tests and full expo
 ## v1.4 six-digit email sign-in
 
 Owner sign-in now requests a six-digit email code to enter in the original browser. The single input supports numeric keyboards, one-time-code autofill, paste and Enter; resend has a 60-second cooldown. Existing UUID-based authorization, session persistence, immediate logout and Magic Link compatibility remain. Desktop and physical-mobile acceptance passed; see docs/releases/v1.4.0.md.
+
+## Writing
+MAIN includes a separate Writing card and a responsive editorial reader. Published articles live in content/writing/*.md and images in public/writing/<slug>/. npm run build generates /writing/<slug>/index.html with static metadata/content. Markdown body remains Git canonical; owner settings manage presentation, featured article and independent ordering. See [Writing schema and publishing workflow](docs/WRITING.md), [UI decisions](DESIGN.md), and [release evidence](docs/releases/main-writing-v1.md).
+For attended isolated QA: node scripts/build-site.mjs --qa, then node scripts/qa-writing-server.mjs. Production always uses ordinary dist, never dist-qa.

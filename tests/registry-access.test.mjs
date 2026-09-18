@@ -45,8 +45,8 @@ test('database denies raw reads and writes to anon and every authenticated user 
 });
 test('published allowlist has only public runtime artifacts and no old export/manifest/source',async()=>{
  const root=new URL('../dist/',import.meta.url);const top=await readdir(root);
- assert.deepEqual(top.sort(),['_headers','assets','data','index.html']);
- assert.deepEqual(await readdir(new URL('data/',root)),['registry.public.snapshot.json']);
+ assert.deepEqual(top.sort(),['_headers','assets','data','index.html','writing']);
+ assert.deepEqual(await readdir(new URL('data/',root)),['registry.public.snapshot.json','writing.json']);
  assertPublicRegistry(JSON.parse(await readFile(new URL('data/registry.public.snapshot.json',root),'utf8')));
  const html=await readFile(new URL('index.html',root),'utf8');assert.doesNotMatch(html,/github\.com\/blackeirose|registry\.snapshot\.json|rest\/v1\/product_registry/);
 });

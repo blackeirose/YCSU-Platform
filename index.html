@@ -373,17 +373,18 @@
     body { background: radial-gradient(ellipse 120% 80% at 50% -10%, #e7edfb 0%, var(--bg) 55%); }
   }
 </style>
+<link rel="stylesheet" href="/assets/writing.css" />
 </head>
 <body>
   <div class="wrap">
     <header class="hero">
       <div class="eyebrow"><span class="dot"></span> main.ycsu.cc</div>
       <h1>YCSU Platform</h1>
-      <p class="sub">Central registry and entry point for the YCSU product ecosystem — every tool, its status, and where to find it.</p>
+      <p class="sub">Products, projects, and writing.</p>
       <div class="summary-bar" id="summary-bar"></div>
     </header>
 
-    <div id="reorder-toolbar" class="reorder-toolbar" hidden><span id="reorder-status" role="status" aria-live="polite"></span></div>
+    <div id="reorder-toolbar" class="reorder-toolbar" hidden><button type="button" id="arrange-cards" class="owner-button" aria-pressed="false">Arrange cards</button><span id="reorder-status" role="status" aria-live="polite"></span></div>
     <main class="grid" id="grid"></main>
 
     <footer>
@@ -416,15 +417,28 @@
   <p id="owner-message" role="status" aria-live="polite"></p>
 </dialog>
 <script type="module">
-  import { orderedProducts } from './assets/js/registry-order.mjs';
-  import { createCardReorder } from './assets/js/card-reorder.mjs';
-  import { setupOwnerAccess } from './assets/js/owner-access.mjs';
-  import { assertPublicRegistry } from './assets/js/registry-public.mjs';
+  import { orderedProducts } from '/assets/js/registry-order.mjs';
+  import { createCardReorder } from '/assets/js/card-reorder.mjs';
+  import { setupOwnerAccess } from '/assets/js/owner-access.mjs';
+  import { assertPublicRegistry } from '/assets/js/registry-public.mjs';
   let liveRegistry = false, publicLive = false, ownerView = false, publicData = null;
-  let ownerAccess;
+  import { setupWriting } from '/assets/js/writing.mjs';
+  let ownerAccess, currentData=null, canArrange=false, arranging=false, writingAvailable=false;
+  const arrangeButton=document.getElementById('arrange-cards');
+  function updateArrange(){
+    const available=canArrange&&writingAvailable;
+    arrangeButton.disabled=!available;
+    if(!available)arranging=false;
+    arrangeButton.textContent=arranging?'Done arranging':'Arrange cards';
+    arrangeButton.setAttribute('aria-pressed',String(arranging));
+    reorder.setAllowed(available&&arranging);
+    document.getElementById('reorder-status').textContent=arranging?'Drag a grip; on touch, hold it. Arrow keys also move cards.':'';
+  }
+  arrangeButton.addEventListener('click',()=>{arranging=!arranging;updateArrange()});
+  const writing=setupWriting({url:'https://fzydsnxxcdllkjxwdiwn.supabase.co',key:'sb_publishable_wpnShrpWOLV94EEUA86vVg_zRQbbW2W',getOwner:()=>ownerAccess,onChange:()=>{if(currentData)render(currentData)},onAvailability:value=>{writingAvailable=value;updateArrange()}});
   const reorder = createCardReorder({
     grid: document.getElementById('grid'), status: document.getElementById('reorder-status'),
-    save: payload => ownerAccess.save(payload),
+    save: payload => writing.saveOrder(payload),
   });
   // Deployment is an operational/reachability indicator — it must never be used
   // to represent product maturity. See docs/PLATFORM_MODEL.md §4.
@@ -454,6 +468,7 @@
     } catch { return null; }
   }
 
+  const PREVIEW_SLUGS = null; // Filled from curated assets by the static build.
   function previewHtml(p) {
     const isDevelopment = p.deployment === "Local" || p.deployment === "Internal";
     const isLive = p.deployment === "Public" && p.operationalStatus === "Live";
@@ -466,7 +481,7 @@
     }
 
     // Registry slugs determine optional assets curated during explicit MAIN maintenance tasks.
-    const src = (isLive || isDevelopment) && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug || "")
+    const src = (isLive || isDevelopment) && (!PREVIEW_SLUGS || PREVIEW_SLUGS.includes(p.slug)) && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug || "")
       ? `/assets/previews/${p.slug}.webp` : null;
     const href = isLive ? safeUrl(p.mainUrl) : null;
     const tag = href ? "a" : "div";
@@ -499,6 +514,7 @@
   }
 
   function render(data) {
+    currentData=data;
     const grid = document.getElementById("grid");
     const products = orderedProducts(data.products || []);
 
@@ -512,7 +528,9 @@
     `;
     document.getElementById("updated-date").textContent = data.updated || "unknown";
 
-    grid.innerHTML = products.map(p => {
+    const cards=writing.mix(products);
+    grid.innerHTML = cards.map(p => {
+      if(p.id==='writing')return writing.card();
       const badge = deploymentBadge(p);
 
       // Reality rule: only a verified mainUrl may render as an active Launch link.
@@ -554,13 +572,14 @@
       `;
     }).join("");
     loadPreviews(grid);
-    reorder.setProducts(products);
+    writing.images(grid);
+    reorder.setProducts(cards);
     ownerAccess?.refreshAvailability();
   }
 
   const SUPABASE_URL = "https://fzydsnxxcdllkjxwdiwn.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_wpnShrpWOLV94EEUA86vVg_zRQbbW2W";
-  function guestView(){ownerView=false;liveRegistry=publicLive;render(publicData||{products:[],updated:''});}
+  function guestView(){writing.setOwner(false);ownerView=false;liveRegistry=publicLive;render(publicData||{products:[],updated:''});}
   async function fetchPublicRegistry(){
     const response=await fetch(`${SUPABASE_URL}/functions/v1/registry-ops`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({operation:'read-public'}),cache:'no-store'});
     if(!response.ok)throw new Error('Public Registry unavailable');
@@ -572,9 +591,9 @@
     if(!response.ok)throw new Error('Public fallback unavailable');
     return assertPublicRegistry(await response.json());
   }
-  setupOwnerAccess({url:SUPABASE_URL,key:SUPABASE_ANON_KEY,setAllowed:value=>reorder.setAllowed(value),isLive:()=>liveRegistry,status:document.getElementById('reorder-status'),
-    onGuest:guestView,onOwnerData:data=>{ownerView=true;liveRegistry=true;render(data);}
-  }).then(access=>{ownerAccess=access;access.refreshAvailability();});
+  setupOwnerAccess({url:SUPABASE_URL,key:SUPABASE_ANON_KEY,setAllowed:value=>{canArrange=value;updateArrange()},isLive:()=>liveRegistry,status:document.getElementById('reorder-status'),
+    onGuest:guestView,onOwnerData:data=>{writing.setOwner(true);ownerView=true;liveRegistry=true;render(data);}
+  }).then(access=>{ownerAccess=access;access.refreshAvailability();writing.refresh();});
   fetchPublicRegistry().catch(()=>fetchPublicSnapshot()).then(data=>{
     publicData=data;if(!ownerView){liveRegistry=publicLive;render(data);}
   }).catch(()=>{if(!ownerView)document.getElementById('grid').textContent='Could not load the Registry. Please reload.';});

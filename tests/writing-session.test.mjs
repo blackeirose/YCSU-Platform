@@ -20,7 +20,7 @@ test('Writing owner requests reject stale sessions before sending and after JSON
 test('manifest failure retains static article, waits for public initialization and disables privileged editing',async()=>{
  const dom=environment('https://main.example.invalid/writing/article/'),w=dom.window,oldFetch=globalThis.fetch;let resolvePublic,ownerReads=0,changes=0;
  const staticArticle=w.document.createElement('main');staticArticle.id='writing-static';staticArticle.textContent='Canonical article body';w.document.body.prepend(staticArticle);
- globalThis.fetch=async url=>url==='/data/writing.json'?new Response('',{status:503}):new Promise(r=>{resolvePublic=()=>r(Response.json({ok:true,settings:{},home_order:[]}))});
+ globalThis.fetch=async url=>(url==='/data/writing.json'||url.endsWith('writing-content'))?new Response('',{status:503}):new Promise(r=>{resolvePublic=()=>r(Response.json({ok:true,settings:{},home_order:[]}))});
  try{
   const writing=setupWriting({url:'https://backend.example.invalid',key:'public',getOwner:()=>({writingRequest:async()=>{ownerReads++;return {}}}),onChange:()=>{changes++},onAvailability(){}});writing.setOwner(true);await tick();assert.equal(changes,0);resolvePublic();await writing.ready;
   assert.equal(w.document.getElementById('writing-static').textContent,'Canonical article body');assert.equal(w.document.querySelector('.writing-viewer').open,false);assert.match(writing.card(),/UNAVAILABLE/);assert.equal(ownerReads,0);
@@ -28,10 +28,10 @@ test('manifest failure retains static article, waits for public initialization a
 });
 test('logout removes Writing editor and delayed settings response cannot restore controls',async()=>{
  const dom=environment(),w=dom.window,oldFetch=globalThis.fetch;let resolveSave,allowed=false;
- const settings={ok:true,settings:{},home_order:[]};globalThis.fetch=async url=>Response.json(url==='/data/writing.json'?{schema:1,articles:[]}:settings);
+ const settings={ok:true,settings:{},home_order:[]};globalThis.fetch=async url=>Response.json((url==='/data/writing.json'||url.endsWith('writing-content'))?{schema:1,articles:[]}:settings);
  try{
   const writing=setupWriting({url:'https://backend.example.invalid',key:'public',getOwner:()=>({writingRequest:async payload=>payload.operation==='read-owner'?{...settings,revision:0}:new Promise(r=>{resolveSave=()=>r({...settings,revision:1})})}),onChange(){},onAvailability:v=>{allowed=v}});await writing.ready;writing.setOwner(true);await tick();assert.equal(allowed,true);
-  [...w.document.querySelectorAll('button')].find(b=>b.textContent==='Writing settings').click();assert.ok(w.document.querySelector('.writing-editor'));
-  w.document.querySelector('.writing-editor form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();writing.setOwner(false);assert.equal(w.document.querySelector('.writing-editor'),null);assert.equal(allowed,false);resolveSave();await tick();assert.equal(w.document.querySelector('.writing-editor'),null);assert.equal(allowed,false);
+  w.history.replaceState(null,'','/writing/');w.dispatchEvent(new w.PopStateEvent('popstate'));[...w.document.querySelectorAll('button')].find(b=>b.textContent==='Reorder articles').click();assert.ok(w.document.querySelector('.writing-order-form'));
+  w.document.querySelector('.writing-order-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();writing.setOwner(false);assert.equal(w.document.querySelector('.writing-order-form'),null);assert.equal(allowed,false);resolveSave();await tick();assert.equal(w.document.querySelector('.writing-order-form'),null);assert.equal(allowed,false);
  }finally{globalThis.fetch=oldFetch;dom.window.close()}
 });

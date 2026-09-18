@@ -11,3 +11,6 @@ verify_jwt = false
 [functions.writing-ops]
 # Public read projection; exact owner validated in handler for all other operations.
 verify_jwt = false
+[functions.writing-content]
+# Exact existing owner is verified server-side for article reads/writes; public content projection only.
+verify_jwt = false

@@ -1,0 +1,14 @@
+# MAIN Writing v1.1 — release evidence
+
+Status: CANDIDATE; no production release yet.
+Core:7a11fa58253cbd2e1587a97e01af15e054aec442, current canonical AGENTS/AI_CORE and required architecture/services/workflow/workspace/communication/gate/UI/tool references read. Gate Full; existing Node/CLI/PGlite only, no Admin/system installation.
+Initial main:97c9322; clean, origin matched. Feature branch:feat/main-writing-v1-1-polish. Production/rollback:6aada2062630da334a6f46db, existing Netlify site9c0bd872-1f70-4468-b853-e87b9b3269d5, no Git CD. One approved article retained byte-for-byte in canonical source. No Product schema/records,Auth/SMTP,DNS,other apps or original media changes.
+
+Requirements1–5,13,16–17:contextual editor,all named metadata/body fields,cover/inline asset selection/upload,exact owner server validation,Git canonical writes,tags preservation implemented. Requirements6–12,15:880px/86dvh floating shell,frosted layering,sans18px body/17pxmobile,~651px desktop measure,170pxsidebar,compact leftheader,singular/plural card. Requirement14:independent order/feature/home with200article bounded backend. Requirements18–21:tests and actualbrowser evidence below. Requirements22–24:release pending.
+
+Independent reviewer /root/writing_security_review PASS after two fixes: navigation invalidates delayed edit reads; save uses committed public_article and public reads validate current main SHA across instances. Reviewer ran25focusedtests, no remaining code/security blockers. Separate visual implementation agent owned only CSS/card/header; backend agent owned only new handler/API tests. Root integrated and performed browserQA. Authors' own checks are not labelled independent review.
+
+Real Chrome isolated QA:owner edited title/body/excerpt/video/LinkedIn and uploaded cover+inline WebP, saved, then reloaded. Updated body and two immutable image URLs persisted and decoded. Set featured on second article, moved first article to top of index, saved/reloaded; homepage featured stayed second and home position unchanged. Close leaves only Arrange cards; mobile Back/Forward and list transition passed. Logout removed allProduct links and allWriting owner buttons immediately. No console warnings/errors. Test fixtures remained in memory/dist-qa only.
+Approved article visualQA:1440x1000 panel880x860,grid1032,body~651px,18px/29.7px;768x1024 panel688px;390x844 full-width17pxbody. Light/dark inspected at all three breakpoints, nooverflow/brokenimages. Current Tracker/UMS/Capture production visualreferences inspected read-only. Existing real article Markdown/image unmodified.
+
+Remaining gates:final complete suite,Netlify protectedpreview,canonicalpush/merge,newbackendrelease,singlefrontendpromotion,productionreadback/ownereditor verification. Real physical-device touch not newly tested; actualChrome viewporttests and existing touch regression retained.

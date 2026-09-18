@@ -1,9 +1,11 @@
 # MAIN Writing UI decisions
 
-Applied canonical `ysu-ai-core/docs/SMALL_PROJECT_UI_STANDARD.md` v1.0 at Core revision `7a11fa58253cbd2e1587a97e01af15e054aec442`.
+Applied canonical ysu-ai-core SMALL_PROJECT_UI_STANDARD v1.0, revision7a11fa58253cbd2e1587a97e01af15e054aec442.
 
-Preserve MAIN's existing blue accent, dark/light system preference, native HTML and Product layout. Writing adds a semantic editorial card in the same grid. Header spacing is compact (28px top, 24px below hero); owner Arrange is explicit and is the only place with drag guidance. Grips use 44px hit targets in Arrange mode.
+Preserve MAIN blue identity, system sans font, light/dark semantic tokens and unchanged Product grid. Current Tracker, UMS and Capture live headers were inspected: left alignment, compact hierarchy and close subtitle spacing inform MAIN without copying their palettes. Header uses32px maximum title,14px subtitle,17px statistics and24px top padding. Home owner controls contain only Arrange cards.
 
-Reader: native modal dialog, 52% black backdrop and 18px blur; 90% main surface and 86–90% reading panel with 20px blur. The paragraph measure is approximately 720px, 18px Georgia/serif with 1.85 line height. Interface text remains the system sans font. At 700px and below, reader and index become separate full-width states with Back to Articles. Desktop/tablet retain independently scrollable index and reader. The empty state is honest, without fabricated covers or articles.
+Desktop native dialog: width min(880px,100vw -80px),86dvh height, centered18px radius. At1440x1000 the grid is1032px wide and dialog880x860 atx280/y70, leaving76px of each grid edge plus70px above/below. Background45% black with8px blur; actual QA found16px blur obscured background cards too heavily. Shell68% opacity with20px blur, index24%, reader88%. Sidebar170px; reader text measured~651px, max700px. System-sans body18px/1.65, paragraphs1em, title26–32px/1.22, metadata13px. No ebook serif or extra fonts.
 
-Semantic colors reuse `--text`, `--text-dim`, `--accent`, `--card-border`; light-mode Writing links use #2469a8 for contrast. Avoid faint color for new body/date/control text. Native modal focus, Escape, focus return, scroll lock and reduced-motion overrides are maintained. Media has alt text and an explicit failure placeholder. No new fonts, UI framework, runtime package, or icon service.
+At768px dialog688px wide with independent index/reader scrolling. At<=700px panel100vw/100dvh, separate list/reader, body17px/1.65, title27px. Owner editor shares reader,44px controls, labelled Markdown/metadata fields, collapsible body preview and inline/cover replacement. No rich-text CMS or homepage settings link.
+
+Semantic colors reuse --text,--text-dim,--accent,--card-border; light Writing links#2469a8. Native Escape/focus return/scroll lock and reduced-motion support remain. Image alt/failure placeholders, no overflow and guest/logout controls were checked. Tests validate card count singular/plural and typography bounds; actual browser checks establish dimensions and appearance.

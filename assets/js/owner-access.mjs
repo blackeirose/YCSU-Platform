@@ -71,13 +71,13 @@ export async function setupOwnerAccess({url,key,setAllowed,isLive,status,onOwner
   refreshAvailability(){setAllowed(verified&&isLive());},
   async writingRequest(payload){
    if(!verified||!client)throw new Error('Owner session required');
-   if(!['read-owner','settings','home-order'].includes(payload.operation))throw new Error('Unsupported Writing operation');
+   if(!['read-owner','settings','home-order','read-article','save-article'].includes(payload.operation))throw new Error('Unsupported Writing operation');
    const current=revision;const {data,error}=await client.auth.getSession();
    if(current!==revision||!verified)throw new Error('Session changed');
    if(error||!data.session){revoke();throw new Error('Session expired');}
-   const response=await fetch(url+'/functions/v1/writing-ops',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store',signal:AbortSignal.timeout(15000)});
+   const response=await fetch(url+'/functions/v1/'+(['read-article','save-article'].includes(payload.operation)?'writing-content':'writing-ops'),{method:'POST',headers:{apikey:key,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store',signal:AbortSignal.timeout(15000)});
    if(current!==revision||!verified)throw new Error('Session changed');
-   if(!response.ok){if(response.status===401||response.status===403)revoke();throw new Error('Writing save failed');}
+   if(!response.ok){if(response.status===401||response.status===403)revoke();const error=new Error(response.status===409?'Changed elsewhere. Reload the article before saving.':'Writing save failed');error.status=response.status;throw error;}
    const result=await response.json();if(current!==revision||!verified)throw new Error('Session changed');return result;
   },
   async save(payload){

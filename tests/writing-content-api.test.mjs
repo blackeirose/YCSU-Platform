@@ -83,7 +83,7 @@ test('an old in-flight public read cannot repopulate cache after a save',async()
 });
 
 test('upstream failures stay sanitized and redirect responses are never followed',async()=>{
- const c=setup({onRequest:()=>Response.json({message:'github-secret service-secret private/secret.txt'},{status:403})});const response=await c.request({operation:'read-public'},'');assert.equal(response.status,503);assert.doesNotMatch(await response.text(),/github-secret|service-secret|private\/secret/);assert.equal(c.fixture.calls[0].options.redirect,'error');
+ const c=setup({onRequest:()=>Response.json({message:'github-secret service-secret private/secret.txt'},{status:403})});const response=await c.request({operation:'read-public'},'');assert.equal(response.status,502);assert.doesNotMatch(await response.text(),/github-secret|service-secret|private\/secret/);assert.equal(c.fixture.calls[0].options.redirect,'error');
 });
 
 test('maximum-size images, optional empty URLs and total upload limits are enforced without regex stack failure',async()=>{
@@ -105,4 +105,24 @@ test('save result carries immutable committed article and another isolate revali
  assert.equal(result.public_article.title,'Committed title');assert.equal(result.commit,fixture.head);assert.equal(result.public_article.cover,`https://raw.githubusercontent.com/blackeirose/YCSU-Platform/${fixture.head}/public/writing/existing/${name}`);assert.match(result.public_article.reader_html,new RegExp(fixture.head));
  const cached=await (await reader.request({operation:'read-public'},'')).json();assert.equal(cached.articles[0].title,'Committed title');
  const unchanged=await (await writer.save({})).json();assert.equal(unchanged.unchanged,true);assert.equal(unchanged.commit,fixture.head);assert.equal(unchanged.public_article.title,'Committed title');
+});
+
+
+test('public reads never access or send editor token, including a broken configured token',async()=>{
+ const c=setup({env:{MAIN_WRITING_GITHUB_TOKEN:'expired-secret'},onRequest:call=>call.options.headers.Authorization?Response.json({message:'Bad credentials'},{status:401}):undefined});
+ const pub=await c.request({operation:'read-public'},'');assert.equal(pub.status,200);
+ assert.ok(c.fixture.calls.every(call=>!call.options.headers.Authorization));
+ const editor=await c.request({operation:'read-article',slug:'existing'});
+ assert.equal(editor.status,502);assert.deepEqual((await editor.json()).diagnostic,{github_status:401,response_class:'authentication_failed'});
+ const again=await c.request({operation:'read-public'},'');assert.equal(again.status,200);
+ const h=createWritingContentHandler({getEnv:()=>{throw Error('public must not read secrets')},createClient:()=>{throw Error('public must not authenticate')},fetchImpl:c.fixture.fetch});
+ assert.equal((await h(new Request('https://backend.invalid',{method:'POST',body:JSON.stringify({operation:'read-public'})}))).status,200);
+});
+
+test('GitHub diagnostic reports exact status and safe class without upstream body or secrets',async()=>{
+ for(const [status,classification] of [[401,'authentication_failed'],[403,'permission_denied'],[404,'not_found_or_inaccessible'],[429,'rate_limited'],[500,'upstream_server_error']]){
+  const c=setup({onRequest:()=>Response.json({message:'github-secret service-secret private/secret.txt'},{status})});
+  const response=await c.request({operation:'read-article',slug:'existing'});assert.equal(response.status,502);
+  const out=await response.json();assert.deepEqual(out.diagnostic,{github_status:status,response_class:classification});assert.doesNotMatch(JSON.stringify(out),/github-secret|service-secret|private\/secret/);
+ }
 });

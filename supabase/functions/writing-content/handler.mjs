@@ -70,7 +70,16 @@ export function createWritingContentHandler({createClient,getEnv,fetchImpl=fetch
  const reply=(status,body)=>new Response(JSON.stringify(body),{status,headers});
  function github(token){return async(endpoint,method='GET',body)=>{
   const response=await fetchImpl(API+endpoint,{method,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'YCSU-MAIN-Writing',...(token?{Authorization:`Bearer ${token}`}:{})},...(body?{body:JSON.stringify(body),headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'YCSU-MAIN-Writing','Content-Type':'application/json',Authorization:`Bearer ${token}`}}:{}),redirect:'error',signal:AbortSignal.timeout(15000)});
-  if(!response.ok){if(method==='PATCH'&&[409,422].includes(response.status))conflict();unavailable();}
+  if(!response.ok){
+   if(method==='PATCH'&&[409,422].includes(response.status))conflict();
+   const status=response.status;
+   const classification=status===401?'authentication_failed':status===403?(response.headers.get('x-ratelimit-remaining')==='0'?'rate_limited':'permission_denied'):status===404?'not_found_or_inaccessible':status===429?'rate_limited':status>=500?'upstream_server_error':'upstream_request_rejected';
+   // Fixed metadata only: never log/return GitHub body, headers, URLs or credentials.
+   const diagnostic={github_status:status,response_class:classification};
+   console.warn('writing-content GitHub failure',JSON.stringify(diagnostic));
+   const error=new Failure(502,'GITHUB_REQUEST_FAILED','GitHub rejected the content request.');
+   error.diagnostic=diagnostic;throw error;
+  }
   let data;try{data=JSON.parse(await boundedText(response,16*1024*1024))}catch(error){if(error instanceof Failure)throw error;unavailable();}return data;
  };}
  async function head(api){return checkedSHA((await api('/git/ref/heads/main')).object?.sha);}
@@ -91,9 +100,9 @@ export function createWritingContentHandler({createClient,getEnv,fetchImpl=fetch
   const entries=await snap.directory(['public','writing',slug]);
   return new Set(entries.filter(e=>e.type==='blob'&&e.mode==='100644'&&MEDIA.test(e.path)).map(e=>e.path));
  }
- async function manifest(token){
+ async function manifest(){
   // Every caller checks canonical main, including other Edge isolates after a save.
-  const current=epoch,api=github(token),commit=await head(api);
+  const current=epoch,api=github(undefined),commit=await head(api);
   if(cache?.commit===commit)return cache.value;
   if(inflight?.commit===commit)return inflight.promise;
   const pending=(async()=>{const snap=await snapshot(api,commit);let total=0;
@@ -151,10 +160,10 @@ export function createWritingContentHandler({createClient,getEnv,fetchImpl=fetch
     const {data,error}=await client.auth.getUser(token),user=data?.user;
     if(error||!user||user.id!==OWNER||!user.email_confirmed_at||user.is_anonymous)return reply(403,{ok:false,error:'Owner access required.'});
    }
+   if(body.operation==='read-public')return reply(200,await manifest());
    const token=getEnv('MAIN_WRITING_GITHUB_TOKEN');
-   if(body.operation==='read-public')return reply(200,await manifest(token));
    if(!token)return reply(503,{ok:false,code:'EDITOR_NOT_CONFIGURED',error:'Article editing is not configured yet.'});
    return reply(200,await edit(github(token),body));
-  }catch(error){return error instanceof Failure?reply(error.status,{ok:false,code:error.code,error:error.message}):reply(503,{ok:false,code:'CONTENT_UNAVAILABLE',error:'Writing content is unavailable. Reload to check the latest state.'});}
+  }catch(error){return error instanceof Failure?reply(error.status,{ok:false,code:error.code,error:error.message,...(error.diagnostic?{diagnostic:error.diagnostic}:{})}):reply(503,{ok:false,code:'CONTENT_UNAVAILABLE',error:'Writing content is unavailable. Reload to check the latest state.'});}
  };
 }

@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — verified 2026-09-16
+## Current production — first Writing article, verified 2026-09-18
+
+**Make the Impossible Possible** is published at https://main.ycsu.cc/writing/make-the-impossible-possible/. Source `15a6100283e000901009146d55b2315285900cc2`, Netlify `6aada2062630da334a6f46db`, published `2026-09-18T20:41:43.480Z`. Rollback: `6aad8e62321b9fa6785b09b8`. Exact LinkedIn copy and approved cover, owner-approved descriptive cover alt, 29/29 tests, isolated responsive QA and real production browser verification passed. Writing now has exactly 1 article; all 11 live Products and public Writing settings/order are unchanged. All 27 served assets match dist SHA256. One production release, no backend or infrastructure changes. [Full evidence and limits](docs/releases/make-the-impossible-possible-2026-09-18.md).
+
+## Historical production — verified 2026-09-16
 
 Source `f2c464ebda178a0da2528cc70f51638069582e4d`, Netlify deployment `6aa73f14dcefc0bfdb32050d`, ready/published 2026-09-14 00:27:27.812 UTC. Product release remains v1.4.0; the only subsequent runtime change is the manually curated UMS preview. Final owner-only link security acceptance is **PASS / CLOSED**. All 19 served files match the reviewed build; the live public Registry has 11 products. See [final acceptance and evidence limits](docs/releases/owner-links-security-acceptance-2026-09-16.md).
 

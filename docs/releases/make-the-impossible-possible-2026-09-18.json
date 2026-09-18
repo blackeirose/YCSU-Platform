@@ -1,0 +1,147 @@
+{
+  "deploy": "6aada2062630da334a6f46db",
+  "articleCount": 1,
+  "liveProducts": 11,
+  "publicStateUnchanged": true,
+  "files": [
+    {
+      "path": "assets/js/card-reorder.mjs",
+      "status": 200,
+      "sha256": "7ae60b9a1d7d73309e6c2e45d09bc4c9af9a2141f9f8ed53c2fb4cad5738af58"
+    },
+    {
+      "path": "assets/js/email-otp.mjs",
+      "status": 200,
+      "sha256": "297e8be773e3eba581e7362703a3c671e725429a6a1058671c897cbc9f06ce54"
+    },
+    {
+      "path": "assets/js/owner-access.mjs",
+      "status": 200,
+      "sha256": "5830d1bba0658910c881d0913be66ca6eebe3cc16020789e7f42a92a7fb6ba46"
+    },
+    {
+      "path": "assets/js/registry-order.mjs",
+      "status": 200,
+      "sha256": "a0c60e2fd842d4d98193bb083ef4dd8b92bb1ed340564ff85edd447a783c25a2"
+    },
+    {
+      "path": "assets/js/registry-public.mjs",
+      "status": 200,
+      "sha256": "a396329da6ef7f43e20f822933a40e23dd8405f19d478e3c158b864423004527"
+    },
+    {
+      "path": "assets/js/writing-model.mjs",
+      "status": 200,
+      "sha256": "c5bfe5dc011cecc7df132a0cc30373d1f28e23ab0d141a1cf88012e87e354f65"
+    },
+    {
+      "path": "assets/js/writing-viewer.mjs",
+      "status": 200,
+      "sha256": "f2b4488d03a4f4990cbf2fe6df67516fbfa5607978c684cf12dcd3a782d21db2"
+    },
+    {
+      "path": "assets/js/writing.mjs",
+      "status": 200,
+      "sha256": "3c85c9d298291e6372bb32422eb841361706995e0132a54add20ea0d0a668b37"
+    },
+    {
+      "path": "assets/previews/adcc.webp",
+      "status": 200,
+      "sha256": "00d236b083082960f4e45c1515682101823b13843e4f6cac7acffa6c7644d8ef"
+    },
+    {
+      "path": "assets/previews/fire-pump-test-pit-simulator.webp",
+      "status": 200,
+      "sha256": "bcb7524c6b01cf45e8f87bb18f8c12abacc0f66754729178ea6f1bb2ded60fda"
+    },
+    {
+      "path": "assets/previews/plumbing-calculation-chart.webp",
+      "status": 200,
+      "sha256": "72169fc8f09bef0b9b29cb21c3710753d4338dfbe8d59ee205772943b07ba955"
+    },
+    {
+      "path": "assets/previews/rachels-animal-kingdom.webp",
+      "status": 200,
+      "sha256": "f7fd6e831ebb568c59cdd4e2f40a1a0a97dca73623466a42f997712e42d7aed2"
+    },
+    {
+      "path": "assets/previews/ums.webp",
+      "status": 200,
+      "sha256": "587f4f281974807498bb1455a691d95eaafcbfb53946f628d2f651f76106895d"
+    },
+    {
+      "path": "assets/previews/workflow-hub.webp",
+      "status": 200,
+      "sha256": "609e52a8e42d5026a8f09a0cf0dbd29044b1572cbfc5ac7c22ad67acc24a7a89"
+    },
+    {
+      "path": "assets/previews/ycsu-platform.webp",
+      "status": 200,
+      "sha256": "fcc22f1bd49c49efb9a81151fd722257c60b40f55f7841b748acec6b48ffdf4f"
+    },
+    {
+      "path": "assets/previews/ycsu-tracker.webp",
+      "status": 200,
+      "sha256": "3c660efc47decacb56e2283606f4e18985f39f4cfeea45c2703b0e80e54dc746"
+    },
+    {
+      "path": "assets/previews/ysu-mind-map.webp",
+      "status": 200,
+      "sha256": "f37732f75fbfcd7707c0602886a21aed32981f826d71149dd22162751c6f48f9"
+    },
+    {
+      "path": "assets/reorder.css",
+      "status": 200,
+      "sha256": "92b542071890ec788230e43472135584d4ec7ae82f3d485b5c8961a010f13f05"
+    },
+    {
+      "path": "assets/vendor/supabase-2.116.0.js",
+      "status": 200,
+      "sha256": "118e46708b26a7913386c7740284fd28bd92f37e00cb59e5a58be8aea7ef34bd"
+    },
+    {
+      "path": "assets/vendor/SUPABASE-LICENSE",
+      "status": 200,
+      "sha256": "bc704afe85e5e92311e42c5e6b07d5ff082e93639303c92a93d7fa3184ce3eef"
+    },
+    {
+      "path": "assets/writing.css",
+      "status": 200,
+      "sha256": "c52d0e861633ce65a107ed8154d57a1e8ecbafc2b2e2266fbfc9fc4a8a702842"
+    },
+    {
+      "path": "data/registry.public.snapshot.json",
+      "status": 200,
+      "sha256": "47b74818912d79f1157834ad1f0b6fb8d550e54d48b55d1bc04d87c81015dd74"
+    },
+    {
+      "path": "data/writing.json",
+      "status": 200,
+      "sha256": "f2ece9cb7b98ce03fb1c48dc9f99f9b939881f950615649a9bc1c4e6a297ae59"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "46712cca3cbbdd586fa5f959e4b84b7dbfba31fda0f42a1e9b13393136542754"
+    },
+    {
+      "path": "writing/index.html",
+      "status": 200,
+      "sha256": "3f2f324ec50415f7cfe9fe5fe0bd2f0e464b641cffdebfd44bf3b0b9bf2a9d2d"
+    },
+    {
+      "path": "writing/make-the-impossible-possible/cover.webp",
+      "status": 200,
+      "sha256": "5f2040fb825d6019721090eba159a006d49c9826591a9711f7a58595ed1f8282"
+    },
+    {
+      "path": "writing/make-the-impossible-possible/index.html",
+      "status": 200,
+      "sha256": "c2db553b93b8f01e5bd2583e400cffc393e44c9c7724c32b41f81b097c8e03a8"
+    }
+  ],
+  "coreRevision": "7a11fa58253cbd2e1587a97e01af15e054aec442",
+  "sourceCommit": "15a6100283e000901009146d55b2315285900cc2",
+  "rollbackDeploy": "6aad8e62321b9fa6785b09b8",
+  "bodySha256": "ed4ea1388fa9fff0fd06ee323dc5e55266dadb0a72be81b61c7fcfbbc845d966"
+}

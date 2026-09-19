@@ -10,7 +10,8 @@ test('Writing card uses singular and plural counts with cover before featured ar
   const dom=new JSDOM(writingCard(Array.from({length:count},(_,i)=>({...article,slug:'fixture-'+i}))));
   const card=dom.window.document.querySelector('.writing-card');
   assert.equal(card.querySelector('.writing-count').textContent,label);
-  assert.ok(card.querySelector('.writing-cover').compareDocumentPosition(card.querySelector('.writing-article-title'))&dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+  if(count)assert.ok(card.querySelector('.writing-cover').compareDocumentPosition(card.querySelector('.writing-article-title'))&dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+  else{assert.equal(card.querySelector('.writing-article-title'),null);assert.equal(card.querySelector('h2 a').getAttribute('href'),'/writing/');}
   assert.equal(card.querySelectorAll('.badge,.version-row,.meta-list').length,0);
   if(count)assert.equal(card.querySelector('.writing-date').textContent,'2026-09-18 · Education');
   dom.window.close();

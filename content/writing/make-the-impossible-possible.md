@@ -1,7 +1,7 @@
 ---
 title: "Make the Impossible Possible"
 slug: "make-the-impossible-possible"
-date: "2026-09-18"
+date: "2026-09-05"
 category: "AI & Architecture"
 cover: "/writing/make-the-impossible-possible/replacement-298bc5e63fa94ffe84b4183ab485b5d8.webp"
 cover_alt: "A child draws animals beside a tablet showing Rachel’s Animal Kingdom game, with her sketches and the finished game artwork displayed above."

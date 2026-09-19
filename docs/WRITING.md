@@ -87,3 +87,6 @@ Partial/mixed existing markup and code/image/link syntax are protected: use plai
 
 ## Lifecycle milestone font expansion
 Supersedes v1.2 size list only: body_font_size accepts each integer12 through20; default18. Line height for12/13/14/15/16 is1.8/1.78/1.75/1.72/1.68. No arbitrary CSS. Hidden/Archived/Deleted apply only to Products. Mixed home ordering retains inactive Product slots; article ordering/featured settings remain independent.
+
+## v1.3.1 card identity
+The display setting/default title is YSU Journal. WRITING remains the type label, data-product-id remains writing, and /writing/ routes and article schema are unchanged. Card order: type/count → h2 Journal name → cover → h3 featured article title → date/category → excerpt → shared-title footer. Existing title-driven empty/list reader naming inherits this display identity; article reader/editor behavior and styles are unchanged.

@@ -36,3 +36,11 @@ button,input,select,textarea{font:inherit}button:focus-visible,a:focus-visible,i
 .article-body[data-body-size="14"]{font-size:14px;line-height:1.75}
 .article-body[data-body-size="15"]{font-size:15px;line-height:1.72}
 .article-body[data-body-size="16"]{font-size:16px;line-height:1.68}
+
+/* Journal uses the Product meta/name/preview rows; only this card changes. */
+.writing-card{height:620px}
+.writing-card-content{display:flex;flex:1;min-width:0;min-height:0;overflow:auto;flex-direction:column;gap:14px}
+.writing-card-content>.preview{flex-shrink:0}
+.writing-card .writing-article-title{font-size:18px;line-height:1.25;font-weight:600;margin:0;overflow-wrap:anywhere}
+#grid:has(.product-actions) .writing-card{padding-top:64px}
+@media(max-width:639px){.writing-card .card-tags{min-height:22px}.can-reorder .writing-card .card-tags{min-height:44px}}

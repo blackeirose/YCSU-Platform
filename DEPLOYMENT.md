@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — MAIN v1.3.1 final polish, verified 2026-09-18 (Pacific)
+## Current production — second Writing article, verified 2026-09-19 (Pacific)
+
+Published [What if I could just build the missing Revit button?](https://main.ycsu.cc/writing/build-the-missing-revit-button/) from content commit `df15f898b0a2283dca8627e1ae81be240ff272aa`. Netlify `6aaf1757a66ab60159ad14a1`, published `2026-09-19T23:14:36.849Z`. Content-only addition: approved September 12 LinkedIn text and lossless cover. 73/73 tests, 29/29 isolated browser and 29/29 production browser checks; 35/35 served files match dist SHA256. Existing featured article, presentation settings and public Registry unchanged. Frontend rollback `6aae22f53d17fbcf50985c6c`; dynamic content also requires an ordinary Git revert for complete rollback. [Release evidence](docs/releases/missing-revit-button-2026-09-19.md).
+
+## Historical production — MAIN v1.3.1 final polish, verified 2026-09-18 (Pacific)
 
 Netlify `6aae22f53d17fbcf50985c6c`, published `2026-09-19T05:52:18.006Z`; merge/build `bdf6ed9e59f92410159856dc48b51c4dec14d475`, feature `c3e0f01827c443004bef079c3cdb86cc8dbb6f26`. One frontend publication after73/73 full tests,24/24 affected final tests, independent review/readiness,21 isolated regression checks, mouse/touch ordering and18 live candidate checks. Production18/18 browser checks,6/6 API security checks and33/33 served SHA256 hashes PASS. YSU Journal card hierarchy, one curated Social Capture preview and exact Registry English copy only. No migration/backend/Auth/lifecycle/reader/editor implementation change. Previous secure frontend rollback `6aae039f329918d23c9511bf`; preserve current operational states and privacy contract. No owner action. [Full evidence, exact English readback and limitations](docs/releases/main-v1-3-1-final-polish.md).
 

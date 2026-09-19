@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production - Writing v1.1 polish, verified 2026-09-18
+## Current production — Writing v1.2, verified 2026-09-18 (Pacific)
+
+Netlify `6aadd0b0941aa8845e985d20`, published `2026-09-19T00:02:07.048Z`, merge/build `422160a50ece4db33974365fba2c8f34323bcd42`, feature `b3459a3c7b81edd7882645405e67b132086c1469`. One frontend release after65/65 tests, independent37/37 review, isolated desktop/mobile QA and real owner save/restore/logout gates.31/31 served assets match; actual production owner formatting/size save, refresh, guest read and restoration passed. Previous secure frontend rollback `6aadc5abb7561cd759f6c1e3`; retain the compatible new writing-content parser when restoring it. No owner action pending. [Full evidence and limitations](docs/releases/main-writing-v1-2.md).
+
+## Historical production - Writing v1.1 polish, verified 2026-09-18
 
 Netlify `6aadc5abb7561cd759f6c1e3`, published `2026-09-18T23:14:45.917Z`, from canonical source `6bcde873d6a5f30efe9a712cd7f8cbe5dccb2a1d`. One frontend release after actual owner read/save/reload/logout gates. Additive writing-content uses public unauthenticated GitHub reads and a server-only editor token for exact-owner operations. 53/53 full tests plus 9 post-content tests passed; 30/30 deployed assets match; actual production owner no-op save/logout and mobile public deep-link checks passed. Registry/presentation payloads are unchanged. Rollback `6aada2062630da334a6f46db`. No owner action pending. [Full evidence](docs/releases/main-writing-v1-1.md).
 

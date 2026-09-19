@@ -86,3 +86,5 @@ Production v1.1 polish is verified at Netlify 6aadc5abb7561cd759f6c1e3, source 6
 
 ## Writing v1.2 — formatting and article body size
 The existing Markdown editor adds a compact Bold/Italic/H2/H3/Quote/Link toolbar with immediate preview and one article-wide numeric body_font_size (17/18/19/20; default18). Shared parsing, static generation, public runtime and protected owner save use the same field. Fixed system sans family; title, metadata, index and controls retain their own sizes. No new service, library, Auth/DB changes or arbitrary CSS. Release evidence: docs/releases/main-writing-v1-2.md.
+
+Writing v1.2 released at merge422160a, Netlify6aadd0b0941aa8845e985d20 (2026-09-19UTC /2026-09-18Pacific).65/65 tests, independent37/37 review and real owner/guest/save/restore/logout passed.31/31 deployed asset hashes match; no owner action remains. See release note for exact evidence and mobile-tool limitations.

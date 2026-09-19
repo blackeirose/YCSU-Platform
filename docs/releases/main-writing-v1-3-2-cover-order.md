@@ -1,6 +1,6 @@
 # MAIN Writing v1.3.2 — MAIN Cover + Default Article Order
 
-Status: RELEASE READY; implementation, tests, independent review and candidate gates PASS.
+Status: RELEASED / PRODUCTION VERIFIED. Owner action: NONE.
 
 - Fresh canonical Core:57a69136b7473718dfcf26311ae801f033696f05 (AGENTS/AI_CORE and relevant UI, workflow, gates, services, workspace, communication, agentic references).
 - Clean base main:e602b98910e81b1bbc599bf8c005513450361705, including owner article-date update. Branch:feat/main-writing-v1-3-2-cover-order.
@@ -22,3 +22,17 @@ Candidate uses local dist with an attended loopback proxy to existing MAIN servi
 Initial live harness tried an unnecessary second read after logout, correctly received403, and was changed to skip cleanup reads after confirmed restoration. This was a QA harness issue, not an application fix. No credentials printed. Private backups and images: C:/Users/ysu/Codex_Workspaces/MAIN-release-evidence/v132-cover-order (outside dist).
 
 Independent final readiness PASS after the static fixture correction. Additional real Chrome no-JavaScript index check PASS.
+
+## Release and production acceptance
+
+- Feature SHA:4faa34cb8c65d4e2f6f576866be6b1bc60199fe8 (implementation checkpoint c68fb8188831b5fb8aee110000b93e0cf7b59a03).
+- Merge/build SHA:e1ed82ee2442dac080fc92940c56edf6eaccaa5c.
+- Previous deploy:6aaf1757a66ab60159ad14a1. New deploy:6aaf1e77b3d3a8598605e033, published2026-09-19T23:45:20.756Z. Exactly one production publication to existing ycsu-platform-registry; no new site or Git CD change.
+- Production13/13 real browser checks PASS at1440/light and390/dark/touch emulation: cover selection200, immediate full card content update and reload persistence; unchanged index order; one owner badge/disabled selected button; real manual reorder save/reload with cover unchanged; exact restoration; owner edit read/cancel, logout/storage clear, guest reload, no overflow or JavaScript exceptions.
+- Production8/8 API security checks PASS: guest settings writes for both featured_slug/article_order denied401, guest owner reads/edit/save denied, public Writing read200 without secret patterns, Hidden product exactly four allowed fields, archived/deleted absent. No security configuration or schema change.
+-35/35 served production files SHA256 match the accepted build;36 staged files include Netlify _headers configuration. Static secret/fixture/banner scan PASS. Real no-JavaScript production index uses dateDESC order.
+- Initial and final settings/home_order match for each live QA viewport; only normal CAS audit revision increases. Preserved current Product lifecycle states, original article content/dates and media. No fake articles were published and no other previews changed.
+- Files:assets/js/writing-model.mjs,writing.mjs,writing-viewer.mjs;assets/writing.css;scripts/writing-content.mjs;Writing tests and scoped docs. No changes to Auth, Supabase handlers/migrations, Product code or index.html.
+- Limits:mobile is Chromium emulation, not a physical-device/SMTP test. New-publication insertion uses isolated fixtures; no production fake content. Static/no-JavaScript index uses default date order; runtime manual order requires JavaScript as before. Existing legacy featured/display_order and cover/excerpt fields remain stored but do not override the new rules. Original featured_slug was empty and restored empty, so the newest article is the resulting MAIN cover.
+
+Machine-readable checks:main-writing-v1-3-2-evidence.json. No owner action required.

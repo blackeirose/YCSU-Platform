@@ -1,0 +1,127 @@
+{
+  "isolated": {
+    "checks": [
+      "1440 guest newest fallback and no management UI",
+      "1440 older cover saves immediately/reloads without changing article order; absent cover stays placeholder",
+      "1440 owner MAIN COVER badge and readable index",
+      "1440 manual reorder persists and leaves MAIN cover unchanged",
+      "1440 two fixture publications inserted newest-first above unchanged manual relative order",
+      "1440 removed MAIN cover falls back to newest; no horizontal overflow",
+      "1440 logout removes management controls",
+      "390 guest newest fallback and no management UI",
+      "390 older cover saves immediately/reloads without changing article order; absent cover stays placeholder",
+      "390 owner MAIN COVER badge and readable index",
+      "390 manual reorder persists and leaves MAIN cover unchanged",
+      "390 two fixture publications inserted newest-first above unchanged manual relative order",
+      "390 removed MAIN cover falls back to newest; no horizontal overflow",
+      "390 logout removes management controls",
+      "no browser exceptions"
+    ],
+    "errors": [],
+    "status": "PASS"
+  },
+  "candidate": {
+    "checks": [
+      "1440 guest cover and no owner MAIN COVER management",
+      "1440 real owner cover save200, one indicator, order unchanged",
+      "1440 homepage selected image/title/date/category/excerpt updates and persists",
+      "1440 real manual reorder save/reload; cover remains independent",
+      "1440 intended cover/order restored through CAS and fresh reads",
+      "1440 owner editor read/cancel, logout/storage clear, guest reload and no overflow",
+      "390 guest cover and no owner MAIN COVER management",
+      "390 real owner cover save200, one indicator, order unchanged",
+      "390 homepage selected image/title/date/category/excerpt updates and persists",
+      "390 real manual reorder save/reload; cover remains independent",
+      "390 intended cover/order restored through CAS and fresh reads",
+      "390 owner editor read/cancel, logout/storage clear, guest reload and no overflow",
+      "no browser JavaScript exceptions"
+    ],
+    "errors": [],
+    "status": "PASS"
+  },
+  "production": {
+    "checks": [
+      "1440 guest cover and no owner MAIN COVER management",
+      "1440 real owner cover save200, one indicator, order unchanged",
+      "1440 homepage selected image/title/date/category/excerpt updates and persists",
+      "1440 real manual reorder save/reload; cover remains independent",
+      "1440 intended cover/order restored through CAS and fresh reads",
+      "1440 owner editor read/cancel, logout/storage clear, guest reload and no overflow",
+      "390 guest cover and no owner MAIN COVER management",
+      "390 real owner cover save200, one indicator, order unchanged",
+      "390 homepage selected image/title/date/category/excerpt updates and persists",
+      "390 real manual reorder save/reload; cover remains independent",
+      "390 intended cover/order restored through CAS and fresh reads",
+      "390 owner editor read/cancel, logout/storage clear, guest reload and no overflow",
+      "no browser JavaScript exceptions"
+    ],
+    "errors": [],
+    "status": "PASS"
+  },
+  "security": {
+    "status": "PASS",
+    "hiddenCount": 1,
+    "checks": [
+      "Live Hidden payload exactly id/lifecycleState/name/sortOrder; archived/deleted absent",
+      "registry-ops guest owner-read denied401",
+      "writing-ops guest owner-read denied401",
+      "writing-content read-article guest denied401",
+      "writing-content save-article guest denied401",
+      "Guest settings featured_slug denied401",
+      "Guest settings article_order denied401",
+      "Public Writing read200; no credential fields/patterns"
+    ],
+    "at": "2026-09-19T23:45:55.887Z"
+  },
+  "hashes": {
+    "deploy": "6aaf1e77b3d3a8598605e033",
+    "status": "PASS",
+    "count": 35,
+    "files": [
+      "assets/js/card-reorder.mjs",
+      "assets/js/email-otp.mjs",
+      "assets/js/owner-access.mjs",
+      "assets/js/product-lifecycle.mjs",
+      "assets/js/registry-order.mjs",
+      "assets/js/registry-public.mjs",
+      "assets/js/writing-content.mjs",
+      "assets/js/writing-editor.mjs",
+      "assets/js/writing-format.mjs",
+      "assets/js/writing-model.mjs",
+      "assets/js/writing-viewer.mjs",
+      "assets/js/writing.mjs",
+      "assets/previews/adcc.webp",
+      "assets/previews/fire-pump-test-pit-simulator.webp",
+      "assets/previews/plumbing-calculation-chart.webp",
+      "assets/previews/rachels-animal-kingdom.webp",
+      "assets/previews/social-capture-tool.webp",
+      "assets/previews/ums.webp",
+      "assets/previews/workflow-hub.webp",
+      "assets/previews/ycsu-platform.webp",
+      "assets/previews/ycsu-tracker.webp",
+      "assets/previews/ysu-mind-map.webp",
+      "assets/reorder.css",
+      "assets/vendor/supabase-2.116.0.js",
+      "assets/vendor/SUPABASE-LICENSE",
+      "assets/writing.css",
+      "data/registry.public.snapshot.json",
+      "data/writing.json",
+      "index.html",
+      "writing/build-the-missing-revit-button/cover.webp",
+      "writing/build-the-missing-revit-button/index.html",
+      "writing/index.html",
+      "writing/make-the-impossible-possible/cover.webp",
+      "writing/make-the-impossible-possible/index.html",
+      "writing/make-the-impossible-possible/replacement-298bc5e63fa94ffe84b4183ab485b5d8.webp"
+    ],
+    "at": "2026-09-19T23:45:27.505Z"
+  },
+  "fullTests": {
+    "pass": 79,
+    "fail": 0
+  },
+  "independentReview": "PASS",
+  "staticBrowser": "PASS: candidate and production no-JavaScript date order",
+  "previousDeploy": "6aaf1757a66ab60159ad14a1",
+  "newDeploy": "6aaf1e77b3d3a8598605e033"
+}

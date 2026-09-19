@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — second Writing article, verified 2026-09-19 (Pacific)
+## Current production — Writing v1.3.2 MAIN cover/order, verified 2026-09-19 (Pacific)
+
+Netlify `6aaf1e77b3d3a8598605e033`, published `2026-09-19T23:45:20.756Z`; feature `4faa34cb8c65d4e2f6f576866be6b1bc60199fe8`, merge/build `e1ed82ee2442dac080fc92940c56edf6eaccaa5c`. One frontend release after79/79 full tests,11/11 final affected tests, independent review/readiness,15 isolated browser and13 live candidate checks. Production13/13 browser,8/8 API security,35/35 served SHA256 and no-JavaScript index checks PASS. Owner MAIN cover and article ordering are independent; new/unlisted articles precede manual order by date. Temporary QA settings restored exactly; no article/Product/Auth/schema/backend changes. Rollback `6aaf1757a66ab60159ad14a1`, retaining current protected backend and operational data. Owner action NONE. [Full report](docs/releases/main-writing-v1-3-2-cover-order.md).
+
+## Historical production — second Writing article, verified 2026-09-19 (Pacific)
 
 Published [What if I could just build the missing Revit button?](https://main.ycsu.cc/writing/build-the-missing-revit-button/) from content commit `df15f898b0a2283dca8627e1ae81be240ff272aa`. Netlify `6aaf1757a66ab60159ad14a1`, published `2026-09-19T23:14:36.849Z`. Content-only addition: approved September 12 LinkedIn text and lossless cover. 73/73 tests, 29/29 isolated browser and 29/29 production browser checks; 35/35 served files match dist SHA256. Existing featured article, presentation settings and public Registry unchanged. Frontend rollback `6aae22f53d17fbcf50985c6c`; dynamic content also requires an ordinary Git revert for complete rollback. [Release evidence](docs/releases/missing-revit-button-2026-09-19.md).
 

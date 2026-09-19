@@ -1,4 +1,4 @@
-import {parseArticle,serializeArticle,articleHtml} from '../../../assets/js/writing-content.mjs';
+import {parseArticle,serializeArticle,articleHtml,BODY_SIZES} from '../../../assets/js/writing-content.mjs';
 import {validSlug} from '../../../assets/js/writing-model.mjs';
 
 const OWNER='38531f7e-e05e-473a-a587-500b1d3aebe5';
@@ -8,8 +8,8 @@ const ORIGIN='https://main.ycsu.cc';
 const SHA=/^[a-f0-9]{40}$/;
 const MEDIA=/^[a-zA-Z0-9_-]+\.(?:png|webp|jpe?g|gif|avif|mp4|webm)$/;
 const UPLOAD=/^replacement-[a-zA-Z0-9_-]{8,100}\.(?:png|webp|jpe?g|gif)$/;
-const EDITABLE=new Set(['title','date','category','excerpt','body','cover','cover_alt','video_url','linkedin_url','facebook_url']);
-const METADATA=['title','slug','date','category','excerpt','cover','cover_alt','video_url','linkedin_url','facebook_url','tags','featured','display_order'];
+const EDITABLE=new Set(['title','date','category','excerpt','body','cover','cover_alt','video_url','linkedin_url','facebook_url','body_font_size']);
+const METADATA=['title','slug','date','category','excerpt','cover','cover_alt','video_url','linkedin_url','facebook_url','tags','featured','display_order','body_font_size'];
 export const LIMITS=Object.freeze({request:9*1024*1024,article:128*1024,articles:200,manifest:8*1024*1024,upload:4*1024*1024,uploads:4,totalUploads:6*1024*1024,concurrency:4});
 const encoder=new TextEncoder();
 class Failure extends Error {constructor(status,code,message){super(message);this.status=status;this.code=code;}}
@@ -119,7 +119,7 @@ export function createWritingContentHandler({createClient,getEnv,fetchImpl=fetch
   if(body.operation==='read-article')return {ok:true,article:{...fields(article),body:article.body},revision:entry.sha,assets:[...assets].sort().map(name=>`/writing/${body.slug}/${name}`)};
   if(typeof body.revision!=='string'||!SHA.test(body.revision))invalid();if(body.revision!==entry.sha)conflict();
   only(body.data,[...EDITABLE]);
-  const patch={};for(const [key,value] of Object.entries(body.data)){if(value!==null&&typeof value!=='string')invalid();if(value===null&&['body','title','date'].includes(key))invalid();patch[key]=(['cover','video_url','linkedin_url','facebook_url'].includes(key)&&value==='')?null:value;}
+  const patch={};for(const [key,value] of Object.entries(body.data)){if(key==='body_font_size'){if(!BODY_SIZES.includes(value))invalid();patch[key]=value;continue;}if(value!==null&&typeof value!=='string')invalid();if(value===null&&['body','title','date'].includes(key))invalid();patch[key]=(['cover','video_url','linkedin_url','facebook_url'].includes(key)&&value==='')?null:value;}
   const next={...article,...patch};if(typeof next.body!=='string'||encoder.encode(next.body).length>LIMITS.article)fail(413,'TOO_LARGE','Article exceeds the allowed size.');
   let serialized;try{serialized=serializeArticle(next)}catch{fail(422,'INVALID_ARTICLE','Article Markdown or metadata is invalid.');}if(encoder.encode(serialized).length>LIMITS.article)fail(413,'TOO_LARGE','Article exceeds the allowed size.');
   const checked=parse(serialized,body.slug),uploads=body.uploads??[];

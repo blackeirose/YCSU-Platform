@@ -1,5 +1,8 @@
 import {escapeHtml as esc,safeUrl,validSlug} from './writing-model.mjs';
-const fields=new Set(['title','slug','date','category','cover','cover_alt','excerpt','linkedin_url','facebook_url','video_url','featured','display_order','tags']);
+const fields=new Set(['title','slug','date','category','cover','cover_alt','excerpt','linkedin_url','facebook_url','video_url','featured','display_order','tags','body_font_size']);
+export const BODY_SIZES=Object.freeze([17,18,19,20]);
+export const DEFAULT_BODY_SIZE=18;
+export function bodySize(value){return BODY_SIZES.includes(value)?value:DEFAULT_BODY_SIZE;}
 function scalar(raw){
  const v=raw.trim();if(v==='null'||v==='')return null;if(v==='true')return true;if(v==='false')return false;
  if(/^-?\d+$/.test(v))return Number(v);
@@ -25,19 +28,25 @@ export function parseArticle(source,filename='article.md'){
  if(meta.featured!=null&&typeof meta.featured!=='boolean')throw new Error(`${filename}: invalid featured`);
  if(meta.display_order!=null&&!Number.isSafeInteger(meta.display_order))throw new Error(`${filename}: invalid display_order`);
  if(meta.tags!=null&&(!Array.isArray(meta.tags)||meta.tags.length>30||meta.tags.some(t=>typeof t!=='string'||!t.trim()||t.length>80)||new Set(meta.tags).size!==meta.tags.length))throw new Error('Invalid tags');
+ if(Object.hasOwn(meta,'body_font_size')&&!BODY_SIZES.includes(meta.body_font_size))throw new Error(`${filename}: invalid body_font_size`);
  if(!match[2].trim())throw new Error(`${filename}: empty body`);
- return {...meta,featured:meta.featured||false,body:match[2],html:markdown(match[2])};
+ return {...meta,body_font_size:meta.body_font_size??DEFAULT_BODY_SIZE,featured:meta.featured||false,body:match[2],html:markdown(match[2])};
 }
 function inline(text){
  const tokens=[];const token=html=>`\u0000${tokens.push(html)-1}\u0000`;
  // Raw HTML is always text. Only these explicit forms can create elements.
- let s=text.replace(/`([^`]+)`/g,(_,v)=>token(`<code>${esc(v)}</code>`));
+ let s=text.replace(/\\([*`\[\]\\])/g,(_,v)=>token(esc(v))).replace(/`([^`]+)`/g,(_,v)=>token(`<code>${esc(v)}</code>`));
  s=s.replace(/!\[([^\]]*)\]\(([^\s)]+)\)/g,(_,alt,url)=>{const href=safeUrl(url,{media:true});if(!alt.trim()||!href)throw new Error('Image requires alt text and a safe URL');return token(`<figure><img src="${esc(href)}" alt="${esc(alt)}" loading="lazy" decoding="async"><figcaption>${esc(alt)}</figcaption></figure>`)});
  s=s.replace(/\[([^\]]+)\]\(([^\s)]+)\)/g,(_,label,url)=>{const href=safeUrl(url);if(!href)throw new Error('Link requires HTTPS');return token(`<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>`)});
- s=esc(s).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>');
- return s.replace(/\u0000(\d+)\u0000/g,(_,i)=>tokens[Number(i)]);
+ s=esc(s);
+ s=s.replace(/\*\*\*(?=\S)(.+?\S|\S)\*\*\*/g,(_,v)=>token(`<strong><em>${v}</em></strong>`));
+ s=s.replace(/\*\*(?=\S)(.+?\S|\S)\*\*/g,(_,v)=>token(`<strong>${v.replace(/\*(?=\S)([^*]*?\S|\S)\*/g,'<em>$1</em>')}</strong>`));
+ s=s.replace(/\*(?=\S)([^*]*?\S|\S)\*/g,'<em>$1</em>');
+ for(let i=0;i<4;i++)s=s.replace(/\u0000(\d+)\u0000/g,(_,n)=>tokens[Number(n)]??'');
+ return s;
 }
 export function markdown(body){
+ if(body.includes('\u0000'))throw new Error('Invalid control character in Markdown');
  const lines=body.replace(/\r\n/g,'\n').split('\n');let output=[],paragraph=[],list=[],listType='',code=null;
  const flush=()=>{if(paragraph.length){output.push(`<p>${inline(paragraph.join(' '))}</p>`);paragraph=[];}if(list.length){output.push(`<${listType}>${list.map(v=>`<li>${inline(v)}</li>`).join('')}</${listType}>`);list=[];}};
  for(const line of lines){
@@ -57,7 +66,7 @@ export function articleHtml(article){
  const media=safeUrl(article.video_url,{media:true});
  return `<header class="article-header"><p class="writing-label">WRITING</p><h1>${esc(article.title)}</h1><p class="writing-date">${esc([article.date,article.category].filter(Boolean).join(' · '))}</p></header>
  ${article.cover?`<figure class="article-hero"><img src="${esc(article.cover)}" alt="${esc(article.cover_alt?.trim()||article.title)}" width="1440" height="900"><figcaption hidden>Cover</figcaption></figure>`:''}
- <div class="article-body">${article.html}</div>
+ <div class="article-body" data-body-size="${bodySize(article.body_font_size)}">${article.html}</div>
  ${media?`<p><a href="${esc(media)}" target="_blank" rel="noopener noreferrer">Watch video ↗</a></p>`:''}
  <footer class="article-originals">${[['linkedin_url','Original on LinkedIn'],['facebook_url','Original on Facebook']].filter(([key])=>article[key]).map(([key,label])=>`<a href="${esc(article[key])}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`).join('')}</footer>`;
 }

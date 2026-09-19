@@ -16,3 +16,17 @@ button,input,select,textarea{font:inherit}button:focus-visible,a:focus-visible,i
 .can-reorder .card-tags{padding-left:30px;min-height:44px}
 /* Contextual owner editing stays inside the reader, with the same touch targets. */
 .writing-article-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}.writing-article-actions button,.article-edit-form button{min-height:44px;padding:9px 13px;border:1px solid var(--text-dim);border-radius:6px;background:var(--bg-elev);color:var(--text);cursor:pointer;font-size:13px}.writing-index .writing-article-actions{margin-top:20px}.article-edit-form{max-width:700px;margin:auto;font-size:14px}.article-edit-form h2{font-size:24px;margin:0 0 12px}.article-edit-form>p{line-height:1.6;color:var(--text-dim)}.article-edit-form label{display:block;margin:16px 0;font-size:13px}.article-edit-form input,.article-edit-form textarea,.article-edit-form select{display:block;box-sizing:border-box;width:100%;min-width:0;margin-top:6px;min-height:44px;padding:10px;border:1px solid var(--text-dim);border-radius:6px;background:var(--bg-elev);color:var(--text);font:inherit}.article-edit-form textarea{resize:vertical;line-height:1.6}.article-edit-form textarea[name=body]{font-family:ui-monospace,monospace;font-size:13px}.article-edit-form fieldset{min-width:0;border:1px solid var(--card-border);border-radius:8px;margin:20px 0;padding:12px}.article-edit-form details{margin:16px 0}.article-edit-form summary{min-height:44px;cursor:pointer;display:flex;align-items:center}.article-edit-form button:disabled{opacity:.55;cursor:default}.article-edit-form [role=status]{overflow-wrap:anywhere}.article-edit-form .editor-actions{position:sticky;bottom:-40px;background:var(--reader-pane);padding:12px 0;flex-wrap:wrap}.article-edit-form input[type=file]{font-size:12px}
+
+/* One article-wide size; title, metadata and controls retain their own scale. */
+.article-body{font-size:18px;line-height:1.62}
+.article-body[data-body-size="17"]{font-size:17px;line-height:1.65}
+.article-body[data-body-size="18"]{font-size:18px;line-height:1.62}
+.article-body[data-body-size="19"]{font-size:19px;line-height:1.6}
+.article-body[data-body-size="20"]{font-size:20px;line-height:1.58}
+.format-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:20px 0 8px}
+.format-toolbar button{min-width:44px;padding:9px 10px}.format-toolbar [data-format=bold]{font-weight:750}.format-toolbar [data-format=italic]{font-style:italic}
+.article-edit-form .body-size-control{display:flex;align-items:center;gap:8px;margin:0 0 0 auto;white-space:nowrap}
+.article-edit-form .body-size-control select{width:auto;margin:0;min-width:76px}
+.article-edit-form [data-link-panel][hidden]{display:none}
+.article-edit-form .edit-preview{padding:16px 0;border-top:1px solid var(--card-border)}
+@media(max-width:700px){.article-edit-form .body-size-control{margin-left:0}.format-toolbar{gap:4px}}

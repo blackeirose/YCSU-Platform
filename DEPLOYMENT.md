@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — MAIN v1.3 lifecycle, verified 2026-09-18 (Pacific)
+## Current production — MAIN v1.3.1 final polish, verified 2026-09-18 (Pacific)
+
+Netlify `6aae22f53d17fbcf50985c6c`, published `2026-09-19T05:52:18.006Z`; merge/build `bdf6ed9e59f92410159856dc48b51c4dec14d475`, feature `c3e0f01827c443004bef079c3cdb86cc8dbb6f26`. One frontend publication after73/73 full tests,24/24 affected final tests, independent review/readiness,21 isolated regression checks, mouse/touch ordering and18 live candidate checks. Production18/18 browser checks,6/6 API security checks and33/33 served SHA256 hashes PASS. YSU Journal card hierarchy, one curated Social Capture preview and exact Registry English copy only. No migration/backend/Auth/lifecycle/reader/editor implementation change. Previous secure frontend rollback `6aae039f329918d23c9511bf`; preserve current operational states and privacy contract. No owner action. [Full evidence, exact English readback and limitations](docs/releases/main-v1-3-1-final-polish.md).
+
+## Historical production — MAIN v1.3 lifecycle, verified 2026-09-18 (Pacific)
 
 Netlify `6aae039f329918d23c9511bf`, published `2026-09-19T03:38:33.698Z`; merge/build `35e7f14ec39b6f20d4d2bf91ad72e0e7fdca91c3`, reviewed implementation `8c0d5ed294e25d32ec8f1dfd1f06424c8b3cfe5c`, feature head `1e84e667c2d1a8783d62e6fe4f6c61c42348d574`. One frontend publication after71/71 tests, independent code/security/readiness PASS, applied lifecycle migration and real backend/browser lifecycle/save/auth gates.32/32 served hashes and15 production browser checks PASS. Product facts/order restored; article17px restored. Previous deploy `6aadd0b0941aa8845e985d20`; rollback must retain the privacy-preserving lifecycle contract. No owner action pending. [Full evidence and limits](docs/releases/main-v1-3-product-lifecycle.md).
 

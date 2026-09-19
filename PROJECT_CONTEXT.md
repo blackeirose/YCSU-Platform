@@ -97,3 +97,5 @@ Writing body_font_size supports integer12–20, default18; title/sidebar/metadat
 
 ## MAIN v1.3.1 — final UI/content polish
 Writing's display identity is YSU Journal, with Product-aligned type/name/preview rows and the featured article title beneath its cover. WRITING type and /writing/ routes remain. Social Capture has a manually captured public production landing preview and English Registry description/status note preserving all limitations. Lifecycle, owner security, article reader/editor and other Product facts/previews remain intact. Release evidence: docs/releases/main-v1-3-1-final-polish.md.
+
+MAIN v1.3.1 final polish released: merge bdf6ed9, Netlify6aae22f53d17fbcf50985c6c,33 production hashes/18 browser/6 API security checks PASS. See docs/releases/main-v1-3-1-final-polish.md. Owner action NONE.

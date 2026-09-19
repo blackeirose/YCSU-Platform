@@ -1,6 +1,6 @@
 # MAIN v1.3 — Product lifecycle + Writing 12–20
 
-Status: release ready; backend and browser gates PASS. Frontend publication pending the single authorized promotion.
+Status: RELEASED / PRODUCTION VERIFIED — 2026-09-18 Pacific (2026-09-19 UTC). No owner action required.
 
 - Canonical Core: 57a69136b7473718dfcf26311ae801f033696f05 (current AGENTS/AI_CORE and required shared references read).
 - Base main:13985dbfb5c9f7b6fb99a181a0b3c671f8905c1e, including the owner's latest article edits.
@@ -29,5 +29,17 @@ Before any frontend release, restore tested products and intended article size t
 - Desktop/mobile owner editor read, visible management/links, uniform620px product height, no horizontal page overflow, synchronous logout clearing, storage clearing and guest-only reload passed. No JavaScript exceptions or credential strings in rendered DOM. Current runtime contract does not revoke already-public historical images/Git data.
 - Screenshots inspected for desktop/mobile, light/dark, owner/guest/Hidden and12px Writing. Native browser-control outage was bypassed using existing bundled Playwright/Chrome, with no installation or shared browser storage extraction.
 
-## Publication and post-release checks
-Pending: merge reviewed feature, publish one allowlisted dist to existing Netlify site, verify immutable file hashes and production owner/guest/logout UI, record IDs and clean canonical Git. No further owner action is required for the remaining authorized steps.
+## Final publication and production acceptance
+- Reviewed implementation SHA:8c0d5ed294e25d32ec8f1dfd1f06424c8b3cfe5c.
+- Feature branch release head:1e84e667c2d1a8783d62e6fe4f6c61c42348d574, including evidence and restored article history.
+- Merge/build SHA:35e7f14ec39b6f20d4d2bf91ad72e0e7fdca91c3. No runtime or article-content diff from the reviewed implementation.
+- Previous deploy:6aadd0b0941aa8845e985d20. New deploy:6aae039f329918d23c9511bf, published2026-09-19T03:38:33.698Z.
+- Netlify:existing ycsu-platform-registry / 9c0bd872-1f70-4468-b853-e87b9b3269d5. Git CD remained disconnected. One dist-only draft was promoted once after independent readiness PASS; no additional frontend production deployment.
+- 33 dist files, including _headers;32/32 HTTP-served file SHA256 values match the exact build. Publish-boundary scan excludes source/private rollback data, QA banners and credential patterns. Empty Registry snapshot confirmed.
+- Production browser15/15 checks PASS: desktop/mobile guest and actual owner sessions, protected edit read, real unchanged/no-op save HTTP200, logout clearing storage/owner DOM, reload remaining guest, uniform card geometry, no overflow/JavaScript exceptions, final product facts/order and17px article restoration.
+- Additional settled public Writing checks PASS on desktop/mobile: published article loads without editor credentials, body17px, no guest Edit Article controls. Initial loading states were not counted as final screenshots. Screenshots inspected after content settled.
+- Independent reviewer confirmed source/security PASS and release readiness, examined27+21+22 checks and gesture evidence, then independently read production API/public GitHub:11 Visible products, guest links absent and article bytes equal13985db baseline.
+- Working tree checked clean after release-record commit/push. Source main tracks canonical origin/main. No tag reused: this milestone is distinct from historicalv1.3.0.
+
+## Limits and owner action
+Desktop/mobile QA used Chrome153 with a390px touch-emulated viewport, not a new physical-device test. Real Auth sessions and normal SDK owner checks/sign-out ran; SMTP delivery was not retested or changed. Signed-out denial is the client-cleared session model, not a claim that previously issued access JWTs are immediately cryptographically revoked. Historical public images/Git/deploy data are outside the runtime Hidden contract. No remaining release blocker or owner action.

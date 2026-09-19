@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — Writing v1.2, verified 2026-09-18 (Pacific)
+## Current production — MAIN v1.3 lifecycle, verified 2026-09-18 (Pacific)
+
+Netlify `6aae039f329918d23c9511bf`, published `2026-09-19T03:38:33.698Z`; merge/build `35e7f14ec39b6f20d4d2bf91ad72e0e7fdca91c3`, reviewed implementation `8c0d5ed294e25d32ec8f1dfd1f06424c8b3cfe5c`, feature head `1e84e667c2d1a8783d62e6fe4f6c61c42348d574`. One frontend publication after71/71 tests, independent code/security/readiness PASS, applied lifecycle migration and real backend/browser lifecycle/save/auth gates.32/32 served hashes and15 production browser checks PASS. Product facts/order restored; article17px restored. Previous deploy `6aadd0b0941aa8845e985d20`; rollback must retain the privacy-preserving lifecycle contract. No owner action pending. [Full evidence and limits](docs/releases/main-v1-3-product-lifecycle.md).
+
+## Historical production — Writing v1.2, verified 2026-09-18 (Pacific)
 
 Netlify `6aadd0b0941aa8845e985d20`, published `2026-09-19T00:02:07.048Z`, merge/build `422160a50ece4db33974365fba2c8f34323bcd42`, feature `b3459a3c7b81edd7882645405e67b132086c1469`. One frontend release after65/65 tests, independent37/37 review, isolated desktop/mobile QA and real owner save/restore/logout gates.31/31 served assets match; actual production owner formatting/size save, refresh, guest read and restoration passed. Previous secure frontend rollback `6aadc5abb7561cd759f6c1e3`; retain the compatible new writing-content parser when restoring it. No owner action pending. [Full evidence and limitations](docs/releases/main-writing-v1-2.md).
 
@@ -200,5 +204,5 @@ Owner remote preview acceptance received. Main merged at ff463beeeaf9b84daa5ed21
 
 Writing v1.1 backend 7f3f5fa is deployed: public read 200; guest writes denied; real owner edit read reaches GitHub and reports github_status 401 / response_class authentication_failed. Actual candidate logout passed. Owner save remains blocked pending token replacement, so frontend remains 6aada2062630da334a6f46db. Detailed live evidence: docs/releases/main-writing-v1-1.md.
 
-## MAIN v1.3 lifecycle release checkpoint
-See docs/releases/main-v1-3-product-lifecycle.md. Existing production remains6aadd0b0941aa8845e985d20. Feature branch is not a production release. Migration/backend/real auth-save-lifecycle/browser gates must complete before the single frontend publication. Rollback data is private local evidence, not a public snapshot.
+## MAIN v1.3 lifecycle closeout
+Released and production verified; see current production entry and docs/releases/main-v1-3-product-lifecycle.md. Private rollback data remains outside the publish directory.

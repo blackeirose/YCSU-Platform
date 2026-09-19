@@ -1,6 +1,6 @@
 import {escapeHtml as esc,safeUrl,validSlug} from './writing-model.mjs';
 const fields=new Set(['title','slug','date','category','cover','cover_alt','excerpt','linkedin_url','facebook_url','video_url','featured','display_order','tags','body_font_size']);
-export const BODY_SIZES=Object.freeze([17,18,19,20]);
+export const BODY_SIZES=Object.freeze([12,13,14,15,16,17,18,19,20]);
 export const DEFAULT_BODY_SIZE=18;
 export function bodySize(value){return BODY_SIZES.includes(value)?value:DEFAULT_BODY_SIZE;}
 function scalar(raw){

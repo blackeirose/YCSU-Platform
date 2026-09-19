@@ -1,6 +1,6 @@
 import { movedOrder, orderPayload } from './registry-order.mjs';
 
-const INTERACTIVE = 'a,button,input,select,textarea,label,[contenteditable],[role="button"],[role="link"]';
+const INTERACTIVE = 'a,button,summary,details,input,select,textarea,label,[contenteditable],[role="button"],[role="link"]';
 export function createCardReorder({ grid, status, save }) {
   let products = [], allowed = false, busy = false, gesture = null, frame = 0, suppressClick = false;
   const ids = () => [...grid.querySelectorAll('.card')].map(c => c.dataset.productId);

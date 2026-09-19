@@ -199,3 +199,6 @@ Normal owner saves create canonical content commits and become visible through t
 Owner remote preview acceptance received. Main merged at ff463beeeaf9b84daa5ed21a944d88ed625ac391. Additive writing-content deployed through --use-api. Its unauthorized request checks pass (401/403), but public canonical content read returns 503; identical handler against public GitHub from the workstation succeeds. Token/environment diagnosis is pending. No frontend promotion: production remains 6aada2062630da334a6f46db. See docs/releases/main-writing-v1-1.md for exact scope and remaining gates.
 
 Writing v1.1 backend 7f3f5fa is deployed: public read 200; guest writes denied; real owner edit read reaches GitHub and reports github_status 401 / response_class authentication_failed. Actual candidate logout passed. Owner save remains blocked pending token replacement, so frontend remains 6aada2062630da334a6f46db. Detailed live evidence: docs/releases/main-writing-v1-1.md.
+
+## MAIN v1.3 lifecycle release checkpoint
+See docs/releases/main-v1-3-product-lifecycle.md. Existing production remains6aadd0b0941aa8845e985d20. Feature branch is not a production release. Migration/backend/real auth-save-lifecycle/browser gates must complete before the single frontend publication. Rollback data is private local evidence, not a public snapshot.

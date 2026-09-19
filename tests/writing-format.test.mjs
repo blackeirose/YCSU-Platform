@@ -8,8 +8,8 @@ import {articleEditor} from '../assets/js/writing-editor.mjs';
 const source=await readFile(new URL('fixtures/content/writing/qa-first.md',import.meta.url),'utf8');
 test('old articles default to 18; only numeric 17/18/19/20 frontmatter round-trips',()=>{
  assert.equal(parseArticle(source).body_font_size,18);
- for(const size of [17,18,19,20])assert.equal(parseArticle(serializeArticle({...parseArticle(source),body_font_size:size})).body_font_size,size);
- for(const value of ['16','21','18.5','"18"','null','true','"18px"','"18; color:red"'])assert.throws(()=>parseArticle(source.replace('slug:',`body_font_size: ${value}\nslug:`)),/body_font_size/);
+ for(const size of [12,13,14,15,16,17,18,19,20])assert.equal(parseArticle(serializeArticle({...parseArticle(source),body_font_size:size})).body_font_size,size);
+ for(const value of ['11','21','18.5','"18"','null','true','"18px"','"18; color:red"'])assert.throws(()=>parseArticle(source.replace('slug:',`body_font_size: ${value}\nslug:`)),/body_font_size/);
 });
 for(const action of ['bold','italic'])test(`${action} selection preserves surrounding text and toggles repeatedly`,()=>{
  const text='Before selected words after.',mark=action==='bold'?'**':'*';let result=formatSelection(text,7,21,action);
@@ -39,7 +39,7 @@ test('paragraph emphasis preserves whitespace, rejects code/image selections and
 });
 test('body size affects only body; title metadata and sidebar CSS stay identical',async()=>{
  const css=await readFile(new URL('../assets/writing.css',import.meta.url),'utf8');let baseline;
- for(const size of [17,18,19,20]){const dom=new JSDOM(`<style>${css}</style><div class="writing-index"><strong>Index</strong></div>${articleHtml({...parseArticle(source),body_font_size:size})}`);const d=dom.window.document,style=el=>dom.window.getComputedStyle(d.querySelector(el));assert.equal(style('.article-body').fontSize,size+'px');const rest=['.article-header h1','.writing-date','.writing-index strong'].map(el=>style(el).fontSize);baseline??=rest;assert.deepEqual(rest,baseline);dom.window.close();}
+ for(const size of [12,13,14,15,16,17,18,19,20]){const dom=new JSDOM(`<style>${css}</style><div class="writing-index"><strong>Index</strong></div>${articleHtml({...parseArticle(source),body_font_size:size})}`);const d=dom.window.document,style=el=>dom.window.getComputedStyle(d.querySelector(el));assert.equal(style('.article-body').fontSize,size+'px');const rest=['.article-header h1','.writing-date','.writing-index strong'].map(el=>style(el).fontSize);baseline??=rest;assert.deepEqual(rest,baseline);dom.window.close();}
 });
 test('toolbar preserves selection on click, previews immediately and submits numeric body size',async()=>{
  const dom=new JSDOM('<body>'),w=dom.window;globalThis.document=w.document;let saved,current=true;

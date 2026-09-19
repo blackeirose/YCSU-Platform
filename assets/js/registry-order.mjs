@@ -1,3 +1,4 @@
+import {isActiveProduct} from './registry-public.mjs';
 /** Shared deterministic order rules. No credentials or browser dependencies. */
 export function compareProducts(a, b) {
   const av = Number.isInteger(a.sortOrder) ? a.sortOrder : Infinity;
@@ -7,7 +8,7 @@ export function compareProducts(a, b) {
   return name || (a.slug || a.id || '').localeCompare(b.slug || b.id || '', 'en');
 }
 export function orderedProducts(products) {
-  return products.filter(p => !p.archived).slice().sort(compareProducts);
+  return products.filter(isActiveProduct).slice().sort(compareProducts);
 }
 export function movedOrder(ids, id, toIndex) {
   const result = ids.filter(value => value !== id);

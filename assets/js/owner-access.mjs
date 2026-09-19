@@ -82,9 +82,11 @@ export async function setupOwnerAccess({url,key,setAllowed,isLive,status,onOwner
   },
   async save(payload){
    if(!verified||!isLive()||!client)throw new Error('Owner session required');
-   const {data,error}=await client.auth.getSession();
-   if(error||!data.session){revoke();throw new Error('Session expired');}
+   if(!['reorder','lifecycle'].includes(payload.operation))throw new Error('Unsupported Registry operation');
    const current=revision;
+   const {data,error}=await client.auth.getSession();
+   if(current!==revision||!verified)throw new Error('Session changed');
+   if(error||!data.session){revoke();throw new Error('Session expired');}
    const response=await fetch(`${url}/functions/v1/registry-ops`,{method:'POST',headers:{apikey:key,Authorization:`Bearer ${data.session.access_token}`,'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store',signal:AbortSignal.timeout(15000)});
    if(current!==revision)throw new Error('Session changed');
    if(!response.ok){if(response.status===401||response.status===403)revoke();throw new Error('Save failed');}

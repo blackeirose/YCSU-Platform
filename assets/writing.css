@@ -30,3 +30,9 @@ button,input,select,textarea{font:inherit}button:focus-visible,a:focus-visible,i
 .article-edit-form [data-link-panel][hidden]{display:none}
 .article-edit-form .edit-preview{padding:16px 0;border-top:1px solid var(--card-border)}
 @media(max-width:700px){.article-edit-form .body-size-control{margin-left:0}.format-toolbar{gap:4px}}
+
+.article-body[data-body-size="12"]{font-size:12px;line-height:1.8}
+.article-body[data-body-size="13"]{font-size:13px;line-height:1.78}
+.article-body[data-body-size="14"]{font-size:14px;line-height:1.75}
+.article-body[data-body-size="15"]{font-size:15px;line-height:1.72}
+.article-body[data-body-size="16"]{font-size:16px;line-height:1.68}

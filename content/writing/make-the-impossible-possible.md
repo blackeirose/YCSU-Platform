@@ -11,9 +11,9 @@ facebook_url: null
 video_url: null
 featured: true
 display_order: 10
-body_font_size: 18
+body_font_size: 17
 ---
-Make the Impossible Possible
+**Make the Impossible Possible**
 
 Lately, I’ve noticed two very different reactions to AI among people around me.
 
@@ -79,4 +79,4 @@ What could we discover if we approached the unknown with more curiosity, less fe
 
 Watching Rachel begin her journey with AI reminded me that sometimes the best response to a powerful new tool is also the simplest:
 
-“Let’s see what we can make.”
+**“Let’s see what we can make.”**

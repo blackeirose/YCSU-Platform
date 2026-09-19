@@ -10,7 +10,7 @@ test('Markdown frontmatter validates schema, rejects ambiguous/malformed/unsafe 
 });
 test('featured, article index, and mixed homepage order remain independent; new/stale product IDs reconcile',()=>{
  const articles=[{slug:'a',date:'2026-09-17',featured:true,display_order:20},{slug:'b',date:'2026-09-18',display_order:10}];
- assert.equal(featuredArticle(articles).slug,'a');assert.deepEqual(articleOrder(articles).map(a=>a.slug),['b','a']);
+ assert.equal(featuredArticle(articles).slug,'b');assert.deepEqual(articleOrder(articles).map(a=>a.slug),['b','a']);
  assert.equal(featuredArticle(articles,{featured_slug:'b',article_order:['a','b']}).slug,'b');assert.equal(featuredArticle(articles.map(a=>({...a,featured:false}))).slug,'b');
  const products=[{id:'p1'},{id:'p2'}];assert.deepEqual(mixedCards(products,['old','writing','p2','writing']).map(p=>p.id),['writing','p2','p1']);assert.equal(products.length,2);assert.deepEqual(articleOrder(articles,{article_order:['a','b']}).map(a=>a.slug),['a','b']);
 });
@@ -28,6 +28,8 @@ test('static deep links render real article content and metadata without JS; pro
   await mkdir(path.join(dir,'content/writing'),{recursive:true});await writeFile(path.join(dir,'content/writing/a.md'),fixture.replaceAll('cover: "/writing/qa-first/cover.webp"\n','').replace(/!\[QA[^\n]+\n/,''));
   const template=await readFile(new URL('../index.html',import.meta.url),'utf8');assert.equal(await buildWriting({root:dir,out:path.join(dir,'out'),template}),1);
   const html=await readFile(path.join(dir,'out/writing/qa-first/index.html'),'utf8');assert.match(html,/id="writing-static"/);assert.match(html,/Space for a clear idea/);assert.match(html,/rel="canonical" href="https:\/\/main.ycsu.cc\/writing\/qa-first\//);assert.match(html,/from '\/assets/);assert.match(html,/property="og:title"/);
+  await writeFile(path.join(dir,'content/writing/0-old.md'),fixture.replaceAll('qa-first','aa-old').replace('2026-09-18','2026-09-01').replaceAll('cover: "/writing/aa-old/cover.webp"\n','').replace(/!\[QA[^\n]+\n/,''));
+  await buildWriting({root:dir,out:path.join(dir,'out'),template});const index=await readFile(path.join(dir,'out/writing/index.html'),'utf8'),indexDom=new JSDOM(index);assert.deepEqual([...indexDom.window.document.querySelectorAll('#writing-static li a')].map(a=>a.getAttribute('href')),['/writing/qa-first/','/writing/aa-old/']);indexDom.window.close();
   await writeFile(path.join(dir,'content/writing/a.md'),fixture);await assert.rejects(buildWriting({root:dir,out:path.join(dir,'out'),template}),/Missing article media/);
   const prod=JSON.parse(await readFile(new URL('../dist/data/writing.json',import.meta.url),'utf8'));assert.equal(prod.articles.some(a=>a.slug.startsWith('qa-')||a.title.startsWith('QA only:')),false);
  }finally{await rm(dir,{recursive:true,force:true})}
@@ -71,7 +73,7 @@ test('cover descriptions reach readers and cards with safe fallbacks',()=>{
  for(const cover_alt of [undefined,null,'   ']){
   const a={...article,cover_alt};for(const html of [articleHtml(a),writingCard([a])]){const dom=new JSDOM(html);assert.equal(dom.window.document.querySelector('img').alt,a.title);dom.window.close();}
  }
- const override=new JSDOM(writingCard([article],{...defaults,cover:'/writing/other/cover.webp'}));assert.equal(override.window.document.querySelector('img').alt,article.title);override.window.close();
+ const override=new JSDOM(writingCard([article],{...defaults,cover:'/writing/other/cover.webp'}));assert.equal(override.window.document.querySelector('img').alt,article.cover_alt);assert.equal(override.window.document.querySelector('img').dataset.writingImage,article.cover);override.window.close();
  for(const value of ['42','true','"'+ 'x'.repeat(1001)+'"'])assert.throws(()=>parseArticle(fixture.replace('slug:',`cover_alt: ${value}\nslug:`)),/invalid cover_alt/);
 });
 

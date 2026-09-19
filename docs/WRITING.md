@@ -37,10 +37,10 @@ Supported Markdown: paragraphs, headings (`#` promoted to `h2`, `##`–`######` 
 ## Three independent states
 
 1. **Home grid:** `main_presentation.home_order` stores active Product IDs plus the `writing` sentinel. Missing/new IDs append in existing Registry order; stale IDs disappear. Before the first mixed save, existing Product order remains unchanged. Legacy Registry reorder still works as the fallback; once a mixed order is saved, MAIN uses that presentation order. No Product `sort_order` or other metadata is written by this feature.
-2. **Article index:** `settings.article_order` overrides Markdown `display_order`; remaining ties use newest date, then slug.
-3. **Featured article:** explicit `settings.featured_slug`, then a Markdown `featured: true` article, then newest date. Index/home order never changes featured selection.
+2. **Article index:** articles absent from `settings.article_order` come first, sorted by date descending then slug ascending; listed articles follow in their saved relative order. With no manual order, all articles use date/slug order. Legacy Markdown `display_order` remains stored but does not drive this index.
+3. **MAIN cover article:** valid explicit `settings.featured_slug`, otherwise newest date then slug. Legacy Markdown `featured` remains stored but does not override this fallback. Index/home order never changes MAIN cover selection.
 
-Owner settings also support card title (footer; empty-state heading), description, homepage excerpt override, cover URL and featured video URL. Article title remains the card's main heading when articles exist. Empty override values restore article/default values. These values are **public**, so never paste private Product destinations or secrets. Markdown body remains Git canonical. Featured video override appears only with the featured article in the runtime viewer; the static article preserves its Markdown video URL.
+Stored settings also retain card title, description, legacy excerpt/cover overrides and featured video URL. The card name is YSU Journal; the chosen article title appears below its image. For populated cards v1.3.2 uses the selected article's cover/excerpt; legacy overrides do not mask them. The empty card may use the stored cover/description. These values are **public**, so never paste private Product destinations or secrets. Markdown body remains Git canonical. Featured video override appears only with the featured article in the runtime viewer; the static article preserves its Markdown video URL.
 
 ## Security and persistence
 
@@ -66,7 +66,7 @@ No chat-to-repo backend or unattended automation is installed. Existing chat/fil
 Production always uses ordinary **`npm run build` → dist**. Never deploy `dist-qa`, the QA server, fixture SDK, or test articles. Test articles are explicitly labelled and excluded from ordinary output. Real Writing content starts at zero articles for this release; no fabricated work is published.
 
 ## v1.1 — contextual editing (supersedes v1 presentation-only editing)
-Owner opens a published article and chooses Edit Article. Fields: title,date,category,excerpt,Markdown body,cover/cover description,inline images,video URL,LinkedIn andFacebook URL. Existing assets may be selected for cover; inline URLs and uploaded replacements update references automatically. Set as featured and Reorder articles are contextual actions; no Writing settings link remains on home.
+Owner opens a published article and chooses Edit Article. Fields: title,date,category,excerpt,Markdown body,cover/cover description,inline images,video URL,LinkedIn andFacebook URL. Existing assets may be selected for cover; inline URLs and uploaded replacements update references automatically. Set as MAIN cover and Reorder articles are contextual actions; no Writing settings link remains on home.
 
 Optional tags now support a safe block list, for example tags followed by two-space-indented '- AI' entries. Maximum30 unique nonempty strings,80characters each. No arbitrary YAML, anchors, nested objects or filter UI. Absent tags stay absent; edit/save preserves tags plus featured/display_order. Parser/render/serializer are shared by build and backend in assets/js/writing-content.mjs.
 
@@ -90,3 +90,9 @@ Supersedes v1.2 size list only: body_font_size accepts each integer12 through20;
 
 ## v1.3.1 card identity
 The display setting/default title is YSU Journal. WRITING remains the type label, data-product-id remains writing, and /writing/ routes and article schema are unchanged. Card order: type/count → h2 Journal name → cover → h3 featured article title → date/category → excerpt → shared-title footer. Existing title-driven empty/list reader naming inherits this display identity; article reader/editor behavior and styles are unchanged.
+
+## Writing v1.3.2 MAIN cover and article order
+Owner chooses Set as MAIN cover inside an article. Its image, title, date/category and excerpt immediately drive the homepage card and persist through existing settings CAS. For populated cards, legacy presentation cover/excerpt overrides remain stored but no longer mask the selected article. No-cover/no-excerpt articles use a placeholder/empty excerpt. Empty-card defaults remain. The selected article shows disabled MAIN cover selected and exactly one restrained MAIN COVER index label for owners; guests have neither. A successful settings save still updates shared card state if navigation happens before completion; logout invalidation remains.
+New/unlisted articles always precede the manual group. Saving Reorder articles lists all currently known articles; later unlisted publications automatically appear above that list without changing the saved items' relative order. Invalid/removed selected slugs fall back to newest regardless of manual order or legacy featured/display_order. No schema or backend API change.
+
+The no-JavaScript static index uses the same newest date/slug default. Live manual settings require JavaScript, as before; static generation does not export owner state.

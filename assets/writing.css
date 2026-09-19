@@ -44,3 +44,5 @@ button,input,select,textarea{font:inherit}button:focus-visible,a:focus-visible,i
 .writing-card .writing-article-title{font-size:18px;line-height:1.25;font-weight:600;margin:0;overflow-wrap:anywhere}
 #grid:has(.product-actions) .writing-card{padding-top:64px}
 @media(max-width:639px){.writing-card .card-tags{min-height:22px}.can-reorder .writing-card .card-tags{min-height:44px}}
+
+.writing-main-cover{display:block;margin-top:4px;font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--text-dim)}

@@ -17,3 +17,5 @@ YSU Small Project UI Standard1.0 remains applied with existing MAIN tokens. Prod
 
 ## MAIN v1.3.1 — Journal card alignment
 UI Standard1.0, current canonical Core57a69136b7473718dfcf26311ae801f033696f05. Only Writing card layout changes: the shared Product h2 visual language names YSU Journal above the cover; featured title becomes an18px/600 h3 below it. Meta/name/preview rows retain Product spacing. Owner-only42px top allowance matches the existing Manage row without changing any Product. Fixed620px card and native overflow match lifecycle geometry; the cover never shrinks. Desktop1440 and mobile390 guest/owner row positions match exactly. Reader/editor styles, routes and content are untouched. Existing shared title consumers (footer and empty/list reader name) inherit the Journal identity.
+
+Writing v1.3.2 follows Core Small Project UI Standard1.0: only an owner-only MAIN COVER label in the existing index, using text-dim/11px and existing spacing; disabled selected action uses existing button styling. Homepage card and reader geometry remain.

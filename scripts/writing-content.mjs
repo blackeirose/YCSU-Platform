@@ -1,6 +1,6 @@
 import {readFile,readdir,mkdir,writeFile,cp,lstat} from 'node:fs/promises';
 import path from 'node:path';
-import {escapeHtml as esc,safeUrl,validSlug} from '../assets/js/writing-model.mjs';
+import {escapeHtml as esc,safeUrl,validSlug,articleOrder} from '../assets/js/writing-model.mjs';
 import {parseArticle,articleHtml} from '../assets/js/writing-content.mjs';
 export {parseArticle,articleHtml,markdown} from '../assets/js/writing-content.mjs';
 export async function buildWriting({root,out,template,sourceDir=path.join(root,'content/writing')}){
@@ -27,7 +27,7 @@ export async function buildWriting({root,out,template,sourceDir=path.join(root,'
   const route=article?`/writing/${article.slug}/`:'/writing/';const title=article?`${article.title} — YCSU Writing`:'Writing — YCSU Platform';
   const description=article?.excerpt||'Writing by YuCheng Su.';
   const metadata=`<link rel="canonical" href="https://main.ycsu.cc${route}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="https://main.ycsu.cc${route}">${article?.cover?`<meta property="og:image" content="${esc(new URL(article.cover,'https://main.ycsu.cc').href)}">`:''}`;
-  const content=article?articleHtml(article):`<h1>Writing</h1>${articles.length?`<ul>${articles.map(a=>`<li><a href="/writing/${a.slug}/">${esc(a.title)}</a> · ${a.date}</li>`).join('')}</ul>`:'<p>No published articles yet.</p>'}`;
+  const content=article?articleHtml(article):`<h1>Writing</h1>${articles.length?`<ul>${articleOrder(articles).map(a=>`<li><a href="/writing/${a.slug}/">${esc(a.title)}</a> · ${a.date}</li>`).join('')}</ul>`:'<p>No published articles yet.</p>'}`;
   const staticReader=`<main id="writing-static" class="writing-static"><a href="/">← Back to MAIN</a>${content}</main>`;
   const html=template.replace(/<title>.*?<\/title>/,`<title>${esc(title)}</title>`).replace(/<meta name="description"[^>]*\/>/,`<meta name="description" content="${esc(description)}">`).replace('</head>',metadata+'</head>').replace('<body>','<body>'+staticReader);
   await mkdir(path.join(out,route),{recursive:true});await writeFile(path.join(out,route,'index.html'),html);

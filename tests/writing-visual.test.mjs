@@ -5,12 +5,12 @@ import {JSDOM} from 'jsdom';
 import {writingCard} from '../assets/js/writing-model.mjs';
 
 const article={slug:'visual-fixture',title:'A clear idea',date:'2026-09-18',category:'Education',cover:'/writing/visual-fixture/cover.webp',excerpt:'An editorial excerpt.'};
-test('Writing card uses singular and plural counts with cover before title and no Product metadata',()=>{
+test('Writing card uses singular and plural counts with cover before featured article title and no Product metadata',()=>{
  for(const [count,label] of [[0,'0 ARTICLES'],[1,'1 ARTICLE'],[2,'2 ARTICLES']]){
   const dom=new JSDOM(writingCard(Array.from({length:count},(_,i)=>({...article,slug:'fixture-'+i}))));
   const card=dom.window.document.querySelector('.writing-card');
   assert.equal(card.querySelector('.writing-count').textContent,label);
-  assert.ok(card.querySelector('.writing-cover').compareDocumentPosition(card.querySelector('h2'))&dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+  assert.ok(card.querySelector('.writing-cover').compareDocumentPosition(card.querySelector('.writing-article-title'))&dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
   assert.equal(card.querySelectorAll('.badge,.version-row,.meta-list').length,0);
   if(count)assert.equal(card.querySelector('.writing-date').textContent,'2026-09-18 · Education');
   dom.window.close();

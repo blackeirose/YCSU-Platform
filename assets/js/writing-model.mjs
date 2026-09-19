@@ -1,5 +1,5 @@
 export const WRITING_ID = 'writing';
-export const defaults = Object.freeze({title:'Writing',description:'Notes on architecture, technology, and making things.',excerpt:'',cover:'',video_url:'',featured_slug:'',article_order:[]});
+export const defaults = Object.freeze({title:'YSU Journal',description:'Notes on architecture, technology, and making things.',excerpt:'',cover:'',video_url:'',featured_slug:'',article_order:[]});
 export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const validSlug = value => typeof value==='string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value) && value.length<=100;
 export function safeUrl(value,{media=false}={}) {
@@ -45,16 +45,17 @@ export function featuredArticle(articles,settings=defaults){
  return articles.find(a=>a.slug===settings.featured_slug)||[...articles].sort((a,b)=>Number(!!b.featured)-Number(!!a.featured)||b.date.localeCompare(a.date)||a.slug.localeCompare(b.slug))[0]||null;
 }
 export function mixedCards(products,home=[]){
- const items=[...products,{id:WRITING_ID,name:'Writing'}],byId=new Map(items.map(p=>[p.id,p]));
+ const items=[...products,{id:WRITING_ID,name:defaults.title}],byId=new Map(items.map(p=>[p.id,p]));
  return [...new Set([...home,...items.map(p=>p.id)])].filter(id=>byId.has(id)).map((id,i)=>({...byId.get(id),sortOrder:i}));
 }
 export function writingCard(articles,settings=defaults){
  const article=featuredArticle(articles,settings),cover=safeUrl(settings.cover||article?.cover,{media:true});
  const title=article?.title||settings.title;
- return `<article class="card writing-card" data-product-id="writing"><div class="card-tags"><span class="writing-label">WRITING</span><span class="writing-count">${articles.length} ${articles.length===1?'ARTICLE':'ARTICLES'}</span></div>
+ return `<article class="card writing-card" data-product-id="writing"><div class="writing-card-content"><div class="card-tags"><span class="writing-label">WRITING</span><span class="writing-count">${articles.length} ${articles.length===1?'ARTICLE':'ARTICLES'}</span></div>
+ <h2>${escapeHtml(settings.title)}</h2>
  <div class="preview writing-cover">${cover?`<img data-writing-image="${escapeHtml(cover)}" alt="${escapeHtml((!settings.cover||settings.cover===article?.cover)?(article?.cover_alt?.trim()||title):title)}" width="1440" height="900" loading="lazy">`:''}<span class="writing-placeholder">${article?'YCSU · WRITING':'A space for ideas.'}</span></div>
- <h2><a class="writing-open" href="/writing/${article?escapeHtml(article.slug)+'/':''}" data-writing-link>${escapeHtml(title)}</a></h2>
+ <h3 class="writing-article-title"><a class="writing-open" href="/writing/${article?escapeHtml(article.slug)+'/':''}" data-writing-link>${escapeHtml(title)}</a></h3>
  <p class="writing-date">${article?escapeHtml([article.date,article.category].filter(Boolean).join(' · ')):'No published articles yet.'}</p>
  <p class="tagline writing-excerpt">${escapeHtml(article?(settings.excerpt||article.excerpt||settings.description):settings.description)}</p>
- <div class="writing-footer">${escapeHtml(settings.title)} <span aria-hidden="true">↗</span></div></article>`;
+ <div class="writing-footer">${escapeHtml(settings.title)} <span aria-hidden="true">↗</span></div></div></article>`;
 }

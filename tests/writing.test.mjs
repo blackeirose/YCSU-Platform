@@ -15,7 +15,7 @@ test('featured, article index, and mixed homepage order remain independent; new/
  const products=[{id:'p1'},{id:'p2'}];assert.deepEqual(mixedCards(products,['old','writing','p2','writing']).map(p=>p.id),['writing','p2','p1']);assert.equal(products.length,2);assert.deepEqual(articleOrder(articles,{article_order:['a','b']}).map(a=>a.slug),['a','b']);
 });
 test('Writing card has a mandatory title, exactly one card, no Product status/version metadata and safe empty/media fallback',()=>{
- const dom=new JSDOM(writingCard([],defaults)),card=dom.window.document.querySelector('.card');assert.equal(card.dataset.productId,'writing');assert.equal(card.querySelector('h2').textContent,'Writing');assert.match(card.textContent,/No published articles/);assert.equal(card.querySelectorAll('img,.badge,.maturity-tag,.version-row,.cert-badge').length,0);assert.equal(card.querySelector('a').getAttribute('href'),'/writing/');
+ const dom=new JSDOM(writingCard([],defaults)),card=dom.window.document.querySelector('.card');assert.equal(card.dataset.productId,'writing');assert.equal(card.querySelector('h2').textContent,'YSU Journal');assert.match(card.textContent,/No published articles/);assert.equal(card.querySelectorAll('img,.badge,.maturity-tag,.version-row,.cert-badge').length,0);assert.equal(card.querySelector('a').getAttribute('href'),'/writing/');
  const html=writingCard([{title:'<script>',slug:'safe',date:'2026-09-18',cover:'javascript:bad'}],defaults);assert.doesNotMatch(html,/<script>|src="javascript/);dom.window.close();
 });
 test('presentation projection never includes raw owner metadata; settings reject unsafe URLs, unexpected fields and duplicate order',()=>{
@@ -73,4 +73,20 @@ test('cover descriptions reach readers and cards with safe fallbacks',()=>{
  }
  const override=new JSDOM(writingCard([article],{...defaults,cover:'/writing/other/cover.webp'}));assert.equal(override.window.document.querySelector('img').alt,article.title);override.window.close();
  for(const value of ['42','true','"'+ 'x'.repeat(1001)+'"'])assert.throws(()=>parseArticle(fixture.replace('slug:',`cover_alt: ${value}\nslug:`)),/invalid cover_alt/);
+});
+
+test('Journal card preserves Writing identity, count, route and meta/name/cover/article hierarchy',()=>{
+ const article={title:'Make the Impossible Possible',slug:'make-the-impossible-possible',date:'2026-09-18',category:'AI & Architecture',excerpt:'A clear thought.',cover:'/writing/make-the-impossible-possible/cover.webp'};
+ for(const articles of [[article],[article,{...article,slug:'second'}]]){
+  const dom=new JSDOM(writingCard(articles)),d=dom.window.document,card=d.querySelector('.writing-card');
+  assert.equal(d.querySelectorAll('.writing-card').length,1);assert.equal(card.querySelectorAll('h2').length,1);assert.equal(card.querySelector('h2').textContent,'YSU Journal');
+  assert.equal(card.querySelector('.writing-label').textContent,'WRITING');assert.equal(card.querySelector('.writing-count').textContent,articles.length===1?'1 ARTICLE':'2 ARTICLES');
+  const rows=[...card.querySelector('.writing-card-content').children];assert.deepEqual(rows.slice(0,6).map(e=>e.className||e.tagName),['card-tags','H2','preview writing-cover','writing-article-title','writing-date','tagline writing-excerpt']);
+  assert.equal(card.querySelector('h3').textContent,article.title);assert.equal(card.querySelector('.writing-open').getAttribute('href'),'/writing/make-the-impossible-possible/');assert.equal(card.querySelectorAll('.badge,.maturity-tag,.version-row,.meta-list,.product-actions').length,0);dom.window.close();
+ }
+});
+test('Social Capture curated preview is WebP and copied unchanged into dist',async()=>{
+ const asset=new URL('../assets/previews/social-capture-tool.webp',import.meta.url),source=await readFile(asset),built=await readFile(new URL('../dist/assets/previews/social-capture-tool.webp',import.meta.url));
+ assert.equal(source.toString('ascii',0,4),'RIFF');assert.equal(source.toString('ascii',8,12),'WEBP');assert.deepEqual(built,source);
+
 });

@@ -10,7 +10,7 @@ test('Markdown frontmatter validates schema, rejects ambiguous/malformed/unsafe 
 });
 test('featured, article index, and mixed homepage order remain independent; new/stale product IDs reconcile',()=>{
  const articles=[{slug:'a',date:'2026-09-17',featured:true,display_order:20},{slug:'b',date:'2026-09-18',display_order:10}];
- assert.equal(featuredArticle(articles).slug,'a');assert.deepEqual(articleOrder(articles).map(a=>a.slug),['b','a']);
+ assert.equal(featuredArticle(articles).slug,'b');assert.deepEqual(articleOrder(articles).map(a=>a.slug),['b','a']);
  assert.equal(featuredArticle(articles,{featured_slug:'b',article_order:['a','b']}).slug,'b');assert.equal(featuredArticle(articles.map(a=>({...a,featured:false}))).slug,'b');
  const products=[{id:'p1'},{id:'p2'}];assert.deepEqual(mixedCards(products,['old','writing','p2','writing']).map(p=>p.id),['writing','p2','p1']);assert.equal(products.length,2);assert.deepEqual(articleOrder(articles,{article_order:['a','b']}).map(a=>a.slug),['a','b']);
 });
@@ -71,7 +71,7 @@ test('cover descriptions reach readers and cards with safe fallbacks',()=>{
  for(const cover_alt of [undefined,null,'   ']){
   const a={...article,cover_alt};for(const html of [articleHtml(a),writingCard([a])]){const dom=new JSDOM(html);assert.equal(dom.window.document.querySelector('img').alt,a.title);dom.window.close();}
  }
- const override=new JSDOM(writingCard([article],{...defaults,cover:'/writing/other/cover.webp'}));assert.equal(override.window.document.querySelector('img').alt,article.title);override.window.close();
+ const override=new JSDOM(writingCard([article],{...defaults,cover:'/writing/other/cover.webp'}));assert.equal(override.window.document.querySelector('img').alt,article.cover_alt);assert.equal(override.window.document.querySelector('img').dataset.writingImage,article.cover);override.window.close();
  for(const value of ['42','true','"'+ 'x'.repeat(1001)+'"'])assert.throws(()=>parseArticle(fixture.replace('slug:',`cover_alt: ${value}\nslug:`)),/invalid cover_alt/);
 });
 

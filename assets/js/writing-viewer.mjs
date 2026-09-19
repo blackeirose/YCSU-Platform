@@ -9,8 +9,8 @@ export function createWritingViewer({onNavigate=()=>{}}={}){
   if(!ready)return;
   if(observedRoute!==location.pathname){observedRoute=location.pathname;onNavigate();}
   const match=location.pathname.match(/^\/writing(?:\/([^/]+))?\/?$/);if(!match){close();return;}
-  const article=articles.find(a=>a.slug===match[1]);
-  index.innerHTML='<h2>Articles <span>'+articles.length+'</span></h2>'+(articles.length?articleOrder(articles,settings).map(a=>`<a href="/writing/${a.slug}/" data-writing-link${article?.slug===a.slug?' aria-current="page"':''}><strong>${esc(a.title)}</strong><time datetime="${a.date}">${a.date}</time></a>`).join(''):'<p>No published articles yet.</p>');
+  const article=articles.find(a=>a.slug===match[1]),coverSlug=featuredArticle(articles,settings)?.slug;
+  index.innerHTML='<h2>Articles <span>'+articles.length+'</span></h2>'+(articles.length?articleOrder(articles,settings).map(a=>`<a href="/writing/${a.slug}/" data-writing-link${article?.slug===a.slug?' aria-current="page"':''}><strong>${esc(a.title)}</strong>${actions&&a.slug===coverSlug?'<span class="writing-main-cover">MAIN COVER</span>':''}<time datetime="${a.date}">${a.date}</time></a>`).join(''):'<p>No published articles yet.</p>');
   reader.innerHTML=article?article.reader_html:'<div class="writing-empty"><p class="writing-label">WRITING</p><h1>'+esc(settings.title||'Writing')+'</h1><p>'+(articles.length?'Select an article to start reading.':'No published articles yet.')+'</p></div>';
   dialog.classList.toggle('is-list',!article);dialog.querySelector('.writing-back').hidden=!article;
   document.title=article?`${article.title} — YCSU Writing`:'Writing — YCSU Platform';
@@ -19,8 +19,8 @@ export function createWritingViewer({onNavigate=()=>{}}={}){
   if(lastRoute!==location.pathname){reader.scrollTop=0;index.querySelector('[aria-current]')?.scrollIntoView({block:'nearest'});(article?reader:index.querySelector('a')||dialog.querySelector('.writing-close')).focus({preventScroll:true});lastRoute=location.pathname;}
   if(article&&settings.video_url&&featuredArticle(articles,settings)?.slug===article.slug){const p=document.createElement('p'),a=document.createElement('a');a.href=settings.video_url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Watch featured video ↗';p.append(a);reader.append(p)}
   if(actions){const bar=document.createElement('div');bar.className='writing-article-actions';
-   const add=(label,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',fn);bar.append(b)};
-   if(article){add('Edit Article',()=>actions.edit(article.slug));add('Set as featured',()=>actions.feature(article.slug));}
+   const add=(label,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',fn);bar.append(b);return b};
+   if(article){add('Edit Article',()=>actions.edit(article.slug));const selected=article.slug===coverSlug;add(selected?'MAIN cover selected':'Set as MAIN cover',()=>actions.feature(article.slug)).disabled=selected;}
    add('Reorder articles',()=>actions.reorder());reader.prepend(bar);
    if(!article){index.append(bar);}
   }

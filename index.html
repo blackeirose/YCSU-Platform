@@ -372,6 +372,20 @@
     }
     body { background: radial-gradient(ellipse 120% 80% at 50% -10%, #e7edfb 0%, var(--bg) 55%); }
   }
+/* Lifecycle uses the existing card surface and contextual controls. */
+  .product-card{height:620px}
+  .product-content{display:flex;flex:1;min-height:0;overflow:auto;flex-direction:column;gap:14px;min-width:0}.product-content>.preview{flex-shrink:0}
+  .is-hidden .product-content{opacity:.5}
+  .hidden-indicator{position:absolute;top:14px;left:52px;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--text)}
+  .unavailable-card:hover{transform:none;border-color:var(--card-border)}
+  .unavailable-card .preview{margin-top:0}
+  .product-actions{position:relative;margin-top:-8px;margin-bottom:-8px;align-self:flex-end}
+  .product-actions summary{cursor:pointer;font-size:12px;min-height:44px;display:flex;align-items:center;color:var(--text)}
+  .product-actions>div{position:absolute;right:0;top:42px;z-index:5;display:grid;min-width:160px;padding:6px;background:var(--card);border:1px solid var(--text-dim);border-radius:8px;box-shadow:0 8px 24px #0002}
+  .product-actions button,.product-recovery button,.product-delete-dialog button{min-height:44px;text-align:left;background:var(--bg-elev);color:var(--text);border:1px solid var(--text-dim);border-radius:6px;padding:8px 12px;cursor:pointer}
+  .product-actions button:disabled{opacity:.5;cursor:wait}
+  #product-recovery{margin-top:24px}.product-recovery{border-top:1px solid var(--card-border);font-size:13px}.product-recovery summary{min-height:44px;cursor:pointer;padding:14px 0}.product-recovery ul{list-style:none;padding:0}.product-recovery li{display:flex;gap:8px;align-items:center;margin:12px 0}.product-recovery li>span{flex:1;overflow-wrap:anywhere}.product-recovery small{display:block;color:var(--text-dim);margin-top:4px}
+  .product-delete-dialog{width:min(430px,calc(100vw - 32px));border:1px solid var(--text-dim);border-radius:12px;padding:24px;background:var(--card);color:var(--text)}.product-delete-dialog p{line-height:1.6}.product-delete-dialog form>div{display:flex;gap:12px;justify-content:flex-end}.product-delete-dialog::backdrop{background:#0008}
 </style>
 <link rel="stylesheet" href="/assets/writing.css" />
 </head>
@@ -385,7 +399,10 @@
     </header>
 
     <div id="reorder-toolbar" class="reorder-toolbar" hidden><button type="button" id="arrange-cards" class="owner-button" aria-pressed="false">Arrange cards</button><span id="reorder-status" role="status" aria-live="polite"></span></div>
+    <p id="registry-unavailable" role="status" hidden>Product catalog is temporarily unavailable. Reload to try again.</p>
     <main class="grid" id="grid"></main>
+    <p id="lifecycle-status" role="status" aria-live="polite"></p>
+    <section id="product-recovery" aria-label="Product recovery" hidden></section>
 
     <footer>
       Registry-backed product directory.<br />
@@ -420,13 +437,15 @@
   import { orderedProducts } from '/assets/js/registry-order.mjs';
   import { createCardReorder } from '/assets/js/card-reorder.mjs';
   import { setupOwnerAccess } from '/assets/js/owner-access.mjs';
-  import { assertPublicRegistry } from '/assets/js/registry-public.mjs';
+  import {unavailableCard,productActions,recoverySections,setupProductLifecycle} from '/assets/js/product-lifecycle.mjs';
+  import { assertPublicRegistry,emptyRegistry,lifecycleState } from '/assets/js/registry-public.mjs';
   let liveRegistry = false, publicLive = false, ownerView = false, publicData = null;
   import { setupWriting } from '/assets/js/writing.mjs';
+  let lifecycleBusy=false;
   let ownerAccess, currentData=null, canArrange=false, arranging=false, writingAvailable=false;
   const arrangeButton=document.getElementById('arrange-cards');
   function updateArrange(){
-    const available=canArrange&&writingAvailable;
+    const available=canArrange&&writingAvailable&&!lifecycleBusy;
     arrangeButton.disabled=!available;
     if(!available)arranging=false;
     arrangeButton.textContent=arranging?'Done arranging':'Arrange cards';
@@ -440,6 +459,7 @@
     grid: document.getElementById('grid'), status: document.getElementById('reorder-status'),
     save: payload => writing.saveOrder(payload),
   });
+  const lifecycle=setupProductLifecycle({root:document.querySelector('.wrap'),getOwner:()=>ownerAccess,getProducts:()=>currentData?.products||[],onBusy:value=>{lifecycleBusy=value;updateArrange()},onSaved:product=>{currentData={...currentData,products:currentData.products.map(p=>p.id===product.id?product:p)};publicData=null;render(currentData);writing.refresh();void refreshPublic();}});
   // Deployment is an operational/reachability indicator — it must never be used
   // to represent product maturity. See docs/PLATFORM_MODEL.md §4.
   const DEPLOYMENT_BADGE = {
@@ -518,19 +538,22 @@
     const grid = document.getElementById("grid");
     const products = orderedProducts(data.products || []);
 
-    const liveCount = products.filter(p => p.deployment === "Public" && p.operationalStatus === "Live").length;
-    const inProgressCount = products.length - liveCount;
+    const liveCount = products.filter(p => lifecycleState(p)!=='hidden' && p.deployment === "Public" && p.operationalStatus === "Live").length;
+    const hiddenCount=products.filter(p=>lifecycleState(p)==='hidden').length;
+    const inProgressCount = products.filter(p=>lifecycleState(p)!=='hidden'&&!(p.deployment==='Public'&&p.operationalStatus==='Live')).length;
 
     document.getElementById("summary-bar").innerHTML = `
       <div class="summary-stat"><div class="n">${products.length}</div><div class="l">Products</div></div>
       <div class="summary-stat"><div class="n">${liveCount}</div><div class="l">Live</div></div>
       <div class="summary-stat"><div class="n">${inProgressCount}</div><div class="l">In Progress</div></div>
+      ${hiddenCount?`<div class="summary-stat"><div class="n">${hiddenCount}</div><div class="l">Unavailable</div></div>`:""}
     `;
     document.getElementById("updated-date").textContent = data.updated || "unknown";
 
     const cards=writing.mix(products);
     grid.innerHTML = cards.map(p => {
       if(p.id==='writing')return writing.card();
+      if(!ownerView&&lifecycleState(p)==='hidden')return unavailableCard(p);
       const badge = deploymentBadge(p);
 
       // Reality rule: only a verified mainUrl may render as an active Launch link.
@@ -551,7 +574,10 @@
         : "";
 
       return `
-        <article class="card" data-product-id="${escapeHtml(p.id)}">
+        <article class="card product-card${lifecycleState(p)==='hidden'?' is-hidden':''}" data-product-id="${escapeHtml(p.id)}">
+          ${ownerView?productActions(p):''}
+          ${lifecycleState(p)==='hidden'?'<span class="hidden-indicator">HIDDEN</span>':''}
+          <div class="product-content">
           <div class="card-tags">
             <span class="maturity-tag">${escapeHtml(p.maturity)}</span>
             ${certHtml}
@@ -568,9 +594,12 @@
           </div>
           ${linkRow(p)}
           ${p.statusNote ? `<div class="notes">${escapeHtml(p.statusNote)}</div>` : ""}
+          </div>
         </article>
       `;
     }).join("");
+    const recovery=document.getElementById('product-recovery');recovery.hidden=!ownerView;recovery.innerHTML=ownerView?recoverySections(data.products||[]):'';
+    document.getElementById('registry-unavailable').hidden=liveRegistry;
     loadPreviews(grid);
     writing.images(grid);
     reorder.setProducts(cards);
@@ -579,24 +608,19 @@
 
   const SUPABASE_URL = "https://fzydsnxxcdllkjxwdiwn.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_wpnShrpWOLV94EEUA86vVg_zRQbbW2W";
-  function guestView(){writing.setOwner(false);ownerView=false;liveRegistry=publicLive;render(publicData||{products:[],updated:''});}
+  let publicGeneration=0;
+  function guestView(){lifecycle.setOwner(false);writing.setOwner(false);ownerView=false;publicData=null;liveRegistry=false;render(emptyRegistry());void refreshPublic();}
+  async function refreshPublic(){const g=++publicGeneration;try{const data=await fetchPublicRegistry();if(g!==publicGeneration)return;publicData=data;if(!ownerView){liveRegistry=true;render(data)}}catch{if(g===publicGeneration&&!ownerView){publicLive=false;liveRegistry=false;render(emptyRegistry())}}}
   async function fetchPublicRegistry(){
-    const response=await fetch(`${SUPABASE_URL}/functions/v1/registry-ops`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({operation:'read-public'}),cache:'no-store'});
+    const response=await fetch(`${SUPABASE_URL}/functions/v1/registry-ops`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({operation:'read-public',contract:'lifecycle-v1'}),cache:'no-store',signal:AbortSignal.timeout(15000)});
     if(!response.ok)throw new Error('Public Registry unavailable');
     const data=assertPublicRegistry(await response.json());publicLive=true;return data;
   }
-  async function fetchPublicSnapshot(){
-    publicLive=false;
-    const response=await fetch('/data/registry.public.snapshot.json',{cache:'no-store'});
-    if(!response.ok)throw new Error('Public fallback unavailable');
-    return assertPublicRegistry(await response.json());
-  }
   setupOwnerAccess({url:SUPABASE_URL,key:SUPABASE_ANON_KEY,setAllowed:value=>{canArrange=value;updateArrange()},isLive:()=>liveRegistry,status:document.getElementById('reorder-status'),
-    onGuest:guestView,onOwnerData:data=>{writing.setOwner(true);ownerView=true;liveRegistry=true;render(data);}
+    onGuest:guestView,onOwnerData:data=>{lifecycle.setOwner(true);writing.setOwner(true);ownerView=true;liveRegistry=true;render(data);}
   }).then(access=>{ownerAccess=access;access.refreshAvailability();writing.refresh();});
-  fetchPublicRegistry().catch(()=>fetchPublicSnapshot()).then(data=>{
-    publicData=data;if(!ownerView){liveRegistry=publicLive;render(data);}
-  }).catch(()=>{if(!ownerView)document.getElementById('grid').textContent='Could not load the Registry. Please reload.';});
+  void refreshPublic();
+
 
 </script>
 </body>

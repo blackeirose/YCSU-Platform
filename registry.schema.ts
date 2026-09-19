@@ -80,7 +80,10 @@ export interface RegistryProduct {
   sortOrder: number | null;
   /** True if this entry should not appear in the default active view. Prefer
    *  archiving over deleting — see docs/PLATFORM_MODEL.md §2/§7. */
-  archived: boolean;
+  archived: boolean; // Constrained compatibility projection: archived or deleted.
+  lifecycleState: "visible" | "hidden" | "archived" | "deleted";
+  lifecycleRevision: number; // Owner-only compare-and-swap version.
+  deletedAt: string | null; // Owner-only; present only in Deleted state.
   certification: Certification;
   /** ISO date (YYYY-MM-DD) of the last meaningful metadata update — not a
    *  render timestamp. See docs/REGISTRY_OPERATIONS.md "lastUpdated rule". */

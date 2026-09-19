@@ -39,7 +39,6 @@ const FIELD_MAP: Record<string, string> = {
   docsUrl: "docs_url",
   roadmapUrl: "roadmap_url",
   featured: "featured",
-  archived: "archived",
   certification: "certification",
   lastUpdated: "last_updated",
   statusNote: "status_note",
@@ -155,10 +154,13 @@ return async (req: Request) => {
 
   // Public caller options cannot broaden this server-owned projection.
   if (operation === "read-public") {
-    if (Object.keys(body).some(k => k !== "operation")) return json({ok:false,error:"Unsupported public read options"},400);
-    const {data: rows,error} = await supabase.from("product_registry").select("*").eq("archived",false).order("sort_order",{nullsFirst:false}).order("name").order("id");
+    if (Object.keys(body).some(k => !["operation","contract"].includes(k)) || (body.contract!==undefined&&body.contract!=="lifecycle-v1")) return json({ok:false,error:"Unsupported public read options"},400);
+    const {data: rows,error} = await supabase.from("product_registry").select("*").order("sort_order",{nullsFirst:false}).order("name").order("id");
     if(error) return json({ok:false,error:"Registry read unavailable"},503);
-    return json(registryResponse(rows));
+    const projection=registryResponse(rows);
+    // Older deployed clients reject unknown fields. Never trigger their stale snapshot fallback.
+    if(body.contract!=='lifecycle-v1')projection.products=projection.products.filter(p=>p.lifecycleState==='visible').map(({lifecycleState,...p})=>p);
+    return json(projection);
   }
   if (!providedKey) return json({ ok: false, error: "unauthorized" }, 401);
   // The existing verified owner may ONLY authorize/reorder/read-owner. Every other operation
@@ -170,21 +172,36 @@ return async (req: Request) => {
         !authData.user.email_confirmed_at || authData.user.is_anonymous) {
       return json({ ok: false, error: "owner access required" }, 403);
     }
-    if (operation !== "reorder" && operation !== "authorize" && operation !== "read-owner") {
-      return json({ ok: false, error: "this session may only read and reorder products" }, 403);
+    if (operation !== "reorder" && operation !== "authorize" && operation !== "read-owner" && operation !== "lifecycle") {
+      return json({ ok: false, error: "this session may only read, reorder and manage product lifecycle" }, 403);
     }
   }
-  if (operation === "authorize") return json({ ok: true, canReorder: true, canReadLinks: true });
+  if (operation === "authorize") return json({ ok: true, canReorder: true, canReadLinks: true, canManageLifecycle: true });
   if (operation === "read-owner") {
-    const {data: rows,error} = await supabase.from("product_registry").select("*").eq("archived",false).order("sort_order",{nullsFirst:false}).order("name").order("id");
+    const {data: rows,error} = await supabase.from("product_registry").select("*").order("sort_order",{nullsFirst:false}).order("name").order("id");
     if(error) return json({ok:false,error:"Registry read unavailable"},503);
+    const {data:state,error:stateError}=await supabase.from('main_presentation').select('revision').eq('id',1).single();
+    if(stateError||!Number.isSafeInteger(state?.revision))return json({ok:false,error:'Registry order unavailable'},503);
+    return json({...registryResponse(rows,true),presentationRevision:state.revision});
+  }
+
+  if (operation === "lifecycle") {
+    if(Object.keys(body).some(k=>!['operation','data'].includes(k)) || !data || Array.isArray(data) ||
+       Object.keys(data).some(k=>!['id','revision','action','confirm'].includes(k)) ||
+       typeof data.id!=='string'||!(/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i).test(data.id) ||
+       !Number.isSafeInteger(data.revision)||Number(data.revision)<0 ||
+       !['hide','show','archive','delete','restore'].includes(data.action as string) ||
+       (data.action==='delete'&&data.confirm!==true)) return json({ok:false,error:'Invalid lifecycle request'},422);
+    const {data:rows,error}=await supabase.rpc('change_product_lifecycle',{product_id:data.id,expected_revision:data.revision,action:data.action});
+    if(error)return json({ok:false,error:error.code==='40001'?'Product changed. Reload before trying again.':'Could not change product state.'},error.code==='40001'?409:error.code==='P0002'?404:400);
     return json(registryResponse(rows,true));
   }
 
   if (operation === "reorder") {
     const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const validRank = (v: unknown) => v === null || (Number.isInteger(v) && Number(v) >= -2147483648 && Number(v) <= 2147483647);
-    if (!data || Object.keys(data).some(k => !["expected", "order"].includes(k)) ||
+    if (!data || Object.keys(data).some(k => !["expected", "order", "presentationRevision"].includes(k)) ||
+        !Number.isSafeInteger(data.presentationRevision) || Number(data.presentationRevision)<0 ||
         !Array.isArray(data.order) || data.order.length > 1000 ||
         !data.order.every(id => typeof id === "string" && uuid.test(id)) ||
         new Set(data.order).size !== data.order.length ||
@@ -195,7 +212,7 @@ return async (req: Request) => {
       return json({ ok: false, error: "invalid reorder payload" }, 422);
     }
     const { data: result, error } = await supabase.rpc("reorder_product_registry", {
-      expected: data.expected, ordered_ids: data.order,
+      expected: data.expected, ordered_ids: data.order, expected_presentation_revision: data.presentationRevision,
     });
     if (error) return json({ ok: false, error: error.code === "40001" ? "Order changed. Reload and try again." : "Could not save order." }, error.code === "40001" ? 409 : 400);
     return json({ ok: true, ...result });
@@ -244,27 +261,8 @@ return async (req: Request) => {
     return json({ ok: true, product: updated });
   }
 
-  if (operation === "archive" || operation === "unarchive") {
-    if (!slug) return json({ ok: false, error: `"slug" is required for ${operation}` }, 400);
-    const { data: updated, error } = await supabase
-      .from("product_registry")
-      .update({ archived: operation === "archive", last_updated: new Date().toISOString().slice(0, 10) })
-      .eq("slug", slug)
-      .select()
-      .maybeSingle();
-    if (error) return json({ ok: false, error: error.message }, 400);
-    if (!updated) return json({ ok: false, error: `no product with slug "${slug}"` }, 404);
-    return json({ ok: true, product: updated });
-  }
-
-  if (operation === "delete") {
-    if (!slug) return json({ ok: false, error: "\"slug\" is required for delete" }, 400);
-    if (data.confirm !== true) {
-      return json({ ok: false, error: "delete requires data.confirm === true — prefer \"archive\" instead" }, 400);
-    }
-    const { error } = await supabase.from("product_registry").delete().eq("slug", slug);
-    if (error) return json({ ok: false, error: error.message }, 400);
-    return json({ ok: true, deleted: slug });
+  if (['archive','unarchive','delete'].includes(operation)) {
+    return json({ok:false,error:'Use lifecycle with the current product id and revision. Delete is recoverable.'},422);
   }
 
   return json({ ok: false, error: `unknown operation "${operation}"` }, 400);

@@ -30,7 +30,14 @@ export function createWritingHandler({createClient,getEnv}){
    result=await db.rpc('update_main_presentation',{expected_revision:body.revision,settings_patch:settings,next_home_order:home});
    if(!result.error){if(!result.data?.length)return reply(409,{ok:false,error:'Changed elsewhere. Reload before saving.'});result={data:result.data[0]};}
   }
+  if(result.error?.code==='40001')return reply(409,{ok:false,error:'Product set changed. Reload before saving.'});
   if(result.error||!result.data)return reply(503,{ok:false,error:'Writing settings unavailable'});
-  return reply(200,presentation(result.data,owner));
+  const output=presentation(result.data,owner);
+  if(!owner&&output.home_order.length){
+   const active=await db.from('product_registry').select('id').eq('archived',false);
+   if(active.error||!Array.isArray(active.data))return reply(503,{ok:false,error:'Writing settings unavailable'});
+   const ids=new Set(['writing',...active.data.map(p=>p.id)]);output.home_order=output.home_order.filter(id=>ids.has(id));
+  }
+  return reply(200,output);
  };
 }

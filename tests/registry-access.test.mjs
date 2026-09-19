@@ -20,7 +20,7 @@ test('server public projection omits links/unknown fields and removes URLs from 
  assert.throws(()=>assertPublicRegistry({...data,products:[{description:{mainUrl:'https://protected.example.invalid'}}]}),/scalar/);
 });
 test('read-public is safe without credentials; owner full reads require exact validated UUID; writes stay restricted',async()=>{
- let calls=0;const chain={select(){return this},eq(){return this},order(){return this},then(resolve){calls++;return Promise.resolve({data:[row],error:null}).then(resolve)}};
+ let calls=0;const chain={select(){return this},eq(){return this},order(){return this},async single(){return {data:{revision:0}}},then(resolve){calls++;return Promise.resolve({data:[row],error:null}).then(resolve)}};
  const handler=createRegistryHandler({createClient:()=>({from:()=>chain,auth:{getUser:async token=>({data:{user:token==='owner'?{id:owner,email_confirmed_at:'yes'}:token==='other'?{id:'another-user',email_confirmed_at:'yes',user_metadata:{owner:true}}:null},error:null})}}),getEnv:k=>k==='REGISTRY_API_KEY'?'manager':undefined});
  const req=(operation,token='',extra={})=>handler(new Request('https://example.invalid',{method:'POST',headers:{Authorization:token?'Bearer '+token:'','Content-Type':'application/json'},body:JSON.stringify({operation,...extra})}));
  const guest=await req('read-public');assert.equal(guest.status,200);assertPublicRegistry(await guest.json());assert.equal(guest.headers.get('cache-control'),'no-store');

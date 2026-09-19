@@ -49,9 +49,9 @@ And fear can become a reason to stand still.
 
 But my experience with AI has taught me almost the opposite:
 
-The more we understand, the less there is to fear.
+**The more we understand, the less there is to fear.**
 
-The more we explore, the more possibilities we discover.
+**The more we explore, the more possibilities we discover.**
 
 AI is advancing at an extraordinary pace. Things that seemed beyond my skill set not long ago are becoming things I can actually explore today.
 
@@ -67,9 +67,9 @@ I’ve spent most of my career designing buildings, not writing software.
 
 Yet today, I can build tools for architectural workflows, explore automation, experiment with new ways to communicate design, and turn ideas that once stopped at “I wish we could…” into things I can actually test and build.
 
-AI doesn’t automatically make the impossible possible.
+**AI doesn’t automatically make the impossible possible.**
 
-But it dramatically lowers the barrier between imagination and creation.
+**But it dramatically lowers the barrier between imagination and creation.**
 
 The next generation will grow up with AI whether we embrace it or not. For Rachel’s generation, working alongside AI may eventually feel as natural as the internet or smartphones feel to us today.
 

@@ -11,7 +11,7 @@ facebook_url: null
 video_url: null
 featured: true
 display_order: 10
-body_font_size: 12
+body_font_size: 17
 ---
 **Make the Impossible Possible**
 

@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — Grand Line article, verified 2026-09-26 (Pacific)
+## Current production — AI-assisted Revit production article, verified 2026-09-26 (Pacific)
+
+Published the [September20 Revit production article](https://main.ycsu.cc/writing/ai-assisted-revit-production-workflow/) as the fourth Writing entry, preserving full LinkedIn copy and supplied workflow image. Content commit `5c6c85adecb34ad90b4ddf2bc1def13522fb6f86`; Netlify `6ab825b1a04142a8231209c7`, published `2026-09-26T20:06:14.063Z`.79/79 tests,33/33 isolated and33/33 production browser checks;39/39 served file hashes match. Three prior articles, MAIN cover, saved ordering, public presentation and Registry preserved. Frontend rollback `6ab8242a6ca4a2001aeb1fce`; full content rollback also needs an ordinary Git revert. [Release evidence](docs/releases/revit-production-2026-09-26.md).
+
+## Historical production — Grand Line article, verified 2026-09-26 (Pacific)
 
 Published [The Grand Line of Human Civilization](https://main.ycsu.cc/writing/the-grand-line-of-human-civilization/) as the third Writing article, retaining its September19 original date and supplied cover. Content commit `5574f687e75562d0379323f2b799c603b486ead1`; Netlify `6ab8242a6ca4a2001aeb1fce`, published `2026-09-26T19:59:40.981Z`.79/79 tests,38/38 isolated and38/38 production browser checks;37/37 served file hashes match. Existing two articles, MAIN cover selection, manual relative order, public presentation and Registry preserved. Secure frontend rollback `6aaf1e77b3d3a8598605e033`; full content rollback also requires an ordinary Git revert. [Release evidence](docs/releases/grand-line-2026-09-26.md).
 

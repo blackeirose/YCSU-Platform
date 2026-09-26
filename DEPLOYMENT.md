@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — AI-assisted Revit production article, verified 2026-09-26 (Pacific)
+## Current production — tool design article, verified 2026-09-26 (Pacific)
+
+Published [today's tool-design article](https://main.ycsu.cc/writing/addition-vs-subtraction-in-tool-design/) as the fifth Writing entry, preserving original text,44-line reading structure and supplied cover. Content commit `e766525b76f734e71cde23a7ef6497f03fc3b382`; Netlify `6ab830c9db134814eab52e78`, published `2026-09-26T20:53:32.862Z`.79/79 tests,34/34 isolated and34/34 production browser checks;41/41 served hashes match. Four prior articles, MAIN cover, saved ordering, public presentation and Registry unchanged. Frontend rollback `6ab825b1a04142a8231209c7`; full rollback also requires an ordinary content Git revert. [Release evidence](docs/releases/tool-design-2026-09-26.md).
+
+## Historical production — AI-assisted Revit production article, verified 2026-09-26 (Pacific)
 
 Published the [September20 Revit production article](https://main.ycsu.cc/writing/ai-assisted-revit-production-workflow/) as the fourth Writing entry, preserving full LinkedIn copy and supplied workflow image. Content commit `5c6c85adecb34ad90b4ddf2bc1def13522fb6f86`; Netlify `6ab825b1a04142a8231209c7`, published `2026-09-26T20:06:14.063Z`.79/79 tests,33/33 isolated and33/33 production browser checks;39/39 served file hashes match. Three prior articles, MAIN cover, saved ordering, public presentation and Registry preserved. Frontend rollback `6ab8242a6ca4a2001aeb1fce`; full content rollback also needs an ordinary Git revert. [Release evidence](docs/releases/revit-production-2026-09-26.md).
 

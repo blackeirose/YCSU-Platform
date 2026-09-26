@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — Writing v1.3.2 MAIN cover/order, verified 2026-09-19 (Pacific)
+## Current production — Grand Line article, verified 2026-09-26 (Pacific)
+
+Published [The Grand Line of Human Civilization](https://main.ycsu.cc/writing/the-grand-line-of-human-civilization/) as the third Writing article, retaining its September19 original date and supplied cover. Content commit `5574f687e75562d0379323f2b799c603b486ead1`; Netlify `6ab8242a6ca4a2001aeb1fce`, published `2026-09-26T19:59:40.981Z`.79/79 tests,38/38 isolated and38/38 production browser checks;37/37 served file hashes match. Existing two articles, MAIN cover selection, manual relative order, public presentation and Registry preserved. Secure frontend rollback `6aaf1e77b3d3a8598605e033`; full content rollback also requires an ordinary Git revert. [Release evidence](docs/releases/grand-line-2026-09-26.md).
+
+## Historical production — Writing v1.3.2 MAIN cover/order, verified 2026-09-19 (Pacific)
 
 Netlify `6aaf1e77b3d3a8598605e033`, published `2026-09-19T23:45:20.756Z`; feature `4faa34cb8c65d4e2f6f576866be6b1bc60199fe8`, merge/build `e1ed82ee2442dac080fc92940c56edf6eaccaa5c`. One frontend release after79/79 full tests,11/11 final affected tests, independent review/readiness,15 isolated browser and13 live candidate checks. Production13/13 browser,8/8 API security,35/35 served SHA256 and no-JavaScript index checks PASS. Owner MAIN cover and article ordering are independent; new/unlisted articles precede manual order by date. Temporary QA settings restored exactly; no article/Product/Auth/schema/backend changes. Rollback `6aaf1757a66ab60159ad14a1`, retaining current protected backend and operational data. Owner action NONE. [Full report](docs/releases/main-writing-v1-3-2-cover-order.md).
 

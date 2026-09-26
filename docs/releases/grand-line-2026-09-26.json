@@ -1,0 +1,289 @@
+{
+  "core": "57a69136b7473718dfcf26311ae801f033696f05",
+  "baselineCommit": "9e30209336389a60eb80124c2754d0dcdb41e503",
+  "sourceCommit": "5574f687e75562d0379323f2b799c603b486ead1",
+  "rollbackDeploy": "6aaf1e77b3d3a8598605e033",
+  "source": {
+    "url": "https://www.linkedin.com/pulse/grand-line-human-civilization-yucheng-su-z66dc/",
+    "published": "2026-09-19T18:59:17.000+00:00",
+    "bodySha256": "e2fd3a9f86fc52e814ed1f33e669b3f197b6edcda6ef5f90c992d3c877958916",
+    "characters": 12526,
+    "formatCounts": {
+      "h3": 7,
+      "blockquote": 3,
+      "bold": 27,
+      "italic": 5,
+      "listItems": 1
+    }
+  },
+  "asset": {
+    "source": "muck-3-2.jpg",
+    "sha256": "6da08d79aa345c82414dd7be3dc873de16e650fed8253d617ef5ea8ba88d6b3c",
+    "bytes": 1002498,
+    "identicalBytes": true,
+    "dimensions": [
+      1672,
+      941
+    ]
+  },
+  "validation": {
+    "validate": true,
+    "build": true,
+    "testsPassed": 79,
+    "localBrowser": {
+      "base": "http://127.0.0.1:4173",
+      "checks": [
+        "1440 exact source body",
+        "1440 title",
+        "1440 date",
+        "1440 approved cover loaded",
+        "1440 no overflow",
+        "1440 three articles",
+        "1440 long article end reachable",
+        "1440 refresh",
+        "768 exact source body",
+        "768 title",
+        "768 date",
+        "768 approved cover loaded",
+        "768 no overflow",
+        "768 three articles",
+        "768 long article end reachable",
+        "768 refresh",
+        "390 exact source body",
+        "390 title",
+        "390 date",
+        "390 approved cover loaded",
+        "390 no overflow",
+        "390 three articles",
+        "390 long article end reachable",
+        "390 refresh",
+        "index navigation Back/Forward",
+        "new article first; manual order preserved",
+        "source formatting h3",
+        "source formatting blockquote",
+        "source formatting bold",
+        "source formatting italic",
+        "source formatting listItems",
+        "original LinkedIn URL and safe new tab",
+        "homepage original featured retained",
+        "three article label",
+        "guest product destinations hidden",
+        "no browser exceptions",
+        "static source body",
+        "static canonical"
+      ],
+      "errors": [],
+      "browser": "Installed Google Chrome, isolated headless Playwright context",
+      "count": 38
+    }
+  },
+  "status": "Production verified",
+  "deploy": {
+    "id": "6ab8242a6ca4a2001aeb1fce",
+    "publishedAt": "2026-09-26T19:59:40.981Z",
+    "source": "Netlify CLI",
+    "siteId": "9c0bd872-1f70-4468-b853-e87b9b3269d5"
+  },
+  "production": {
+    "registryUnchanged": true,
+    "presentationUnchanged": true,
+    "previousArticleUnchanged": true,
+    "articleCount": 3,
+    "hashes": [
+      {
+        "file": "index.html",
+        "sha256": "ef5f37d5447745b1969a8140aa05d45d9cc1f2a8ffcb1971a1ad18ff3d9aabb0"
+      },
+      {
+        "file": "assets\\reorder.css",
+        "sha256": "92b542071890ec788230e43472135584d4ec7ae82f3d485b5c8961a010f13f05"
+      },
+      {
+        "file": "assets\\writing.css",
+        "sha256": "66961c25c9d42fdd4c0476e60d6a331fd363a7fe71aee52246aa11d29bb79496"
+      },
+      {
+        "file": "data\\registry.public.snapshot.json",
+        "sha256": "c8d365d4c552f882fc87458448ac170dd65037bb9ebd4db6a61ee156ef05531e"
+      },
+      {
+        "file": "data\\writing.json",
+        "sha256": "db4350ad5bd4a0724487ba49817cdb15f76ff3ab06c7dd6b6340dcd838d722a6"
+      },
+      {
+        "file": "writing\\index.html",
+        "sha256": "12164e2f2827c37a78156d0d87c9f802df890aa4fd2ca037258d89d689b55d6e"
+      },
+      {
+        "file": "assets\\js\\card-reorder.mjs",
+        "sha256": "e6bbdc64c07735a91d0b1584fd7af3057a0b492c7967cb42f581ac062420c062"
+      },
+      {
+        "file": "assets\\js\\email-otp.mjs",
+        "sha256": "297e8be773e3eba581e7362703a3c671e725429a6a1058671c897cbc9f06ce54"
+      },
+      {
+        "file": "assets\\js\\owner-access.mjs",
+        "sha256": "07dd7dcc10f6dd8ee7056bef9f57d06680217dd271391c5b1ee349dc6dca22cc"
+      },
+      {
+        "file": "assets\\js\\product-lifecycle.mjs",
+        "sha256": "b547649d8123368eeed00227d6a6ba869808317b3be1dda7de4e89092c981530"
+      },
+      {
+        "file": "assets\\js\\registry-order.mjs",
+        "sha256": "c64bb2d08885eb652b203c8eec2cdf8ec0628b521c57847eea05528fcb51adc1"
+      },
+      {
+        "file": "assets\\js\\registry-public.mjs",
+        "sha256": "a7f1ec0af8ae94f8f1c04eb0f3904311cb6d00ee3d2f7e70819dc4f8cf9d6641"
+      },
+      {
+        "file": "assets\\js\\writing-content.mjs",
+        "sha256": "59cf6701867055c5b47789348971c3975292012b4e95dbbed8d67fce79aaf7a0"
+      },
+      {
+        "file": "assets\\js\\writing-editor.mjs",
+        "sha256": "902cb926f228c227aa21237b81c726ea92c832af6af9faf682c8395c0ff4194a"
+      },
+      {
+        "file": "assets\\js\\writing-format.mjs",
+        "sha256": "e356821bb849f31dbf12e5f15ff27c0490d23edf8fc632fe2c8197f12d0c8edb"
+      },
+      {
+        "file": "assets\\js\\writing-model.mjs",
+        "sha256": "070a59b12eee8c9ffe15aeafa21051d17dbcab99589bbda9d88d9153a2c3895f"
+      },
+      {
+        "file": "assets\\js\\writing-viewer.mjs",
+        "sha256": "8f7af2534cf871206142020ced17c03a110634c0d0891e63fbb2ef845d7f5eaa"
+      },
+      {
+        "file": "assets\\js\\writing.mjs",
+        "sha256": "51debbe2a00784da387afe35c9abf84fee4744abeaff36235ea84fd03497716f"
+      },
+      {
+        "file": "assets\\previews\\adcc.webp",
+        "sha256": "00d236b083082960f4e45c1515682101823b13843e4f6cac7acffa6c7644d8ef"
+      },
+      {
+        "file": "assets\\previews\\fire-pump-test-pit-simulator.webp",
+        "sha256": "bcb7524c6b01cf45e8f87bb18f8c12abacc0f66754729178ea6f1bb2ded60fda"
+      },
+      {
+        "file": "assets\\previews\\plumbing-calculation-chart.webp",
+        "sha256": "72169fc8f09bef0b9b29cb21c3710753d4338dfbe8d59ee205772943b07ba955"
+      },
+      {
+        "file": "assets\\previews\\rachels-animal-kingdom.webp",
+        "sha256": "f7fd6e831ebb568c59cdd4e2f40a1a0a97dca73623466a42f997712e42d7aed2"
+      },
+      {
+        "file": "assets\\previews\\social-capture-tool.webp",
+        "sha256": "05b31c8cab548739e9ba4daee9e4a2670599f43fbd093d5865d3b5d489c38e56"
+      },
+      {
+        "file": "assets\\previews\\ums.webp",
+        "sha256": "587f4f281974807498bb1455a691d95eaafcbfb53946f628d2f651f76106895d"
+      },
+      {
+        "file": "assets\\previews\\workflow-hub.webp",
+        "sha256": "609e52a8e42d5026a8f09a0cf0dbd29044b1572cbfc5ac7c22ad67acc24a7a89"
+      },
+      {
+        "file": "assets\\previews\\ycsu-platform.webp",
+        "sha256": "fcc22f1bd49c49efb9a81151fd722257c60b40f55f7841b748acec6b48ffdf4f"
+      },
+      {
+        "file": "assets\\previews\\ycsu-tracker.webp",
+        "sha256": "3c660efc47decacb56e2283606f4e18985f39f4cfeea45c2703b0e80e54dc746"
+      },
+      {
+        "file": "assets\\previews\\ysu-mind-map.webp",
+        "sha256": "f37732f75fbfcd7707c0602886a21aed32981f826d71149dd22162751c6f48f9"
+      },
+      {
+        "file": "assets\\vendor\\supabase-2.116.0.js",
+        "sha256": "118e46708b26a7913386c7740284fd28bd92f37e00cb59e5a58be8aea7ef34bd"
+      },
+      {
+        "file": "assets\\vendor\\SUPABASE-LICENSE",
+        "sha256": "bc704afe85e5e92311e42c5e6b07d5ff082e93639303c92a93d7fa3184ce3eef"
+      },
+      {
+        "file": "writing\\build-the-missing-revit-button\\cover.webp",
+        "sha256": "572b5c684381f7a849d0a929848c4eece45747d07558fddd9d8b5da6ebcf9edd"
+      },
+      {
+        "file": "writing\\build-the-missing-revit-button\\index.html",
+        "sha256": "68526787a508264e6c6263357dc00b8dc57e6b2c0eb47aae83342263a2a4b7e6"
+      },
+      {
+        "file": "writing\\make-the-impossible-possible\\cover.webp",
+        "sha256": "5f2040fb825d6019721090eba159a006d49c9826591a9711f7a58595ed1f8282"
+      },
+      {
+        "file": "writing\\make-the-impossible-possible\\index.html",
+        "sha256": "9c577a1b121473cd5bea5f592e319b264ed0ca6627041f2b1eea07b9cdebf732"
+      },
+      {
+        "file": "writing\\make-the-impossible-possible\\replacement-298bc5e63fa94ffe84b4183ab485b5d8.webp",
+        "sha256": "5f2040fb825d6019721090eba159a006d49c9826591a9711f7a58595ed1f8282"
+      },
+      {
+        "file": "writing\\the-grand-line-of-human-civilization\\cover.jpg",
+        "sha256": "6da08d79aa345c82414dd7be3dc873de16e650fed8253d617ef5ea8ba88d6b3c"
+      },
+      {
+        "file": "writing\\the-grand-line-of-human-civilization\\index.html",
+        "sha256": "0bd03c7d6e98c0debbf9ef82fa281447a8e5134c60c362ef64d9f29c5a1f1563"
+      }
+    ],
+    "browser": {
+      "base": "https://main.ycsu.cc",
+      "checks": [
+        "1440 exact source body",
+        "1440 title",
+        "1440 date",
+        "1440 approved cover loaded",
+        "1440 no overflow",
+        "1440 three articles",
+        "1440 long article end reachable",
+        "1440 refresh",
+        "768 exact source body",
+        "768 title",
+        "768 date",
+        "768 approved cover loaded",
+        "768 no overflow",
+        "768 three articles",
+        "768 long article end reachable",
+        "768 refresh",
+        "390 exact source body",
+        "390 title",
+        "390 date",
+        "390 approved cover loaded",
+        "390 no overflow",
+        "390 three articles",
+        "390 long article end reachable",
+        "390 refresh",
+        "index navigation Back/Forward",
+        "new article first; manual order preserved",
+        "source formatting h3",
+        "source formatting blockquote",
+        "source formatting bold",
+        "source formatting italic",
+        "source formatting listItems",
+        "original LinkedIn URL and safe new tab",
+        "homepage original featured retained",
+        "three article label",
+        "guest product destinations hidden",
+        "no browser exceptions",
+        "static source body",
+        "static canonical"
+      ],
+      "errors": [],
+      "browser": "Installed Google Chrome, isolated headless Playwright context",
+      "count": 38
+    }
+  }
+}

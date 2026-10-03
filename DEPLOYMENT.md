@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — tool design article, verified 2026-09-26 (Pacific)
+## Current production — Shaping Tools article, verified 2026-10-03 (Pacific)
+
+Published [the LinkedIn project-tools article](https://main.ycsu.cc/writing/from-using-tools-to-shaping-tools/) as the sixth Writing entry using the final published copy and exact LinkedIn image. Content commit `899594140462553db4bc7dab54986940c48ff292`; Netlify `6ac150b83020fc26600bf7af`, published `2026-10-03T19:02:45.763Z`. validate/build and 79/79 tests PASS; 37/37 isolated and 37/37 production desktop/mobile browser checks; 44/44 served hashes match. Five prior articles and public Writing presentation unchanged; existing MAIN cover and manual relative order retained. Draft access was protected (401); isolated local QA provided pre-release acceptance. Frontend rollback `6ab830c9db134814eab52e78`; full rollback also needs an ordinary content Git revert. [Release evidence](docs/releases/shaping-tools-2026-10-03.md).
+
+## Historical production — tool design article, verified 2026-09-26 (Pacific)
 
 Published [today's tool-design article](https://main.ycsu.cc/writing/addition-vs-subtraction-in-tool-design/) as the fifth Writing entry, preserving original text,44-line reading structure and supplied cover. Content commit `e766525b76f734e71cde23a7ef6497f03fc3b382`; Netlify `6ab830c9db134814eab52e78`, published `2026-09-26T20:53:32.862Z`.79/79 tests,34/34 isolated and34/34 production browser checks;41/41 served hashes match. Four prior articles, MAIN cover, saved ordering, public presentation and Registry unchanged. Frontend rollback `6ab825b1a04142a8231209c7`; full rollback also requires an ordinary content Git revert. [Release evidence](docs/releases/tool-design-2026-09-26.md).
 

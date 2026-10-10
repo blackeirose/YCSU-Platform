@@ -14,7 +14,11 @@ Live deployment record for YCSU Platform. Update this file whenever deployment s
 
 ---
 
-## Current production — Shaping Tools article, verified 2026-10-03 (Pacific)
+## Current production — AI Scale article, verified 2026-10-10 (Pacific)
+
+Published [AI Is Changing How Much Scale You Need](https://main.ycsu.cc/writing/ai-is-changing-how-much-scale-you-need/) as the seventh article, preserving the complete final LinkedIn article and cover. Content source `57c1a13d3d9fa82608c3033531245c3e4d1bde75`; Netlify `6acaacde5c8a99dcffde502d`, published `2026-10-10T21:23:44.321Z`. validate/build and 79/79 tests PASS; 41/41 isolated and 41/41 production desktop/mobile browser checks; 46/46 served hashes match. Six prior articles, MAIN cover and public presentation unchanged. Single dist-only production deploy after local acceptance. Previous production `6ac150b83020fc26600bf7af`; recovery requires a reviewed content revert and rebuilt secure release. [Release evidence](docs/releases/ai-scale-2026-10-10.md).
+
+## Historical production — Shaping Tools article, verified 2026-10-03 (Pacific)
 
 Published [the LinkedIn project-tools article](https://main.ycsu.cc/writing/from-using-tools-to-shaping-tools/) as the sixth Writing entry using the final published copy and exact LinkedIn image. Content commit `899594140462553db4bc7dab54986940c48ff292`; Netlify `6ac150b83020fc26600bf7af`, published `2026-10-03T19:02:45.763Z`. validate/build and 79/79 tests PASS; 37/37 isolated and 37/37 production desktop/mobile browser checks; 44/44 served hashes match. Five prior articles and public Writing presentation unchanged; existing MAIN cover and manual relative order retained. Draft access was protected (401); isolated local QA provided pre-release acceptance. Frontend rollback `6ab830c9db134814eab52e78`; full rollback also needs an ordinary content Git revert. [Release evidence](docs/releases/shaping-tools-2026-10-03.md).
 
